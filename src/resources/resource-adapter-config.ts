@@ -1,6 +1,6 @@
 
-import {mapQueryParams} from './utils/mapQueryParams';
-import {buildUrl} from './utils/buildUrl';
+import {mapQueryParams} from '../utils/mapQueryParams';
+import {buildUrl} from '../utils/buildUrl';
 import {IResourceRequestConfig} from './interfaces';
 
 let methods = [

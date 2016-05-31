@@ -1,7 +1,7 @@
 
 import {normalize, arrayOf} from 'normalizr';
 import {action} from '../actions/action';
-import {FIND, ADD} from '../constants';
+import {FIND, ADD} from '../resources/constants';
 import {toCamelCase} from './toCamelCase';
 import {toLoudSnakeCase} from './toLoudSnakeCase';
 

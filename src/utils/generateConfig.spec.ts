@@ -1,6 +1,6 @@
-import {ResourceAdapter} from '../resource-adapter';
+import {ResourceAdapter} from '../resources/resource-adapter';
 import {generateConfig} from '../utils';
-import {IResourceAdapter, IResourceRequestConfig} from '../interfaces';
+import {IResourceAdapter, IResourceRequestConfig} from '../resources/interfaces';
 
 var $http: ng.IHttpService;
 var $q: ng.IQService;

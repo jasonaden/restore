@@ -7,12 +7,12 @@ import {INgRedux, ngRedux, Middleware} from 'ng-redux';
 import {IResourceAdapter, IResourceRequestConfig, IEntityState} from './interfaces';
 import {ResourceAdapterConfig} from './resource-adapter-config';
 
-import {find} from './actions/find';
-import {findOne} from './actions/findOne';
-import {destroy} from './actions/destroy';
-import {action} from './actions/action';
+import {find} from '../actions/find';
+import {findOne} from '../actions/findOne';
+import {destroy} from '../actions/destroy';
+import {action} from '../actions/action';
 
-import {flattenEmbedded} from './utils';
+import {flattenEmbedded} from '../utils';
 
 import {
   FIND_ONE, FINDING_ONE, FOUND_ONE,

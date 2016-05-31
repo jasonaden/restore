@@ -1,5 +1,5 @@
 
-import {joinUrl, parseJson, generateConfig} from './utils';
+import {joinUrl, parseJson, generateConfig} from '../utils';
 
 import {IResourceAdapter, IResourceAdapterConfig, IResourceRequestConfig} from './interfaces';
 import {ResourceAdapterConfig} from './resource-adapter-config';

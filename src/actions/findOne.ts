@@ -1,23 +1,21 @@
 
+
 import {action} from './action';
-import {IResourceRequestConfig} from '../interfaces';
-import {DESTROYING, ERROR} from '../constants';
+import {IResourceRequestConfig} from '../resources/interfaces';
+import {FINDING_ONE, ERROR} from '../resources/constants';
 import {splitSchema} from '../utils/splitSchema';
 import {config} from './action-config';
 
-// TODO: Implement this function. Need to configure what to do after destroying server-side.
-export function destroy (config: config, id: string, args?: IResourceRequestConfig) {
+export function findOne (config: config, args?: IResourceRequestConfig) {
   return (dispatch, store) => {
-    dispatch(action(DESTROYING, config.className));
+    dispatch(action(FINDING_ONE, config.className));
     
     return config.adapter.execute({
-      url: id, 
-      method: 'DELETE'
+      url: config.url, 
+      method: 'GET'
     })
     .then(
       res => {
-        
-        alert("Need to implement what to do after delete (remove from store)");
         dispatch(splitSchema(config.schema, config.className, res.data));
         return res.data;
       },

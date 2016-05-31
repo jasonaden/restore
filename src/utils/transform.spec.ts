@@ -1,4 +1,4 @@
-import {transform} from '../utils';
+import {transform} from './transform';
 
 describe('transform', () => {
     

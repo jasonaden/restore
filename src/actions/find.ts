@@ -1,7 +1,7 @@
 
 import {action} from './action';
-import {IResourceRequestConfig} from '../interfaces';
-import {FINDING, ERROR} from '../constants';
+import {IResourceRequestConfig} from '../resources/interfaces';
+import {FINDING, ERROR} from '../resources/constants';
 import {splitSchema} from '../utils/splitSchema';
 import {config} from './action-config';
 

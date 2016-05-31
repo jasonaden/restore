@@ -1,4 +1,4 @@
-import {IResourceAdapter, IResourceRequestConfig} from '../interfaces';
+import {IResourceAdapter, IResourceRequestConfig} from '../resources/interfaces';
 import {joinUrl} from './joinUrl';
 
 export function generateConfig ($q: ng.IQService, adapter: IResourceAdapter, config: IResourceRequestConfig): ng.IPromise<IResourceRequestConfig> {

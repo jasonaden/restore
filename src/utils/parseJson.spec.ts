@@ -1,4 +1,4 @@
-import {parseJson} from '../utils';
+import {parseJson} from './parseJson';
 
 describe('parseJson', () => {
     

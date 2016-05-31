@@ -28,4 +28,4 @@ export {
   joinUrl, 
   parseJson, 
   transform
-} from './resources/utils';
+} from './utils';

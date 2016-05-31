@@ -1,4 +1,4 @@
-import {joinUrl} from '../utils';
+import {joinUrl} from './joinUrl';
 
 describe('joinUrl', () => {
   
