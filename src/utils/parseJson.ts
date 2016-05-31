@@ -1,6 +1,4 @@
 
-import * as ng from 'angular';
-
 import {transform} from './transform';
 
 export function parseJson (
@@ -24,10 +22,7 @@ export function parseJson (
     transform(data, reviver)
   }
   
-  // TODO: Determine if we really want to do this or if it should always return data
-  if (!(ng.equals({}, data) || ng.equals([], data))) {
-    return data
-  }
+  return data
   
 }
 
