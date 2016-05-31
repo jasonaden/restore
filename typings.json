@@ -1,0 +1,22 @@
+{
+  "ambientDependencies": {
+    "angular": "registry:dt/angular#1.5.0+20160318102130",
+    "angular-mocks": "registry:dt/angular-mocks#1.3.0+20160317120654",
+    "bootstrap": "registry:dt/bootstrap#3.3.5+20160316155526",
+    "flux-standard-action": "registry:dt/flux-standard-action#0.5.0+20160316155526",
+    "jasmine": "registry:dt/jasmine#2.2.0+20160317120654",
+    "jquery": "registry:dt/jquery#1.10.0+20160316155526",
+    "jwt-decode": "registry:dt/jwt-decode#1.4.0+20160317120654",
+    "lodash": "registry:dt/lodash#3.10.0+20160319050323",
+    "redux": "registry:dt/redux#1.0.0+20160317120654",
+    "redux-logger": "registry:dt/redux-logger#2.6.0+20160316155526",
+    "redux-thunk": "registry:dt/redux-thunk#2.0.1+20160317120654",
+    "reselect": "registry:dt/reselect#2.0.2+20160319031821",
+    "rx": "npm:rx/ts/rx.all.d.ts",
+    "source-map": "registry:dt/source-map#0.0.0+20160317120654",
+    "uglify-js": "registry:dt/uglify-js#2.6.1+20160316155526"
+  },
+  "dependencies": {
+    "immutable": "npm:immutable/dist/immutable-nonambient.d.ts"
+  }
+}
