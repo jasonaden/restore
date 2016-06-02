@@ -1,18 +1,35 @@
-// Load vendor files
-import "babel-core/register";
-import "babel-polyfill";
-import "angular";
-import "ng-redux";
-import "redux-saga";
-import "redux-logger";
-import "redux-immutable";
-import "immutable";
+// Resource class
+export {
+  Resource
+} from './resources/resource';
 
-// export const DeskStore:Store = createStore(rootReducer);
-export const deskMod = angular.module('app', [
-  'ngRedux'
-]);
+// resource reducer
+export {
+  defaultReducer
+} from './resources/resource-reducer';
 
-angular.element(document).ready(function() {
-  angular.bootstrap(document, ['app']);
-});
+// interfaces
+// don't need to export since they will be in .d.ts file?
+/*
+export {
+  IResourceAdapter, 
+  IResourceAdapterConfig, 
+  IResourceRequestConfig,
+  IEntityState
+} from './resources/interfaces';*/
+
+// resource-adapter
+export {
+  ResourceAdapter
+} from './resources/resource-adapter';
+
+// utils
+export {
+  flattenEmbedded, 
+  generateConfig, 
+  joinUrl, 
+  parseJson, 
+  transform
+} from './utils';
+
+export * from './resources/constants';
