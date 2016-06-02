@@ -3,7 +3,7 @@ var concat = require('gulp-concat');
 var ts = require('gulp-typescript');
 var merge = require('merge2');
 
-gulp.task('default', ['compile', 'concat-js', 'concat-tsd']);
+gulp.task('default', ['compile', 'concat-tsd']);
 
 gulp.task('compile', function(){
   var tsResult = gulp.src('./src/**/*.ts')
@@ -14,7 +14,7 @@ gulp.task('compile', function(){
 
     return merge([
       tsResult.dts.pipe(gulp.dest('out/tsd')),
-      tsResult.js.pipe(gulp.dest('out/js'))
+      tsResult.js.pipe(gulp.dest('dist/'))
     ]);
 });
 
