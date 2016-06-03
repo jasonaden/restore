@@ -69,6 +69,31 @@ xdescribe('Resource', () => {
     $httpBackend.verifyNoOutstandingExpectation();
     $httpBackend.verifyNoOutstandingRequest();
   });
+  
+  
+  
+  it('works', () => {
+    
+    import {restore} from 'restore';
+    
+    export var Case = restore({
+      url: '',
+      something: '',
+      config: 'stuff'
+    })
+    .adapter({
+      
+    })
+    
+    
+    
+    
+    
+  })
+  
+  
+  
+  
 
   it ('should have isLoading method default to false', () => {
     expect(TestResource.isLoading()).toBe(false);

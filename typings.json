@@ -17,6 +17,7 @@
     "uglify-js": "registry:dt/uglify-js#2.6.1+20160316155526"
   },
   "dependencies": {
-    "immutable": "npm:immutable/dist/immutable-nonambient.d.ts"
+    "immutable": "npm:immutable/dist/immutable-nonambient.d.ts",
+    "request": "registry:npm/request#2.69.0+20160428223725"
   }
 }

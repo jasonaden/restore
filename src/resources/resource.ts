@@ -3,6 +3,8 @@ import {Store, Reducer, combineReducers} from 'redux';
 import {Action} from 'flux-standard-action';
 import { normalize, Schema, arrayOf } from 'normalizr';
 import * as Immutable from 'immutable';
+import {identity} from 'lodash';
+
 import {INgRedux, ngRedux, Middleware} from 'ng-redux';
 import {IResourceAdapter, IResourceRequestConfig, IEntityState} from './interfaces';
 
@@ -25,6 +27,7 @@ import {
 } from './constants';
 
 import {defaultEntityState} from './resource-reducer';
+
 /**
  * 
  */

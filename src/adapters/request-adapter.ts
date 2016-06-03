@@ -1,25 +1,34 @@
 
+import * as request from 'request';
+
 import {joinUrl, parseJson, generateConfig} from '../utils';
 
-import {IResourceAdapter, IResourceAdapterConfig, IResourceRequestConfig} from './interfaces';
-import {ResourceAdapterConfig} from './resource-adapter-config';
+import {IResourceAdapter, IResourceAdapterConfig, IResourceRequestConfig} from '../resources/interfaces';
 
 
+
+let configDefaults = {
+  baseUrl: "/", 
+  removeTrailingSlash: true,
+  datePattern: /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}.\d{3}Z$/
+}
 
 
 /*
-* Base Adapter for an API. The adapter handles
+* Request-based adapter for an API.
 */
-export class ResourceAdapter implements IResourceAdapter {
+export class RequestAdapter {
 
   // Base URL for the API
-  baseUrl: string = "/";
+  baseUrl: string;
   // Do or don't remove trailing slash 
-  removeTrailingSlash: boolean = true;
+  removeTrailingSlash: boolean;
   // Date pattern to be used to find dates in returns from the API
-  datePattern: RegExp = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}.\d{3}Z$/;
+  datePattern: RegExp;
   
-  constructor (public $http: ng.IHttpService, public $q: ng.IQService, public config: ResourceAdapterConfig = new ResourceAdapterConfig()) {
+  constructor ({baseUrl = configDefaults.baseUrl, removeTrailingSlash, datePattern}) {
+    this.baseUrl
+    
     if (!this.interceptors) {
       this.interceptors = [];  
     }
