@@ -1,8 +1,7 @@
 {
   "compilerOptions": {
-    "target": "es5",
-    "module": "amd",
-    "outFile": "index.js"
+    "target": "es6",
+    "module": "es6"
   },
   "exclude": [
     "out",

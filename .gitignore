@@ -3,6 +3,7 @@
 node_modules
 reports
 out
+tsd
 typings/browser
 typings/browser.d.ts
 typings/main
