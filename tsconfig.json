@@ -1,8 +1,12 @@
 {
   "compilerOptions": {
-    "target": "es6",
-    "module": "es6"
+    "target": "es5",
+    "module": "commonjs",
+    "declaration": true
   },
+  "files": [
+      "./src/index.ts"
+  ],
   "exclude": [
     "out",
     "node_modules",
