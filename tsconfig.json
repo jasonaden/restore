@@ -1,8 +1,9 @@
 {
   "compilerOptions": {
     "target": "es5",
-    "module": "commonjs",
-    "declaration": true
+    "module": "amd",
+    "declaration": true,
+    "outFile": "out/index.js"
   },
   "files": [
       "./src/index.ts"

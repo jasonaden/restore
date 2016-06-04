@@ -4,7 +4,7 @@ var tsc = require('gulp-typescript');
 var merge = require('merge2');
 var tsProject = tsc.createProject('tsconfig.json');
 
-gulp.task('default', ['compile', 'concat-tsd']);
+gulp.task('default', ['old-compile', 'concat-tsd']);
 
 gulp.task('compile', function(){
   var tsAmd = gulp.src('./src/**/*.ts')
@@ -23,14 +23,14 @@ gulp.task('compile', function(){
 
 gulp.task('old-compile', function(){
   var tsAmd = gulp.src('./src/**/*.ts')
-      .pipe(ts({
+      .pipe(tsc({
         "target": "es5",
         "module": "amd",
-        "outFile": "dist/index.js"
+        "outFile": "index.js"
       }));
 
   var tsCommon = gulp.src('./src/**/*.ts')
-    .pipe(ts({
+    .pipe(tsc({
       "target": "es5",
       "module": "commonjs",
       "declaration": true,
