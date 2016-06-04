@@ -10,13 +10,13 @@ export {
 
 // interfaces
 // don't need to export since they will be in .d.ts file?
-/*
+
 export {
   IResourceAdapter, 
   IResourceAdapterConfig, 
   IResourceRequestConfig,
   IEntityState
-} from './resources/interfaces';*/
+} from './resources/interfaces';
 
 // resource-adapter
 export {
