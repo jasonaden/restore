@@ -10,7 +10,9 @@
     "build": "webpack --config webpack/webpack.build.js --NODE_ENV=production",
     "postinstall": "typings i"
   },
-  "main": "src/index.ts",
+  "typescript": {
+    "main": "src/index.ts"
+  },
   "license": "MIT",
   "dependencies": {
     "angular": "^1.5.0",
