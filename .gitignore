@@ -8,6 +8,8 @@ typings/browser
 typings/browser.d.ts
 typings/main
 typings/main.d.ts
+typings/modules
+typings/index.d.ts
 .idea/
 app/
 doc/

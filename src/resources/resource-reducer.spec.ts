@@ -1,7 +1,7 @@
 import {defaultReducer} from './resource-reducer';
 import {IEntityState} from './interfaces';
 import {Reducer} from 'redux';
-import 'angular-mocks';
+// import 'angular-mocks';
 
 import {
   FIND_ONE, FINDING_ONE, FOUND_ONE,
