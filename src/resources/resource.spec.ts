@@ -95,11 +95,11 @@ xdescribe('Resource', () => {
   
   
 
-  it ('should have isLoading method default to false', () => {
+  it('should have isLoading method default to false', () => {
     expect(TestResource.isLoading()).toBe(false);
   });
 
-  it ('should have isLoading(id) method default to false', () => {
+  it('should have isLoading(id) method default to false', () => {
     expect(TestResource.isLoading(1)).toBe(false);
   });
   

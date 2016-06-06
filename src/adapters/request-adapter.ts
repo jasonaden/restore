@@ -39,7 +39,7 @@ export class RequestAdapter {
   }
 
   // Execute request based on given DsResourceAdapterConfig
-  execute (config: any): ng.IPromise<any> {
+  execute (config: any): Promise {
     let requestConfig = this.config.extend(config).build();
     return this.doRequest(requestConfig);
   }
@@ -49,7 +49,7 @@ export class RequestAdapter {
     return value;
   }
   
-  doRequest (config: IResourceRequestConfig): ng.IPromise<any> {
+  doRequest (config: IResourceRequestConfig): Promise {
     return generateConfig(this.$q, this, config)
     .then(config => this.$http(config)
       .then(config.interceptor.response, config.interceptor.responseError)
@@ -72,7 +72,7 @@ export class RequestAdapter {
   }
   
   find (config, params) {
-    
+    request
   }
   
   findOne () {
