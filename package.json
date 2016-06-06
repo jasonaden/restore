@@ -7,8 +7,7 @@
     "start": "webpack --config webpack/webpack.dev.js --watch --NODE_ENV=dev",
     "test-watch": "karma start --auto-watch --no-single-run --NODE_ENV=test",
     "test": "karma start --NODE_ENV=test",
-    "build": "webpack --config webpack/webpack.build.js --NODE_ENV=production",
-    "postinstall": "tsc -d"
+    "build": "webpack --config webpack/webpack.build.js --NODE_ENV=production"
   },
   "main": "dist/index.js",
   "typings": "dist/index",
