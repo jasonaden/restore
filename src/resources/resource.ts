@@ -2,10 +2,9 @@ import {createSelector} from 'reselect';
 import {Store, Reducer, combineReducers} from 'redux';
 import {Action} from 'flux-standard-action';
 import { normalize, Schema, arrayOf } from 'normalizr';
-
+import * as Immutable from 'immutable';
 import {INgRedux, ngRedux, Middleware} from 'ng-redux';
 import {IResourceAdapter, IResourceRequestConfig, IEntityState} from './interfaces';
-import {ResourceAdapterConfig} from './resource-adapter-config';
 
 import {find} from '../actions/find';
 import {findOne} from '../actions/findOne';
@@ -25,8 +24,7 @@ import {
   ERROR
 } from './constants';
 
-
-
+import {defaultEntityState} from './resource-reducer';
 /**
  * 
  */
@@ -38,12 +36,12 @@ export class Resource<T> {
   
   public store: Store;
   
-  get state (): IEntityState {
-    return this._state[this.className.toLowerCase()] || {};
+  get state () {
+    return this._state[this.className.toLowerCase()] || new defaultEntityState();
   };
   
   private get _state () {
-    return this.store.getState().entities || {};
+    return this.store.getState().entities || Immutable.Map();
   }
   
   public $http: ng.IHttpService;
@@ -213,7 +211,7 @@ export class Resource<T> {
    */
   findOne(id: number, config?: IResourceRequestConfig): ng.IPromise<any> {
     return this.$q.when(this.beforeFindOne(id, config))
-    .then(args => this.store.dispatch(findOne(this, args)))
+    .then(args => this.store.dispatch(findOne(this, id)))
     .then(data => this.afterFindOne(data));
   }
   
