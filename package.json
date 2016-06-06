@@ -10,9 +10,8 @@
     "build": "webpack --config webpack/webpack.build.js --NODE_ENV=production",
     "postinstall": "typings i"
   },
-  "main": "./dist/index.js",
-  "typings": "./dist/index.d.ts",
-  "files": [ "./src" ],
+  "main": "dist/index.js",
+  "typings": "dist/index",
   "license": "MIT",
   "dependencies": {
     "angular": "^1.5.0",

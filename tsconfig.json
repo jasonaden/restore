@@ -1,13 +1,10 @@
 {
   "compilerOptions": {
     "target": "es5",
-    "module": "amd",
+    "module": "commonjs",
     "declaration": true,
-    "outFile": "out/index.js"
+    "outDir": "dist"
   },
-  "files": [
-      "./src/index.ts"
-  ],
   "exclude": [
     "out",
     "node_modules",
