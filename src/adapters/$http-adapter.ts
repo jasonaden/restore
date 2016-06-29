@@ -1,11 +1,6 @@
 
-import * as request from 'request';
-
+import {BaseAdapter} from './base-adapter';
 import {joinUrl, parseJson, generateConfig} from '../utils';
-
-import {IResourceAdapter, IResourceAdapterConfig, IResourceRequestConfig} from '../resources/interfaces';
-
-
 
 let configDefaults = {
   baseUrl: "/", 
@@ -15,9 +10,9 @@ let configDefaults = {
 
 
 /*
-* Request-based adapter for an API.
+* $http-based adapter for an API.
 */
-export class RequestAdapter {
+export class $httpAdapter extends BaseAdapter {
 
   // Base URL for the API
   baseUrl: string;
@@ -26,12 +21,20 @@ export class RequestAdapter {
   // Date pattern to be used to find dates in returns from the API
   datePattern: RegExp;
   
-  constructor ({baseUrl = configDefaults.baseUrl, removeTrailingSlash, datePattern}) {
-    this.baseUrl
+  constructor () {
+    super();
+  }
     
-    if (!this.interceptors) {
-      this.interceptors = [];  
-    }
+  //   {baseUrl = configDefaults.baseUrl, removeTrailingSlash, datePattern}) {
+  //   this.baseUrl
+    
+  //   if (!this.interceptors) {
+  //     this.interceptors = [];  
+  //   }
+  // }
+  
+  config () {
+    
   }
 
   generateSlug (entity): string {
@@ -72,7 +75,7 @@ export class RequestAdapter {
   }
   
   find (config, params) {
-    request
+    return this.$http.get('/');
   }
   
   findOne () {

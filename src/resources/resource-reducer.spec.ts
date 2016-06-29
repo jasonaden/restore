@@ -17,7 +17,7 @@ import {
 let type: string = 'CASE';
 let reducer: Reducer;
 
-describe('defaultReducer', () => {
+xdescribe('defaultReducer', () => {
   
   beforeEach(() => {
     reducer = defaultReducer(type);    
