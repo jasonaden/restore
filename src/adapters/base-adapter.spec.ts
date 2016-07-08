@@ -22,24 +22,43 @@ describe('BaseAdapter', () => {
     });
     
     it('runs before and after methods', (done) => {
-      spyOn(adapter, 'beforeAdd');
-      spyOn(adapter, 'afterAdd');
-      adapter.add(newObj).then(createdObj => {
-        expect(adapter.beforeAdd).toHaveBeenCalled();
+      spyOn(adapter, 'beforeAdd').and.callThrough();
+      spyOn(adapter, 'afterAdd').and.callThrough();
+      adapter.add(newObj)
+      .then(createdObj => {
+        expect(adapter.beforeAdd).toHaveBeenCalledWith(newObj, undefined);
         expect(adapter.afterAdd).toHaveBeenCalled();
         done();
       });
     });
 
+    it('runs toJSON to serialize data', (done) => {
+      spyOn(adapter, 'toJSON').and.callThrough();
+      adapter.add(newObj).then(createdObj => {
+        expect(adapter.toJSON).toHaveBeenCalledWith(newObj);
+        done();
+      });
+    })
+
     it('runs adapter.persistence.create', (done) => {
       adapter.add(newObj).then(createdObj => {
+        expect(createdObj.id).toBe(789);
         expect(createdObj.created).toBe(true);
         done();
       });
     });
 
-    describe('takes options object', () => {
-      
+    describe('takes config object', () => {
+      it('and passes through to beforeAdd', (done) => {
+        spyOn(adapter, 'beforeAdd').and.callThrough();
+        spyOn(adapter.persistence, 'create').and.callThrough();
+        let config = {config: 'object'};
+        adapter.add(newObj, config).then(createdObj => {
+          expect(adapter.beforeAdd).toHaveBeenCalledWith(newObj, config);
+          expect(adapter.persistence.create).toHaveBeenCalledWith(newObj, config);
+          done();
+        })
+      })
     });
   });
 
@@ -75,18 +94,6 @@ describe('BaseAdapter', () => {
       let seralizable = adapter.toJSON(newObj);
       expect(seralizable.$private).toBeUndefined();
       expect(seralizable.id).toBe(789);
-    });
-  });
-  
-  describe('execute', () => {
-    it('runs ResourceAdapterConfig.build()', () => {
-      // This test should work, but doesn't because spyOn causes an error to be thrown
-      // spyOn(config, 'build');
-                 
-      // $httpBackend.whenGET(config.url).respond(200);
-      // adapter.execute(config);
-      // $httpBackend.flush();
-      // expect(config.build).toHaveBeenCalled();
     });
   });
 

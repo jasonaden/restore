@@ -47,29 +47,35 @@ export class BaseAdapter {
   }
   
   /**
+   * Convert payload from JSON format
+   */
+  fromJSON (value) {
+    if (typeof value !== 'string') return value;
+    
+    return JSON.parse(value, this.reviver);
+  }
+  
+  /**
    * Lifecycle Hooks:
    * 
    * * `beforeAdd(payload[, cb])`
    * * `afterAdd(payload[, cb])`
    */
-  add(data, config?): Promise<any> {
-    // run before hook
-    return this.promise.all([this.beforeAdd(data, config)])
-    // convert to JSON format
-    .then(([data, config]) => [this.toJSON(data), config])
-    // persist
-    .then(([data, config]) => this.persistence.create(data, config))
-    // run after hook
-    .then(x => this.afterAdd(x));
+  add(data, params?): Promise<any> {
+    return this.beforeAdd(data, params) // run before hook
+    .then(([data, params]) => [this.toJSON(data), params]) // convert to JSON format
+    .then(([data, params]) => this.persistence.create(data, params)) // persist
+    .then(x => this.fromJSON(x)) // revive data from api
+    .then(x => this.afterAdd(x)); // run after hook
   }
   
   /**
    * Default hook (return what was passed in). Because .all is being used, 
-   * it's possible that `payload` or `config` could be a promise that returns the 
-   * payload or config, so it's not a pure identity function.
+   * it's possible that `payload` or `params` could be a promise that returns the 
+   * payload or params, so it's not a pure identity function.
    */
-  beforeAdd(payload, config): Promise<(any)[]> {
-    return this.promise.all([payload, config]);
+  beforeAdd(payload, params): Promise<(any)[]> {
+    return this.promise.all([payload, params]);
   }
   
   /**
@@ -79,46 +85,65 @@ export class BaseAdapter {
     return Promise.resolve(data);
   }
   
-  doRequest (config: IResourceRequestConfig): Promise {
-    return generateConfig(this.$q, this, config)
-    .then(config => this.$http(config)
-      .then(config.interceptor.response, config.interceptor.responseError)
-    );
-  }
-  
-
-  // Default response transform
-  transformResponse (data, headers) {
-    return parseJson(this.datePattern, this.reviver, data, headers);
+  find (params?) {
+    return this.promise.all([this.beforeFind(params)])
+    .then(([params]) => this.persistence.find(params))
+    .then(x => this.fromJSON(x))
+    .then(x => this.afterFind(x));
   }
 
-  // Default request transform
-  transformRequest (data, headers) {
-    return JSON.stringify(data, (key, value) => {
-      if (['@viewModel','@descriptor'].indexOf(key) == -1) {
-        return value;
-      }
-    });
+  beforeFind(params?): Promise<(any)[]> {
+    return this.promise.all([params]);
   }
   
-  find (config, params) {
-    // return this.$http.get('/');
+  afterFind(data: any): Promise<any> {
+    return Promise.resolve(data);
   }
   
-  findOne () {
-    
+  findOne (params) {
+    return this.promise.all([this.beforeFindOne(params)])
+    .then(([params]) => this.persistence.findOne(params))
+    .then(x => this.fromJSON(x))
+    .then(x => this.afterFindOne(x));
+  }
+
+  beforeFindOne(params): Promise<(any)[]> {
+    return this.promise.all([params]);
   }
   
-  create () {
-    
+  afterFindOne(data: any): Promise<any> {
+    return Promise.resolve(data);
   }
   
-  update () {
-    
+  update (data, params?) {
+    return this.beforeUpdate(data, params)
+    .then(([data, config]) => [this.toJSON(data), config])
+    .then(([data, config]) => this.persistence.update(data, config))
+    .then(x => this.fromJSON(x))
+    .then(x => this.afterUpdate(x));
+  }
+
+  beforeUpdate(data, params?): Promise<(any)[]> {
+    return this.promise.all([data, params]);
   }
   
-  destroy () {
-    
+  afterUpdate(data: any): Promise<any> {
+    return Promise.resolve(data);
+  }
+  
+  destroy (params) {
+    return this.beforeDestroy(params)
+    .then(([params]) => this.persistence.destroy(params))
+    .then(x => this.fromJSON(x))
+    .then(x => this.afterDestroy(x));
+  }
+
+  beforeDestroy(params): Promise<(any)[]> {
+    return this.promise.all([params]);
+  }
+  
+  afterDestroy(data: any): Promise<any> {
+    return Promise.resolve(data);
   }
   
   

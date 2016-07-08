@@ -1,7 +1,8 @@
 
 export interface IAdapterPersistence {
-  create: (data, options? ) => Promise<any>;
-  update: (data, options?, base?) => Promise<any>;
-  findOne: (options) => Promise<any>;
-  find: (options) => Promise<any>;
+  create: (data, params? ) => Promise<any>;
+  update: (data, params?, base?) => Promise<any>;
+  findOne: (params) => Promise<any>;
+  find: (params) => Promise<any>;
+  destroy: (params) => Promise<any>;
 }
