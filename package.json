@@ -3,6 +3,7 @@
   "private": true,
   "version": "1.0.0",
   "description": "Redux-based store with adapters (defaults to HTTP)",
+  "engines": {"node": "~5.7.0", "npm": "~3.6.0"},
   "scripts": {
     "start": "webpack --config webpack/webpack.dev.js --watch --NODE_ENV=dev",
     "test-watch": "karma start --auto-watch --no-single-run --NODE_ENV=test",
