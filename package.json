@@ -45,9 +45,9 @@
     "karma-spec-reporter": "0.0.23",
     "karma-typescript-preprocessor": "0.0.21",
     "karma-webpack": "1.7.0",
-    
     "redux-mock-store": "~1.0.2",
     "ts-loader": "^0.8.1",
+    "tslint": "~3.13.0",
     "typescript": "~1.8.5",
     "typings": "^1.0.4",
     "webpack": "~1.13.1"

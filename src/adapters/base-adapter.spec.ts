@@ -5,10 +5,11 @@ describe('BaseAdapter', () => {
   
   class TestAdapter extends BaseAdapter {
     persistence = {
-      create: (data, options?) => Promise.resolve(Object.assign({}, data, {created: true})),
-      update: (data, options?, base?) => Promise.resolve(Object.assign({}, data, {updated: true})),
-      findOne: (options) => Promise.resolve({id: 123}),
-      find: (options) => Promise.resolve([{id: 123}, {id: 456}])
+      create: (data, params?) => Promise.resolve(Object.assign({}, data, {created: true})),
+      update: (data, params?, base?) => Promise.resolve(Object.assign({}, data, {updated: true})),
+      findOne: (params) => Promise.resolve({id: 123}),
+      find: (params) => Promise.resolve([{id: 123}, {id: 456}]),
+      destroy: (params) => Promise.resolve(null)
     }
   }
   

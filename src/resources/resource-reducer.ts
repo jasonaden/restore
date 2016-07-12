@@ -30,7 +30,7 @@ export const defaultEntityState = Immutable.Record({
  * 
  * ```
  *  entities = {
- *    cases: {
+ *    case: {
  *      // sequence of cases as returned from most recent API call
  *      result: [6, 3, 5, ...],
  *      loadingMany: true,

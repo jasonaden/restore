@@ -5,7 +5,6 @@ import { normalize, Schema, arrayOf } from 'normalizr';
 import * as Immutable from 'immutable';
 import {identity} from 'lodash';
 
-import {INgRedux, ngRedux, Middleware} from 'ng-redux';
 import {IResourceAdapter, IResourceRequestConfig, IEntityState} from './interfaces';
 
 import {find} from '../actions/find';
