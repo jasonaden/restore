@@ -1,6 +1,6 @@
 "use strict";
 var resource_reducer_1 = require('./resource-reducer');
-require('angular-mocks');
+// import 'angular-mocks';
 var constants_1 = require('./constants');
 var type = 'CASE';
 var reducer;

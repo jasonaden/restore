@@ -1,4 +1,6 @@
 import { Reducer } from 'redux';
+import * as Immutable from 'immutable';
+export declare const defaultEntityState: Immutable.Record.Class;
 /**
  * Generic reducer for items of any type (entities). Produces a state tree like:
  *

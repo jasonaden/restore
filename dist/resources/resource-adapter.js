@@ -50,6 +50,16 @@ var ResourceAdapter = (function () {
             }
         });
     };
+    ResourceAdapter.prototype.find = function (config, params) {
+    };
+    ResourceAdapter.prototype.findOne = function () {
+    };
+    ResourceAdapter.prototype.create = function () {
+    };
+    ResourceAdapter.prototype.update = function () {
+    };
+    ResourceAdapter.prototype.destroy = function () {
+    };
     return ResourceAdapter;
 }());
 exports.ResourceAdapter = ResourceAdapter;

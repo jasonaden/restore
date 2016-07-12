@@ -1,9 +1,11 @@
 "use strict";
+var Immutable = require('immutable');
 var find_1 = require('../actions/find');
 var findOne_1 = require('../actions/findOne');
 var destroy_1 = require('../actions/destroy');
 var action_1 = require('../actions/action');
 var constants_1 = require('./constants');
+var resource_reducer_1 = require('./resource-reducer');
 /**
  *
  */
@@ -29,7 +31,7 @@ var Resource = (function () {
     }
     Object.defineProperty(Resource.prototype, "state", {
         get: function () {
-            return this._state[this.className.toLowerCase()] || {};
+            return this._state[this.className.toLowerCase()] || new resource_reducer_1.defaultEntityState();
         },
         enumerable: true,
         configurable: true
@@ -37,7 +39,7 @@ var Resource = (function () {
     ;
     Object.defineProperty(Resource.prototype, "_state", {
         get: function () {
-            return this.store.getState().entities || {};
+            return this.store.getState().entities || Immutable.Map();
         },
         enumerable: true,
         configurable: true
@@ -175,7 +177,7 @@ var Resource = (function () {
     Resource.prototype.findOne = function (id, config) {
         var _this = this;
         return this.$q.when(this.beforeFindOne(id, config))
-            .then(function (args) { return _this.store.dispatch(findOne_1.findOne(_this, args)); })
+            .then(function (args) { return _this.store.dispatch(findOne_1.findOne(_this, id)); })
             .then(function (data) { return _this.afterFindOne(data); });
     };
     /**

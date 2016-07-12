@@ -1,16 +1,16 @@
 "use strict";
+var Immutable = require('immutable');
 var constants_1 = require('./constants');
-function defaultEntityState() {
-    return {
-        result: [],
-        loadingMany: false,
-        loadingOne: false,
-        deleting: false,
-        patching: false,
-        adding: false,
-        items: {},
-    };
-}
+exports.defaultEntityState = Immutable.Record({
+    result: Immutable.List(),
+    loadingMany: false,
+    loadingOne: false,
+    deleting: false,
+    patching: false,
+    adding: false,
+    meta: null,
+    items: Immutable.Map()
+});
 /**
  * Generic reducer for items of any type (entities). Produces a state tree like:
  *
@@ -53,44 +53,40 @@ function defaultReducer(type) {
         return str + '_' + type;
     }
     return function (state, action) {
-        if (state === void 0) { state = defaultEntityState(); }
-        var s = Object.assign({}, state);
-        if (!action) {
-            return state;
-        }
+        if (state === void 0) { state = new exports.defaultEntityState(); }
         switch (action.type) {
             // SETUP ACTIONABLE ITEMS
             case constants_1.FINDING + "_" + type:
-                return Object.assign(s, { loadingMany: true });
+                return state.set('loadingMany', true);
             case constants_1.FINDING_ONE + "_" + type:
-                return Object.assign(s, { loadingOne: true });
+                return state.set('loadingOne', true);
             case constants_1.DESTROYING + "_" + type:
-                return Object.assign(s, { deleting: true });
+                return state.set('deleting', true);
             case constants_1.PATCHING + "_" + type:
-                return Object.assign(s, { patching: true });
+                return state.set('patching', true);
             case constants_1.ADDING + "_" + type:
-                return Object.assign(s, { adding: true });
-            // This is the load many action. FIND_CASE for instance vs FIND_ONE_CASE.
-            case t(constants_1.FIND, type):
+                return state.set('adding', true);
+            // LOAD_MANY_CASE
+            case t(constants_1.FOUND, type):
                 // Turn off loading indicator
-                s.loadingMany = false;
+                state = state.set('loadingMany', false);
                 // Apply the sequenced result array
-                s.result = action.payload.result.slice(0);
+                state = state.mergeIn(['result'], action.payload.result.slice(0));
                 // Iterate results and add each item
-                s.items = Object.assign({}, s.items);
-                s.result.forEach(function (key) {
-                    s.items[key] = action.payload.items[key];
+                state.result.map(function (key) {
+                    state = state.setIn(['items', key], Immutable.fromJS(action.payload.items[key]));
                 });
                 // Apply metadata
-                s.meta = Object.assign({}, action.payload.meta);
-                return s;
-            case t(constants_1.FIND_ONE, type):
-                debugger;
-                return s;
+                state = state.set('meta', action.payload.meta);
+                return state;
+            // LOAD_ONE_CASE
+            case t(constants_1.FOUND_ONE, type):
+                // turn off loading indicator
+                state = state.set('loadingOne', false);
+                // set individual item
+                return state.setIn(['items', '/cases/' + action.payload.id], Immutable.fromJS(action.payload));
             case t(constants_1.ADD, type):
-                s.items = Object.assign({}, s.items);
-                s.items[action.payload._links.self.href] = action.payload;
-                return s;
+                return state.setIn(['items', action.payload._links.self.href], Immutable.fromJS(action.payload));
             // TODO: ERROR CASE
             default:
                 return state;
