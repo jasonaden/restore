@@ -88,7 +88,6 @@ export class BaseAdapter {
   find (params?) {
     return this.promise.all([this.beforeFind(params)])
     .then(([params]) => this.persistence.find(params))
-    .then(x => this.fromJSON(x))
     .then(x => this.afterFind(x));
   }
 
@@ -103,7 +102,6 @@ export class BaseAdapter {
   findOne (params) {
     return this.promise.all([this.beforeFindOne(params)])
     .then(([params]) => this.persistence.findOne(params))
-    .then(x => this.fromJSON(x))
     .then(x => this.afterFindOne(x));
   }
 
@@ -117,9 +115,7 @@ export class BaseAdapter {
   
   update (data, params?) {
     return this.beforeUpdate(data, params)
-    .then(([data, config]) => [this.toJSON(data), config])
     .then(([data, config]) => this.persistence.update(data, config))
-    .then(x => this.fromJSON(x))
     .then(x => this.afterUpdate(x));
   }
 
@@ -134,7 +130,6 @@ export class BaseAdapter {
   destroy (params) {
     return this.beforeDestroy(params)
     .then(([params]) => this.persistence.destroy(params))
-    .then(x => this.fromJSON(x))
     .then(x => this.afterDestroy(x));
   }
 
@@ -145,13 +140,6 @@ export class BaseAdapter {
   afterDestroy(data: any): Promise<any> {
     return Promise.resolve(data);
   }
-  
-  
-  
-
-
-  // Default interceptors
-  interceptors: ng.IHttpInterceptor | ng.IHttpInterceptor[];
 
 }
 

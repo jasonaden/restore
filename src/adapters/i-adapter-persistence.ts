@@ -1,10 +1,10 @@
 
 export interface IAdapterPersistence {
-  create: (data, params? ) => Promise<any>;
-  update: (data, params?, base?) => Promise<any>;
-  findOne: (params) => Promise<any>;
-  find: (params) => Promise<any>;
-  destroy: (params) => Promise<any>;
+  create: (data, params? ) => PromiseLike<any>;
+  update: (data, params?, base?) => PromiseLike<any>;
+  findOne: (params) => PromiseLike<any>;
+  find: (params) => PromiseLike<any>;
+  destroy: (params) => PromiseLike<any>;
   toJSON?: (data) => string;
   fromJSON?: (value: string | any) => any;
   reviver?: (key: string, value: any) => any;
