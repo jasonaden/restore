@@ -25,37 +25,6 @@ export class BaseAdapter {
   }
     
   /**
-   * Default reviver. This function will run when sending back a response such as after 
-   * find or findOne, but before the `afterAction` hooks get a hold of the data. 
-   */
-  reviver (key, value) {
-    return value;
-  }
-  
-  /**
-   * Convert payload to JSON format
-   */
-  toJSON (value) {
-    if (!value || Array.isArray(value) || typeof value !== 'object') return value;
-    let ret = Object.assign({}, value);
-    
-    // Remove internal "$" properties
-    for (let x in ret) {
-      if (ret.hasOwnProperty(x) && x[0] === '$') delete ret[x];
-    }
-    return ret;
-  }
-  
-  /**
-   * Convert payload from JSON format
-   */
-  fromJSON (value) {
-    if (typeof value !== 'string') return value;
-    
-    return JSON.parse(value, this.reviver);
-  }
-  
-  /**
    * Lifecycle Hooks:
    * 
    * * `beforeAdd(payload[, cb])`
@@ -63,9 +32,7 @@ export class BaseAdapter {
    */
   add(data, params?): Promise<any> {
     return this.beforeAdd(data, params) // run before hook
-    .then(([data, params]) => [this.toJSON(data), params]) // convert to JSON format
     .then(([data, params]) => this.persistence.create(data, params)) // persist
-    .then(x => this.fromJSON(x)) // revive data from api
     .then(x => this.afterAdd(x)); // run after hook
   }
   
