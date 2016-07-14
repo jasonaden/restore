@@ -1,4 +1,6 @@
 import {ResourceAdapterConfig} from './resource-adapter-config';
+import {IAdapterPersistence} from '../adapters/i-adapter-persistence';
+
 /**
  * Instance configuration for a ResourceAdapter. These are the configurable properties
  * that can be adjusted in the constructor for a Resource Adapter.
@@ -46,12 +48,26 @@ export interface IResourceAdapter extends IResourceAdapterConfig {
    * method gives a single interface for executing on actions.
    */
   generateSlug: (entity: any) => string;
-  execute: (config: any) => ng.IPromise<any>;
-  reviver: (key: string, value: any) => any;
-  doRequest: (config: IResourceRequestConfig) => ng.IPromise<any>;
-  transformResponse: (data: any, headers: any) => any;
-  transformRequest: (data: any, headers: any) => any;
-  interceptors: ng.IHttpInterceptor | ng.IHttpInterceptor[];
+  persistence: IAdapterPersistence;
+  promise: PromiseConstructor;
+  // constructor (persistence?: IAdapterPersistence) {
+  //   this.persistence = persistence ? persistence : new BaseAdapterPersistence();
+  // }
+  add: (data, params?) => Promise<any>;
+  beforeAdd: (payload, params) => Promise<(any)[]>;
+  afterAdd: (data: any) => Promise<any>;
+  find: (params?) => Promise<any> | PromiseLike<any>;
+  beforeFind: (params?) => Promise<(any)[]>;
+  afterFind: (data: any) => Promise<any>;
+  findOne: (params) => Promise<any>;
+  beforeFindOne: (params) => Promise<(any)[]>;
+  afterFindOne: (data: any) => Promise<any>;
+  update: (data, params?) => Promise<any>;
+  beforeUpdate: (data, params?) => Promise<(any)[]>;
+  afterUpdate: (data: any) => Promise<any>;
+  destroy: (params) => Promise<any>;
+  beforeDestroy: (params) => Promise<(any)[]>;
+  afterDestroy: (data: any) => Promise<any>;
 }
 
 /**

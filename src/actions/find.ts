@@ -3,24 +3,21 @@ import {action} from './action';
 import {IResourceRequestConfig} from '../resources/interfaces';
 import {FINDING, ERROR} from '../resources/constants';
 import {splitSchema} from '../utils/splitSchema';
-import {config} from './action-config';
+import {ActionConfig} from './action-config';
 
-export function find (config: config, args?: IResourceRequestConfig) {
+export function find (actionConfig: ActionConfig, config?: any) {
   return (dispatch, store) => {
-    dispatch(action(FINDING, config.className));
+    dispatch(action(FINDING, actionConfig.className));
     
-    // TODO: This should not be tied to an HTTP request. What if the 
-    // data needs to be stored in local storage? Should simply tell 
-    // the adapter to load something and pass config data.
-    return config.adapter.execute(config)
+    return actionConfig.adapter.find(actionConfig)
     .then(
       res => {
-        dispatch(splitSchema(config.schema, config.className, res.data));
+        dispatch(splitSchema(actionConfig.schema, actionConfig.className, res.data || res));
         return res.data;
       },
       error => {
-        dispatch(action(ERROR, config.className, error));
-        return config.$q.reject(error);
+        dispatch(action(ERROR, actionConfig.className, error));
+        return actionConfig.promise.reject(error);
       }
     );
   }

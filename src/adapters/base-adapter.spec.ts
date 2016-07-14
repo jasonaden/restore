@@ -1,18 +1,31 @@
 
 import {BaseAdapter} from './base-adapter';
+import {BaseAdapterPersistence} from './base-adapter-persistence';
 
 describe('BaseAdapter', () => {
   
-  class TestAdapter extends BaseAdapter {
-    persistence = {
+  let testPersistence = {
       create: (data, params?) => Promise.resolve(Object.assign({}, data, {created: true})),
       update: (data, params?, base?) => Promise.resolve(Object.assign({}, data, {updated: true})),
       findOne: (params) => Promise.resolve({id: 123}),
       find: (params) => Promise.resolve([{id: 123}, {id: 456}]),
       destroy: (params) => Promise.resolve(null)
     }
+
+  class TestAdapter extends BaseAdapter {
+    persistence = testPersistence;
   }
-  
+
+  it('defaults to BaseAdapterPersistence if no persistence layer is provided', () => {
+    let baseAdapter = new BaseAdapter();
+    expect(baseAdapter.persistence instanceof BaseAdapterPersistence).toBe(true);
+  });
+
+  it('uses persistence passed in to constructor', () => {
+    let baseAdapter = new BaseAdapter(testPersistence);
+    expect(baseAdapter.persistence).toBe(testPersistence);
+  });
+
   describe('has an add method that', () => {
     let adapter;
     let newObj;

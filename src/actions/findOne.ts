@@ -4,9 +4,9 @@ import {action} from './action';
 import {IResourceRequestConfig} from '../resources/interfaces';
 import {FINDING_ONE, ERROR} from '../resources/constants';
 import {splitSchema} from '../utils/splitSchema';
-import {config} from './action-config';
+import {ActionConfig} from './action-config';
 
-export function findOne (config: config, args?: IResourceRequestConfig) {
+export function findOne (config: ActionConfig, args?: IResourceRequestConfig) {
   return (dispatch, store) => {
     dispatch(action(FINDING_ONE, config.className));
     

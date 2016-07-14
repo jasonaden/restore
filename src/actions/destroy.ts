@@ -3,10 +3,10 @@ import {action} from './action';
 import {IResourceRequestConfig} from '../resources/interfaces';
 import {DESTROYING, ERROR} from '../resources/constants';
 import {splitSchema} from '../utils/splitSchema';
-import {config} from './action-config';
+import {ActionConfig} from './action-config';
 
 // TODO: Implement this function. Need to configure what to do after destroying server-side.
-export function destroy (config: config, id: string, args?: IResourceRequestConfig) {
+export function destroy (config: ActionConfig, id: string, args?: IResourceRequestConfig) {
   return (dispatch, store) => {
     dispatch(action(DESTROYING, config.className));
     

@@ -1,10 +1,12 @@
 
 import {IAdapterPersistence} from './i-adapter-persistence';
+import {IResourceAdapter} from '../resources/interfaces';
+import {BaseAdapterPersistence} from './base-adapter-persistence';
 
 /*
 * base adapter implementation.
 */
-export class BaseAdapter {
+export class BaseAdapter implements IResourceAdapter {
   
   /**
    * Persistence adapter that is used to put and retrieve data. These methods need
@@ -16,6 +18,10 @@ export class BaseAdapter {
    * Promise library to use throughout the adapter
    */
   promise = Promise;
+
+  constructor (persistence?: IAdapterPersistence) {
+    this.persistence = persistence ? persistence : new BaseAdapterPersistence();
+  }
 
   /**
    * generateSlug is used when storing data in the redux store. It's the key by which the data is put into the store.

@@ -7,6 +7,7 @@ import {identity} from 'lodash';
 
 import {IResourceAdapter, IResourceRequestConfig, IEntityState} from './interfaces';
 
+import {add} from '../actions/add';
 import {find} from '../actions/find';
 import {findOne} from '../actions/findOne';
 import {destroy} from '../actions/destroy';
@@ -35,8 +36,11 @@ export class Resource<T> {
   public url: string;
   public baseUrl: string;
   public className: string;
-  
-  public store: Store;
+
+  /**
+   * Promise library to use throughout the adapter
+   */
+  promise = Promise;
   
   get state () {
     return this._state[this.className.toLowerCase()] || new defaultEntityState();
@@ -45,9 +49,6 @@ export class Resource<T> {
   private get _state () {
     return this.store.getState().entities || Immutable.Map();
   }
-  
-  public $http: ng.IHttpService;
-  public $q: ng.IQService;
   
   /**
    * The Resource class is designed to be extended, rather than instantiated on its own.
@@ -61,11 +62,7 @@ export class Resource<T> {
    * @param schema Schema         The Normalizr schema to use when parsing API data 
    *                              returned for this Resource.
    */
-  constructor($ngRedux, $http, $q, public adapter: IResourceAdapter, public schema: Schema) {
-    this.store = $ngRedux;
-    this.$http = $http;
-    this.$q = $q;
-  }
+  constructor(public store, public adapter: IResourceAdapter, public schema: Schema) {}
     
   // TODO: ADD METHODS TO GET DATA OUT OF THE RESOURCE.
   
@@ -98,24 +95,24 @@ export class Resource<T> {
    * * `beforeCreate(payload[, cb])`
    * * `afterCreate(payload[, cb])`
    */
-  add(payload: T, config?: IResourceRequestConfig): ng.IPromise<any> {
-    return this.$q.when(this.beforeAdd(payload, config))
-    .then(args => this.store.dispatch(add(this, payload, config)))
-    .then(data => this.afterAdd(data));
+  add(payload: T, config?: any): PromiseLike<any> {
+    return this.promise.all([this.beforeAdd(payload, config)])
+    .then(([payload, config]) => this.store.dispatch(add(this, payload, config)))
+    .then(([data]) => this.afterAdd(data));
   }
   
   /**
    * Default identity hook (return what was passed in)
    */
-  beforeAdd(payload: T, config?: IResourceRequestConfig): ng.IPromise<(T | IResourceRequestConfig)[]> {
-    return this.$q.when(config).then(config => [payload, config]);
+  beforeAdd(payload: T, config?: any): PromiseLike<any[]> {
+    return this.promise.all([payload, config]);
   }
   
   /**
    * Default identity hook (return what was passed in)
    */
-  afterAdd(data: any): ng.IPromise<any> {
-    return this.$q.when(data);
+  afterAdd(data: any): PromiseLike<any[]> {
+    return this.promise.all([data]);
   }
   
   /**
@@ -185,24 +182,24 @@ export class Resource<T> {
    * * `beforeFind(payload[, cb])`
    * * `afterFind(payload[, cb])`
    */
-  find(args?: IResourceRequestConfig): ng.IPromise<any> {
-    return this.$q.when(this.beforeFind(args))
-    .then(args => this.store.dispatch(find(this, args)))
+  find(args?: any): PromiseLike<any> | Promise<any> {
+    return this.promise.all([this.beforeFind(args)])
+    .then(([args]) => this.store.dispatch(find(this, args)))
     .then(data => this.afterFind(data));
   }
   
   /**
    * Default identity hook (return what was passed in)
    */
-  beforeFind(config?: IResourceRequestConfig): ng.IPromise<IResourceRequestConfig> {
-    return this.$q.when(config);
+  beforeFind(config?: any): PromiseLike<any[]> {
+    return this.promise.all([config]);
   }
   
   /**
    * Default identity hook (return what was passed in)
    */
-  afterFind(data: any): ng.IPromise<any> {
-    return this.$q.when(data);
+  afterFind(data: any): PromiseLike<any[]> {
+    return this.promise.all([data]);
   }
   
   /**

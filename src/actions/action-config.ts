@@ -1,9 +1,9 @@
 import {IResourceAdapter} from '../resources/interfaces';
 
-export declare type config = {
+export declare type ActionConfig = {
   adapter: IResourceAdapter,
-  url: string,
+  adapterConfig?: any,
   schema: any,
   className: string,
-  $q: ng.IQService
+  promise: PromiseConstructor
 }
