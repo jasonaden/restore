@@ -6,8 +6,7 @@ Redux-based store with adapters (defaults to HTTP)
 
 ```sh
 npm i webpack typings typescript -g
-git clone git@github.com:jasonaden/rx-poller.git
-cd rx-poller
+
 npm install
 npm test
 ```
@@ -28,6 +27,5 @@ open reports/coverage/index.html
 
 Creating Docs
 ```sh
-typedoc --ignoreCompilerErrors -m commonjs --out ./doc/ src/modules/desk/services/RxPoller.ts
-typedoc --ignoreCompilerErrors -m commonjs --out ./doc/ src/modules
+typedoc --ignoreCompilerErrors -m commonjs --out ./doc/ src
 ```
