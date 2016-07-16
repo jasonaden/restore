@@ -1,4 +1,4 @@
-
+// TODO: Map to updated way of interfacing with adapter
 
 import {action} from './action';
 import {IResourceRequestConfig} from '../resources/interfaces';

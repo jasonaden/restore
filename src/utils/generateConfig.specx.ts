@@ -1,3 +1,6 @@
+// TODO: Work out what to do with this file. It's probably got to be pushed down to 
+// the persistence layer. It's Angularized, but doesn't really need to be (I don't think)
+
 import {ResourceAdapter} from '../resources/resource-adapter';
 import {generateConfig} from '../utils';
 import {IResourceAdapter, IResourceRequestConfig} from '../resources/interfaces';

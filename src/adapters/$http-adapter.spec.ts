@@ -1,6 +1,7 @@
-import {RequestAdapter} from './request-adapter';
+import {$httpAdapter} from './$http-adapter';
 
-xdescribe('RequestAdapter', () => {
+xdescribe('$httpAdapter', () => {
+  /*
   beforeEach(() => {
     this.request = spyOn(request, 'get');
   });
@@ -233,5 +234,5 @@ xdescribe('RequestAdapter', () => {
       expect(error).toEqual(errorResponse); 
     });  
   }); // allows custom interceptors
-  
+  */
 });

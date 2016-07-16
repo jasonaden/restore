@@ -1,4 +1,3 @@
-import {ResourceAdapterConfig} from './resource-adapter-config';
 import {IAdapterPersistence} from '../adapters/i-adapter-persistence';
 
 /**
@@ -16,6 +15,8 @@ import {IAdapterPersistence} from '../adapters/i-adapter-persistence';
  * let myResource = new Resource($injector, adapter, schema);
  * ``` 
  */
+// TODO: This is old. Need to remove this interface. It's probably applicable though to $http-adapter 
+// or the persistence layer connected with it.
 export interface IResourceAdapterConfig {
   baseUrl: string,
   removeTrailingSlash?: boolean,
@@ -39,7 +40,7 @@ export interface IResourceAdapterConfig {
  * ```
  * 
  */
-export interface IResourceAdapter extends IResourceAdapterConfig {
+export interface IResourceAdapter {
   /**
    * Pass-through for running a request or doing whatever action this Adapter does
    * to send or receive data. In the case of an API adapter, it's likely going to 

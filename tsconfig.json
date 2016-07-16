@@ -7,6 +7,7 @@
   },
   "exclude": [
     "out",
+    "old",
     "node_modules",
     "dist",
     "dev",

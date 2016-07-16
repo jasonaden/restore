@@ -1,3 +1,5 @@
+// TODO: Get rid of $q and ng.IPromise and IResourceRequestConfig. See notes in generateConfig.specx.ts
+
 import {IResourceAdapter, IResourceRequestConfig} from '../resources/interfaces';
 import {joinUrl} from './joinUrl';
 

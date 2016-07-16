@@ -13,8 +13,6 @@ import {findOne} from '../actions/findOne';
 import {destroy} from '../actions/destroy';
 import {action} from '../actions/action';
 
-import {flattenEmbedded} from '../utils';
-
 import {
   FIND_ONE, FINDING_ONE, FOUND_ONE,
   FIND, FINDING, FOUND,
@@ -33,7 +31,9 @@ import {defaultEntityState} from './resource-reducer';
  */
 export class Resource<T> {
   
+  // TODO: Move URL down the stack. Needs to be part of the adapter config passed into the Resource constructor
   public url: string;
+  // TODO: Move baseUrl down into the adapter or probably the persistence layer
   public baseUrl: string;
   public className: string;
 
@@ -95,7 +95,7 @@ export class Resource<T> {
    * * `beforeCreate(payload[, cb])`
    * * `afterCreate(payload[, cb])`
    */
-  add(payload: T, config?: any): PromiseLike<any> {
+  add(payload: T, config?: any): PromiseLike<any[]> {
     return this.promise.all([this.beforeAdd(payload, config)])
     .then(([payload, config]) => this.store.dispatch(add(this, payload, config)))
     .then(([data]) => this.afterAdd(data));
@@ -121,22 +121,25 @@ export class Resource<T> {
    * * `beforeUpdate(payload[, cb])`
    * * `afterUpdate(payload[, cb])`
    */
-  update(payload: T): Action<T> {
-    return action<T>(UPDATE, this.className, payload);
+  // TODO: Create the update() action creator
+  update(payload: T, config?: any): PromiseLike<any[]> {
+    return this.promise.all([this.beforeUpdate(payload, config)])
+    .then(([payload, config]) => this.store.dispatch(update(this, payload, config)))
+    .then(([data]) => this.afterUpdate(data));
   }
   
   /**
    * Default identity hook (return what was passed in)
    */
-  beforeUpdate(config?: IResourceRequestConfig): ng.IPromise<IResourceRequestConfig> {
-    return this.$q.when(config);
+  beforeUpdate(payload: T, config?: any): PromiseLike<any[]> {
+    return this.promise.all([payload, config]);
   }
   
   /**
    * Default identity hook (return what was passed in)
    */
-  afterUpdate(data: any): ng.IPromise<any> {
-    return this.$q.when(data);
+  afterUpdate(data: any): PromiseLike<any[]> {
+    return this.promise.all([data]);
   }
   
   /**
@@ -144,8 +147,14 @@ export class Resource<T> {
    * 
    * For Lifecycle hooks, see `add` or `update`.
    */
-  save(payload: T): Action<T> {
-    return action<T>(ADD, this.className, payload);
+  // TODO: Implement save() method. This should determine whether to call update() or create()
+  // therefore it needs more params passed in. Like the payload and the original object so 
+  // comparison can be done.
+  save(payload: T, config?: any): PromiseLike<any[]> {
+    throw('Implement save method');
+    // return this.promise.all([this.beforeUpdate(payload, config)])
+    // .then(([payload, config]) => this.store.dispatch(update(this, payload, config)))
+    // .then(([data]) => this.afterUpdate(data));
   }
   
   /**
@@ -154,10 +163,8 @@ export class Resource<T> {
    * * `beforeDestroy(payload[, cb])`
    * * `afterDestroy(payload[, cb])`
    */
-  destroy(payload: T, config?: IResourceRequestConfig): ng.IPromise<any> {
-    let id = this.adapter.generateSlug(payload);
-    
-    return this.$q.when(this.beforeDestroy(id, config))
+  destroy(id: string | number, config?: any): PromiseLike<any[]> {
+    return this.promise.all([this.beforeDestroy(id, config)])
     .then(args => this.store.dispatch(destroy(this, id, config)))
     .then(data => this.afterFind(data));
   }
@@ -165,15 +172,15 @@ export class Resource<T> {
   /**
    * Default identity hook (return what was passed in)
    */
-  beforeDestroy(id: string, config?: IResourceRequestConfig): ng.IPromise<IResourceRequestConfig> {
-    return this.$q.when(config);
+  beforeDestroy(id: string | number, config?: any): PromiseLike<any[]> {
+    return this.promise.all([config]);
   }
   
   /**
    * Default identity hook (return what was passed in)
    */
-  afterDestroy(data: any): ng.IPromise<any> {
-    return this.$q.when(data);
+  afterDestroy(data: any): PromiseLike<any[]> {
+    return this.promise.all([data]);
   }
   
   /**
@@ -182,8 +189,8 @@ export class Resource<T> {
    * * `beforeFind(payload[, cb])`
    * * `afterFind(payload[, cb])`
    */
-  find(args?: any): PromiseLike<any> | Promise<any> {
-    return this.promise.all([this.beforeFind(args)])
+  find(config?: any): PromiseLike<any[]> | Promise<any[]> {
+    return this.promise.all([this.beforeFind(config)])
     .then(([args]) => this.store.dispatch(find(this, args)))
     .then(data => this.afterFind(data));
   }
@@ -208,24 +215,25 @@ export class Resource<T> {
    * * `beforeFindOne(payload[, cb])`
    * * `afterFindOne(payload[, cb])`
    */
-  findOne(id: number, config?: IResourceRequestConfig): ng.IPromise<any> {
-    return this.$q.when(this.beforeFindOne(id, config))
-    .then(args => this.store.dispatch(findOne(this, id)))
-    .then(data => this.afterFindOne(data));
+  // TODO: Fix findOne()
+  findOne(id: number, config?: any): PromiseLike<any[]> {
+    return this.promise.all([this.beforeFindOne(id, config)])
+    .then(([id, config]) => this.store.dispatch(findOne(this, id, config)))
+    .then(([data]) => this.afterFindOne(data));
   }
   
   /**
    * Default identity hook (return what was passed in)
    */
-  beforeFindOne(id: number, config?: IResourceRequestConfig): ng.IPromise<IResourceRequestConfig> {
-    return this.$q.when(config);
+  beforeFindOne(id: number, config?: IResourceRequestConfig): PromiseLike<any[]> {
+    return this.promise.all([id, config]);
   }
   
   /**
    * Default identity hook (return what was passed in)
    */
-  afterFindOne(data: any): ng.IPromise<any> {
-    return this.$q.when(data);
+  afterFindOne(data: any): PromiseLike<any[]> {
+    return this.promise.all([data]);
   }
   
   reloadMany(): void {

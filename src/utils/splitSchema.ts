@@ -1,4 +1,8 @@
 
+// TODO: This should really only be for splitting the schema itself. It shouldn't include dispatching 
+// of actions. Need to work out a way to pass normalized data back to Resource. Probably should be 
+// coming straight from the adapter this way, then leave dispatching only to the Resource.
+
 import {normalize, arrayOf} from 'normalizr';
 import {action} from '../actions/action';
 import {FIND, ADD} from '../resources/constants';
