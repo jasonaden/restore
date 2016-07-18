@@ -1,3 +1,6 @@
+// TODO: Add beforeAny and afterAny that always happens no matter
+// what method is called
+
 
 import {IAdapterPersistence} from './i-adapter-persistence';
 import {IResourceAdapter} from '../resources/interfaces';

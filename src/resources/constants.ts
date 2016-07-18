@@ -2,9 +2,9 @@
 export const FIND_ONE = "FIND_ONE";
 export const FINDING_ONE = "FINDING_ONE";
 export const FOUND_ONE = "FOUND_ONE";
-export const FIND = "FIND";
-export const FINDING = "FINDING";
-export const FOUND = "FOUND";
+export const FIND = "FIND"; // 2
+export const FINDING = "FINDING"; // 1
+export const FOUND = "FOUND"; // 3
 export const ADD = "ADD";
 export const ADDING = "ADDING";
 export const ADDED = "ADDED";

@@ -40,6 +40,7 @@ export class Resource<T> {
   /**
    * Promise library to use throughout the adapter
    */
+  // TODO: Move to constructor? So it can be there when creating the resource instance.
   promise = Promise;
   
   get state () {
@@ -189,10 +190,11 @@ export class Resource<T> {
    * * `beforeFind(payload[, cb])`
    * * `afterFind(payload[, cb])`
    */
+  // TODO: Determine if type OR is needed
   find(config?: any): PromiseLike<any[]> | Promise<any[]> {
     return this.promise.all([this.beforeFind(config)])
-    .then(([args]) => this.store.dispatch(find(this, args)))
-    .then(data => this.afterFind(data));
+    .then(([config]) => this.store.dispatch(find(this, config)))
+    .then(([data]) => this.afterFind(data));
   }
   
   /**

@@ -3,6 +3,25 @@
 // of actions. Need to work out a way to pass normalized data back to Resource. Probably should be 
 // coming straight from the adapter this way, then leave dispatching only to the Resource.
 
+// TODO: Needs to recurse through embedded objects
+
+// Customer link: /v2/customers/2/cases
+// Case link:     /v2/customers/2
+
+/**
+ *  {
+ *    
+ *    items: [array of items returned],
+ *    related: {
+ *      customer: {},
+ *      company: {}
+ *    }
+ *  }
+ * 
+ */
+
+
+
 import {normalize, arrayOf} from 'normalizr';
 import {action} from '../actions/action';
 import {FIND, ADD} from '../resources/constants';
@@ -13,6 +32,7 @@ export function splitSchema (schema, name: string, data) {
   // Lowercase the schema name
   name = name.toLowerCase();
   
+  // TODO: Get "thunk" in as a type so we can define the return type on these functions
   return (dispatch, store) => {
     let normalized = normalize(data.entries, arrayOf(schema));
     // This is for testing only. If no results are returned, Normalizr will 
@@ -23,6 +43,7 @@ export function splitSchema (schema, name: string, data) {
     }
     // Dispatch event for the main data that was gathered on this request.
     // This includes metadata about the collection.
+    // TODO: Test that this FIND action is actually adding to the state
     dispatch(action(FIND, name.toUpperCase(), {
       result: normalized.result,
       items: normalized.entities[toCamelCase(name)],
@@ -35,12 +56,12 @@ export function splitSchema (schema, name: string, data) {
     
     // Iterate over other objects that were returned (normalized) and 
     // dispatch add actions for them to get them into the store.
-    for (let x in normalized.entities) {
+    for (let idKey in normalized.entities) {
       // Exclude main entity
-      if (toLoudSnakeCase(x) !== toLoudSnakeCase(name)) {
+      if (toLoudSnakeCase(idKey) !== toLoudSnakeCase(name)) {
         // Iterate over each object passed back and dispatch ADD action
-        for (let y in normalized.entities[x]) {
-          dispatch(action(ADD, toLoudSnakeCase(x), normalized.entities[x][y]));
+        for (let y in normalized.entities[idKey]) {
+          dispatch(action(ADD, toLoudSnakeCase(idKey), normalized.entities[idKey][y]));
         }
       }
     }
