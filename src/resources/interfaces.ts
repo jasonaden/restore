@@ -1,27 +1,4 @@
-import {IAdapterPersistence} from '../adapters/i-adapter-persistence';
-
-/**
- * Instance configuration for a ResourceAdapter. These are the configurable properties
- * that can be adjusted in the constructor for a Resource Adapter.
- * 
- * ```
- * let config = {
- *   baseUrl: '/api/v2',
- *   removeTrailingSlash: false
- * }
- * 
- * let adapter = new ResourceAdapter(config, ... );
- * 
- * let myResource = new Resource($injector, adapter, schema);
- * ``` 
- */
-// TODO: This is old. Need to remove this interface. It's probably applicable though to $http-adapter 
-// or the persistence layer connected with it.
-export interface IResourceAdapterConfig {
-  baseUrl: string,
-  removeTrailingSlash?: boolean,
-  datePattern?: RegExp
-}
+import {IAdapterPersistor} from '../persistors/i-adapter-persistor';
 
 /**
  * Interface for creating a ResourceAdapter. ResourceAdapters are the glue that 
@@ -49,10 +26,10 @@ export interface IResourceAdapter {
    * method gives a single interface for executing on actions.
    */
   generateSlug: (entity: any) => string;
-  persistence: IAdapterPersistence;
+  persistor: IAdapterPersistor;
   promise: PromiseConstructor;
-  // constructor (persistence?: IAdapterPersistence) {
-  //   this.persistence = persistence ? persistence : new BaseAdapterPersistence();
+  // constructor (persistor?: IAdapterPersistor) {
+  //   this.persistor = persistor ? persistor : new BaseAdapterpersistor();
   // }
   add: (data, params?) => Promise<any>;
   beforeAdd: (payload, params) => Promise<(any)[]>;

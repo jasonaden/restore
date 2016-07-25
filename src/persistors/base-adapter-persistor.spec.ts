@@ -1,9 +1,9 @@
 
-import {BaseAdapterPersistence} from './base-adapter-persistence';
+import {BaseAdapterPersistor} from './base-adapter-persistor';
 
-describe('BaseAdapterPersistence', () => {
+describe('BaseAdapterPersistor', () => {
   
-  let persistence = new BaseAdapterPersistence();
+  let persistor = new BaseAdapterPersistor();
   let newObj;
 
   beforeEach(() => {
@@ -26,7 +26,7 @@ describe('BaseAdapterPersistence', () => {
         }
       });
       extendedObj.newProp = 'new';
-      let seralizable = persistence.toJSON(extendedObj);
+      let seralizable = persistor.toJSON(extendedObj);
        
       // Make sure non-enumerable prop is accessible
       expect(extendedObj.nonEnumProp).toBe('non-enum');
@@ -38,7 +38,7 @@ describe('BaseAdapterPersistence', () => {
     });
 
     it('cleans private properties', () => {
-      let seralizable = persistence.toJSON(newObj);
+      let seralizable = persistor.toJSON(newObj);
       expect(seralizable.$private).toBeUndefined();
       expect(seralizable.id).toBe(789);
     });

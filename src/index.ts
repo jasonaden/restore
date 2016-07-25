@@ -13,15 +13,10 @@ export {
 
 export {
   IResourceAdapter, 
-  IResourceAdapterConfig, 
   IResourceRequestConfig,
   IEntityState
 } from './resources/interfaces';
 
-// resource-adapter
-export {
-  ResourceAdapter
-} from './resources/resource-adapter';
 
 // utils
 export {

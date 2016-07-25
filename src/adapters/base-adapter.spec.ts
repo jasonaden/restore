@@ -1,6 +1,6 @@
 
 import {BaseAdapter} from './base-adapter';
-import {BaseAdapterPersistence} from './base-adapter-persistence';
+import {BaseAdapterPersistor} from '../persistors/base-adapter-persistor';
 
 describe('BaseAdapter', () => {
   
@@ -16,9 +16,9 @@ describe('BaseAdapter', () => {
     persistence = testPersistence;
   }
 
-  it('defaults to BaseAdapterPersistence if no persistence layer is provided', () => {
+  it('defaults to BaseAdapterPersistor if no persistence layer is provided', () => {
     let baseAdapter = new BaseAdapter();
-    expect(baseAdapter.persistence instanceof BaseAdapterPersistence).toBe(true);
+    expect(baseAdapter.persistence instanceof BaseAdapterPersistor).toBe(true);
   });
 
   it('uses persistence passed in to constructor', () => {

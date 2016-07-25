@@ -1,6 +1,6 @@
 import {Resource} from './resource';
 import {BaseAdapter} from '../adapters/base-adapter';
-import {BaseAdapterPersistence} from '../adapters/base-adapter-persistence';
+import {BaseAdapterPersistor} from '../persistors/base-adapter-persistor';
 import * as configureMockStore from 'redux-mock-store';
 import * as thunk from 'redux-thunk';
 import {Schema} from 'normalizr';

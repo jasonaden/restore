@@ -1,7 +1,7 @@
 
-import {IAdapterPersistence} from './i-adapter-persistence';
+import {IAdapterPersistor} from './i-adapter-persistor';
 
-export class BaseAdapterPersistence implements IAdapterPersistence {
+export class BaseAdapterPersistor implements IAdapterPersistor {
   create (data, options?) {
     data = Object.assign({}, data, {created: true});
     return Promise.resolve(this.toJSON(data));
@@ -16,7 +16,7 @@ export class BaseAdapterPersistence implements IAdapterPersistence {
     return  Promise.resolve({id: 123});
   }
 
-  find (options) {
+  find (options): Promise<any[]> {
     return Promise.resolve([{id: 123}, {id: 456}]);
   }
 

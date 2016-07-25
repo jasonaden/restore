@@ -1,41 +1,33 @@
-import {$httpAdapter} from './$http-adapter';
+import {$httpPersistor} from './$http-persistor';
+import * as angular from 'angular';
 
-xdescribe('$httpAdapter', () => {
-  /*
-  beforeEach(() => {
-    this.request = spyOn(request, 'get');
-  });
+
+
+fdescribe('$httpPersistor', () => {
+  let $httpBackend: ng.IHttpBackendService;
+  let $rootScope: ng.IRootScopeService;
+  let config, persistor: $httpPersistor;
+
+  beforeEach(angular.mock.module('Restore'));
+  
+  beforeEach(inject(function(_$httpBackend_, _$rootScope_, _$httpPersistor_) {
+    $httpBackend = _$httpBackend_;
+    $rootScope = _$rootScope_;
+    persistor = new _$httpPersistor_();
     
-  
-  xdescribe('make a request', () => {
-    it('can request something', () => {
-      
-    })
-  });
-  
-  xdescribe('execute', () => {
-    it('runs ResourceAdapterConfig.build()', () => {
-      // This test should work, but doesn't because spyOn causes an error to be thrown
-      // spyOn(config, 'build');
-                 
-      // $httpBackend.whenGET(config.url).respond(200);
-      // adapter.execute(config);
-      // $httpBackend.flush();
-      // expect(config.build).toHaveBeenCalled();
-    });
-  });
+  }));
 
-  xdescribe('makes GET requests', () => {
+  describe('makes GET requests', () => {
     beforeEach(() => {
-      config = config.extend({
+      persistor.setConfig({
         url: '/foo/{{@id}}',
         method: 'GET'
       });
     });
     
-    it('to listing URLs', () => {
+    fit('to listing URLs', () => {
       $httpBackend.expectGET('/foo').respond(200);    
-      adapter.execute(config);  
+      persistor.execute(config);
       $httpBackend.flush();
     });
     
@@ -46,7 +38,7 @@ xdescribe('$httpAdapter', () => {
       }});
       
       $httpBackend.expectGET('/foo/1').respond(200);    
-      adapter.execute(config);  
+      persistor.execute(config);  
       $httpBackend.flush();
     });
     
@@ -57,13 +49,13 @@ xdescribe('$httpAdapter', () => {
       });
       
       $httpBackend.expectGET('/foo/1?order=desc').respond(200);    
-      adapter.execute(config);  
+      persistor.execute(config);  
       $httpBackend.flush();
     });
     
   }); // makes GET requests
 
-  describe('makes POST requests', () => {
+  xdescribe('makes POST requests', () => {
     beforeEach(() => {
       config = config.extend({
         url: '/foo/{{@id}}',
@@ -76,7 +68,7 @@ xdescribe('$httpAdapter', () => {
     
     it('POSTs the data in data property', () => {
       $httpBackend.expectPOST('/foo').respond(201);    
-      adapter.execute(config);  
+      persistor.execute(config);  
       $httpBackend.flush();
     });
     
@@ -90,7 +82,7 @@ xdescribe('$httpAdapter', () => {
       });
       
       $httpBackend.expectPOST('/foo').respond(201);    
-      adapter.execute(config);  
+      persistor.execute(config);  
       $httpBackend.flush();
     });
     
@@ -100,13 +92,13 @@ xdescribe('$httpAdapter', () => {
       });
       
       $httpBackend.expectPOST('/foo?order=desc').respond(201);    
-      adapter.execute(config);  
+      persistor.execute(config);  
       $httpBackend.flush();
     });
     
   }); // makes POST requests
   
-  describe('makes PUT & PATCH requests', () => {
+  xdescribe('makes PUT & PATCH requests', () => {
     beforeEach(() => {
       config = config.extend({
         url: '/foo/{{@id}}',
@@ -121,12 +113,12 @@ xdescribe('$httpAdapter', () => {
     it('PUTs & PATCHes the data in data property', () => {
       // PUT
       $httpBackend.expectPUT('/foo/101').respond(200);
-      adapter.execute(config);
+      persistor.execute(config);
       $httpBackend.flush();
       // PATCH
       $httpBackend.expectPATCH('/foo/101').respond(200);
       config = config.extend({method: 'PATCH'})  
-      adapter.execute(config);
+      persistor.execute(config);
       $httpBackend.flush();
     });
     
@@ -136,19 +128,19 @@ xdescribe('$httpAdapter', () => {
       });
       // PUT
       $httpBackend.expectPUT('/foo/101?order=desc').respond(200);    
-      adapter.execute(config);  
+      persistor.execute(config);  
       $httpBackend.flush();
       // PATCH
       $httpBackend.expectPATCH('/foo/101?order=desc').respond(200);
       config = config.extend({method: 'PATCH'})    
-      adapter.execute(config);  
+      persistor.execute(config);  
       $httpBackend.flush();
     });
     
   }); // makes PUT requests
     
     
-  describe('performs transformations', () => {
+  xdescribe('performs transformations', () => {
     
     beforeEach(() => {
       config = config.extend({
@@ -165,7 +157,7 @@ xdescribe('$httpAdapter', () => {
         }
       });           
       $httpBackend.whenGET(config.url).respond(200, { name: 'Smith'});    
-      adapter.execute(config).then((response) => {
+      persistor.execute(config).then((response) => {
         expect(response.data.name).toBe('Mr. Smith');
       });     
       $httpBackend.flush(); 
@@ -182,12 +174,12 @@ xdescribe('$httpAdapter', () => {
         }
       });
       $httpBackend.expectPOST(config.url, { name: 'Mr. Smith'}).respond(200);
-      adapter.execute(config);  
+      persistor.execute(config);  
       $httpBackend.flush();
     });    
   });// performs transformations
   
-  describe('allows custom interceptors', () => {
+  xdescribe('allows custom interceptors', () => {
     beforeEach(() => {
       config = config.extend({
         method: 'GET',
@@ -207,7 +199,7 @@ xdescribe('$httpAdapter', () => {
       });
        
       $httpBackend.whenGET(config.url).respond(200, { name: 'Smith' });
-      adapter.execute(config).then((res) => {
+      persistor.execute(config).then((res) => {
         response = res.data;
       });
       $httpBackend.flush();
@@ -227,12 +219,12 @@ xdescribe('$httpAdapter', () => {
       });
        
       $httpBackend.whenGET(config.url).respond(500);
-      adapter.execute(config).catch((err) => {
+      persistor.execute(config).catch((err) => {
         error = err.data;
       });
       $httpBackend.flush();
       expect(error).toEqual(errorResponse); 
     });  
   }); // allows custom interceptors
-  */
+  
 });

@@ -1,5 +1,5 @@
 
-export interface IAdapterPersistence {
+export interface IAdapterPersistor {
   create: (data, params? ) => PromiseLike<any>;
   update: (data, params?, base?) => PromiseLike<any>;
   findOne: (params) => PromiseLike<any>;

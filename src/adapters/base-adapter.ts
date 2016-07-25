@@ -2,9 +2,9 @@
 // what method is called
 
 
-import {IAdapterPersistence} from './i-adapter-persistence';
+import {IAdapterPersistor} from '../persistors/i-adapter-persistor';
 import {IResourceAdapter} from '../resources/interfaces';
-import {BaseAdapterPersistence} from './base-adapter-persistence';
+import {BaseAdapterPersistor} from '../persistors/base-adapter-persistor';
 
 /*
 * base adapter implementation.
@@ -12,18 +12,18 @@ import {BaseAdapterPersistence} from './base-adapter-persistence';
 export class BaseAdapter implements IResourceAdapter {
   
   /**
-   * Persistence adapter that is used to put and retrieve data. These methods need
+   * Persistor adapter that is used to put and retrieve data. These methods need
    * to be implemented by an adapter that extends the BaseAdapter
    */
-  persistence: IAdapterPersistence;
+  persistor: IAdapterPersistor;
   
   /**
    * Promise library to use throughout the adapter
    */
   promise = Promise;
 
-  constructor (persistence?: IAdapterPersistence) {
-    this.persistence = persistence ? persistence : new BaseAdapterPersistence();
+  constructor (persistor?: IAdapterPersistor) {
+    this.persistor = persistor ? persistor : new BaseAdapterPersistor();
   }
 
   /**
@@ -41,7 +41,7 @@ export class BaseAdapter implements IResourceAdapter {
    */
   add(data, params?): Promise<any> {
     return this.beforeAdd(data, params) // run before hook
-    .then(([data, params]) => this.persistence.create(data, params)) // persist
+    .then(([data, params]) => this.persistor.create(data, params)) // persist
     .then(x => this.afterAdd(x)); // run after hook
   }
   
@@ -63,7 +63,7 @@ export class BaseAdapter implements IResourceAdapter {
   
   find (params?) {
     return this.promise.all([this.beforeFind(params)])
-    .then(([params]) => this.persistence.find(params))
+    .then(([params]) => this.persistor.find(params))
     .then(x => this.afterFind(x));
   }
 
@@ -77,7 +77,7 @@ export class BaseAdapter implements IResourceAdapter {
   
   findOne (params) {
     return this.promise.all([this.beforeFindOne(params)])
-    .then(([params]) => this.persistence.findOne(params))
+    .then(([params]) => this.persistor.findOne(params))
     .then(x => this.afterFindOne(x));
   }
 
@@ -91,7 +91,7 @@ export class BaseAdapter implements IResourceAdapter {
   
   update (data, params?) {
     return this.beforeUpdate(data, params)
-    .then(([data, config]) => this.persistence.update(data, config))
+    .then(([data, config]) => this.persistor.update(data, config))
     .then(x => this.afterUpdate(x));
   }
 
@@ -105,7 +105,7 @@ export class BaseAdapter implements IResourceAdapter {
   
   destroy (params) {
     return this.beforeDestroy(params)
-    .then(([params]) => this.persistence.destroy(params))
+    .then(([params]) => this.persistor.destroy(params))
     .then(x => this.afterDestroy(x));
   }
 
