@@ -1,4 +1,4 @@
-import {IAdapterPersistor} from '../persistors/i-adapter-persistor';
+import {IPersistor} from '../persistors/i-persistor';
 
 /**
  * Interface for creating a ResourceAdapter. ResourceAdapters are the glue that 
@@ -26,7 +26,7 @@ export interface IResourceAdapter {
    * method gives a single interface for executing on actions.
    */
   generateSlug: (entity: any) => string;
-  persistor: IAdapterPersistor;
+  persistor: IPersistor;
   promise: PromiseConstructor;
   // constructor (persistor?: IAdapterPersistor) {
   //   this.persistor = persistor ? persistor : new BaseAdapterpersistor();

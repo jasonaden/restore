@@ -2,9 +2,9 @@
 // what method is called
 
 
-import {IAdapterPersistor} from '../persistors/i-adapter-persistor';
+import {IPersistor} from '../persistors/i-persistor';
 import {IResourceAdapter} from '../resources/interfaces';
-import {BaseAdapterPersistor} from '../persistors/base-adapter-persistor';
+import {BasePersistor} from '../persistors/base-persistor';
 
 /*
 * base adapter implementation.
@@ -15,15 +15,15 @@ export class BaseAdapter implements IResourceAdapter {
    * Persistor adapter that is used to put and retrieve data. These methods need
    * to be implemented by an adapter that extends the BaseAdapter
    */
-  persistor: IAdapterPersistor;
+  persistor: IPersistor;
   
   /**
    * Promise library to use throughout the adapter
    */
   promise = Promise;
 
-  constructor (persistor?: IAdapterPersistor) {
-    this.persistor = persistor ? persistor : new BaseAdapterPersistor();
+  constructor (persistor?: IPersistor) {
+    this.persistor = persistor ? persistor : new BasePersistor();
   }
 
   /**

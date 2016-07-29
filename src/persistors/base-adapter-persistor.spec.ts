@@ -1,9 +1,9 @@
 
-import {BaseAdapterPersistor} from './base-adapter-persistor';
+import {BasePersistor} from './base-persistor';
 
 describe('BaseAdapterPersistor', () => {
   
-  let persistor = new BaseAdapterPersistor();
+  let persistor = new BasePersistor();
   let newObj;
 
   beforeEach(() => {

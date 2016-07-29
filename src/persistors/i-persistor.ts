@@ -1,5 +1,5 @@
 
-export interface IAdapterPersistor {
+export interface IPersistor {
   create: (data, params? ) => PromiseLike<any>;
   update: (data, params?, base?) => PromiseLike<any>;
   findOne: (params) => PromiseLike<any>;

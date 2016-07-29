@@ -1,7 +1,7 @@
 
-import {IAdapterPersistor} from './i-adapter-persistor';
+import {IPersistor} from './i-persistor';
 
-export class BaseAdapterPersistor implements IAdapterPersistor {
+export class BasePersistor implements IPersistor {
   create (data, options?) {
     data = Object.assign({}, data, {created: true});
     return Promise.resolve(this.toJSON(data));

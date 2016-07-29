@@ -25,6 +25,9 @@ let defaultMap = {
   }
 }
 
+/**
+ * Specifies method used to change the config at runtime
+ */
 export interface IPersistorConfig {
   extend: (config: any) => this;
 }
@@ -57,7 +60,7 @@ export interface IHttpPersistorConfig extends ng.IRequestConfig, IPersistorConfi
   interceptors?: ng.IHttpInterceptor | ng.IHttpInterceptor[];
   /**
    * This interceptor will be overwritten at runtime. When the request is being 
-   * created any interceptors on the Adapter are combined with interceptor(s) on
+   * created any interceptors on the Persistor are combined with interceptor(s) on
    * the Config object and all are added to this `interceptor` property.
    */
   interceptor?: ng.IHttpInterceptor;
@@ -134,7 +137,7 @@ export class $httpPersistorConfig implements IHttpPersistorConfig {
     }
 
     /**
-     * Create a new AdapterConfig and assign data properties to it.
+     * Create and return a new AdapterConfig with new or updated properties assigned to it.
      */
     extend (data = {}): this {
       let extended = new $httpPersistorConfig(this)
@@ -157,7 +160,8 @@ export class $httpPersistorConfig implements IHttpPersistorConfig {
       if (config.method === 'GET') {
         delete config.data;
       }
-      
+
+      // TODO: Add some info on the use-case for why this we need to do this.       
       // Re-map query params
       if (config.params) {
         config.params = mapQueryParams(config.params, paramMap.query);

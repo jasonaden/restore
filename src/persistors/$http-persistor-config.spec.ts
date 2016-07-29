@@ -1,6 +1,6 @@
 import {$httpPersistorConfig} from './$http-persistor-config';
 
-fdescribe("$httpPersistorConfig", () => {
+describe("$httpPersistorConfig", () => {
   let persistorConfig: $httpPersistorConfig;
   beforeEach(() => {
     persistorConfig = new $httpPersistorConfig({
@@ -10,14 +10,14 @@ fdescribe("$httpPersistorConfig", () => {
         return data;
       },
       interceptor: {
-        request: function(request) {
-          return request;
+        request: function(config) {
+          return config;
         },
         response: function(response) {
           return response;
         },
-        responseError: function(response) {
-          return Promise.reject(response);
+        responseError: function(rejection) {
+          return Promise.reject(rejection);
         }
       }
     });
