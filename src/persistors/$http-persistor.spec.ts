@@ -2,7 +2,7 @@ import {$httpPersistor} from './$http-persistor';
 import { $httpPersistorConfig} from './$http-persistor-config';
 import { caseEmbedded } from '../mocks/caseEmbedded';
 
-fdescribe('$httpPersistor', () => {
+describe('$httpPersistor', () => {
   let $httpBackend: ng.IHttpBackendService;
   let $rootScope: ng.IRootScopeService;
   let ConfigClass = $httpPersistorConfig;

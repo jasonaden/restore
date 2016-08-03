@@ -1,10 +1,14 @@
 // TODO: Add beforeAny and afterAny that always happens no matter
 // what method is called
 
-
+import {Store, Reducer, combineReducers} from 'redux';
+import {Action} from 'flux-standard-action';
 import {IPersistor} from '../persistors/i-persistor';
 import {IResourceAdapter} from '../resources/interfaces';
 import {BasePersistor} from '../persistors/base-persistor';
+import { normalize, Schema, arrayOf } from 'normalizr';
+import { buildAction } from '../utils/buildAction';
+
 
 /*
 * base adapter implementation.
@@ -22,7 +26,20 @@ export class BaseAdapter implements IResourceAdapter {
    */
   promise = Promise;
 
-  constructor (persistor?: IPersistor) {
+  /**
+   * The schemas to use with the adapater
+   */
+  schema: Object;
+
+  /**
+   * The store on which dispatch actions will be called
+   */
+  store: Store;
+
+  constructor (schema?: Object, store?: Store, persistor?: IPersistor ) {
+    
+    this.schema = schema ? schema : {};
+    this.store = store;
     this.persistor = persistor ? persistor : new BasePersistor();
   }
 
@@ -32,7 +49,87 @@ export class BaseAdapter implements IResourceAdapter {
   generateSlug (entity): string {
     return entity.id;
   }
-    
+
+  // Use the passed-in schema to split out the data
+  splitSchema( data ) {
+    // TODO: if needed handle case where array of items returned. 
+    if( Array.isArray(data) ) {
+
+
+    // got an individual item
+    } else {
+
+      let type = data._links.self.class;
+      let split = normalize( data, this.schema[type] )   
+
+      for( let key of Object.getOwnPropertyNames(split.entities) ) {
+        // console.log("built action", buildAction('FOUND', key.toUpperCase(), split.entities[key]))
+        // this.store.dispatch( buildAction('FOUND', key.toUpperCase(), split.entities[key]) )
+      }
+
+      return split; 
+    } 
+  }
+
+  // Override before* or after* as needed in specific adapters.  
+  findOne (params) {
+    return this.promise.resolve(this.beforeFindOne(params))
+    .then( (beforePromise) => {
+      return this.persistor.findOne(beforePromise);
+    })
+    .then( (persistorPromise) => {
+      return this.afterFindOne(persistorPromise)
+    })
+    // Normalizes the data
+    .then( (afterPromise) => {
+      if( Object.keys(this.schema).length ) {
+        return this.promise.resolve( this.splitSchema( afterPromise ) );
+      } else {
+        return this.promise.resolve(afterPromise);
+      }
+    })
+  }
+
+  // Default version passes along the params
+  beforeFindOne(params): Promise<(any)> {
+    // Do any before work and return a resolved promise with 
+    //  the params, data or whatever (default is the params) 
+    return this.promise.resolve(params);
+  }
+  
+  // Default version is a no-op that passes along the 
+  //  persistor's returned promise. 
+  afterFindOne(persistorPromise: any): Promise<any> {
+    return this.promise.resolve(persistorPromise);
+  }
+
+  /* TODO: Original version that uses promise.all() to build the chain.
+  * Need to find out if there is a use case that requires this or if we 
+  * can just build the chain with resolves. Remove this when done. 
+  findOne (params) {
+
+    return this.promise.all([this.beforeFindOne(params)])
+    .then( (params) => {
+      console.log("in base-adapter about t call persistor.findOne", params[0])
+      return this.persistor.findOne(params[0]);
+    })
+    .then( (data) => {
+      this.afterFindOne(data)
+    });
+  }
+  beforeFindOne(params): Promise<(any)[]> {
+    console.log("in beforeFindOne, params = ", params);
+ 
+    return this.promise.resolve(params);
+
+    // return this.promise.all([params]);
+  }
+  afterFindOne(data: any): Promise<any> {
+    console.log("in the afterFindOne", data);
+    return Promise.resolve(data);
+  }
+  */
+
   /**
    * Lifecycle Hooks:
    * 
@@ -74,21 +171,7 @@ export class BaseAdapter implements IResourceAdapter {
   afterFind(data: any): Promise<any> {
     return Promise.resolve(data);
   }
-  
-  findOne (params) {
-    return this.promise.all([this.beforeFindOne(params)])
-    .then(([params]) => this.persistor.findOne(params))
-    .then(x => this.afterFindOne(x));
-  }
 
-  beforeFindOne(params): Promise<(any)[]> {
-    return this.promise.all([params]);
-  }
-  
-  afterFindOne(data: any): Promise<any> {
-    return Promise.resolve(data);
-  }
-  
   update (data, params?) {
     return this.beforeUpdate(data, params)
     .then(([data, config]) => this.persistor.update(data, config))

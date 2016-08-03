@@ -1,7 +1,7 @@
 
 import {BasePersistor} from './base-persistor';
 
-describe('BaseAdapterPersistor', () => {
+describe('BasePersistor', () => {
   
   let persistor = new BasePersistor();
   let newObj;
