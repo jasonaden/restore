@@ -65,7 +65,7 @@ export interface IHttpPersistorConfig extends ng.IRequestConfig, IPersistorConfi
    */
   interceptor?: ng.IHttpInterceptor;
 
-  build: (source?, paramMap?) => this;
+  build: (source?, paramMap?) => IHttpPersistorConfig;
 }
 
 export class $httpPersistorConfig implements IHttpPersistorConfig {
@@ -147,8 +147,8 @@ export class $httpPersistorConfig implements IHttpPersistorConfig {
     /**
      * Build httpConfig object
      */
-    build (source = this.data, paramMap = defaultMap): this {
-      var config: IHttpPersistorConfig = Object.assign({}, this);
+    build (source = this.data, paramMap = defaultMap): IHttpPersistorConfig {
+      var config: IHttpPersistorConfig = Object.assign({}, this); 
       
       // Default to GET request
       config.method = config.method || 'GET';

@@ -1,4 +1,4 @@
-{
+export const filterList = {
     "total_entries": 4,
     "page": 1,
     "_links": {

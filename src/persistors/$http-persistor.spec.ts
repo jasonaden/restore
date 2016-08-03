@@ -44,12 +44,12 @@ describe('$httpPersistor', () => {
     // but are available so we can verify they exist
     it('to set the $http service', () => {
       expect(typeof PersistorClass.setHttp).toEqual('function')
-      expect(typeof PersistorClass.$http).toEqual('function')
+      expect(typeof PersistorClass.getHttp()).toEqual('function')
     })
 
     it('to set the $q service', () => {
       expect(typeof PersistorClass.setQ).toEqual('function')
-      expect(typeof PersistorClass.$q).toEqual('function')
+      expect(typeof PersistorClass.getQ).toEqual('function')
     })
 
   })
@@ -231,7 +231,8 @@ describe('$httpPersistor', () => {
     
     it('adds params to query string', () => {
       let localConfig = {
-        params: {order: 'desc'}
+        params: {order: 'desc'},
+        method: 'PUT'
       };
       // PUT
       $httpBackend.expectPUT('/foo/101?order=desc').respond(200);    

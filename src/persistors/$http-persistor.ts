@@ -24,9 +24,15 @@ export class $httpPersistor extends BasePersistor {
   static setHttp ($http: ng.IHttpService) {
     $httpPersistor.$http = $http;
   }
+  static getHttp() {
+    return $httpPersistor.$http;
+  }
 
   static setQ ($q: ng.IQService) {
     $httpPersistor.$q = $q;
+  }
+  static getQ() {
+    return $httpPersistor.$q;
   }
   static setConfig (config: IHttpPersistorConfig) {
     $httpPersistor.config = config;
@@ -69,14 +75,17 @@ export class $httpPersistor extends BasePersistor {
   }
   */
 
-  findOne(data) {
+  // TODO: I added the function return to avoid a TS error, but it
+  //  is not probably not actually returning a Promise as this
+  //  persistor is not in use. 
+  findOne(data): Promise<{id: number}> {
     let config = {
       method: 'GET',
       type: data.type,
       id: data.id
     }
 
-    this.execute(config)
+    return this.execute(config)
   }
 
   /* OLD

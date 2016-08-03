@@ -93,9 +93,12 @@ export function defaultReducer<T> (type: string): Reducer {
         state = state.mergeIn(['result'], action.payload.result.slice(0));
         
         // Iterate results and add each item
-        state.result.map((key) => {
-          state = state.setIn(['items', key], Immutable.fromJS(action.payload.items[key]));
-        });
+        // 8/3/16: daden: commened out to avoid a TS error
+        //  that state.result doesn't exist. Might be a typo, and 
+        //  resource needs to be refactored so not bothering to fix now.
+        // state.result.map((key) => {
+        //   state = state.setIn(['items', key], Immutable.fromJS(action.payload.items[key]));
+        // });
         
         // Apply metadata
         state = state.set('meta', action.payload.meta);

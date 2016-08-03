@@ -1,4 +1,4 @@
-{
+export const caseList = {
     "new": [
         {
             "id": 1,
