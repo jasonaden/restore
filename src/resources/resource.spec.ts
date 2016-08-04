@@ -1,12 +1,12 @@
 import {Resource} from './resource';
 import {BaseAdapter} from '../adapters/base-adapter';
 import {BasePersistor} from '../persistors/base-persistor';
-import * as configureMockStore from 'redux-mock-store';
+import configureStore = require('redux-mock-store')
 import * as thunk from 'redux-thunk';
 import {Schema} from 'normalizr';
 
 const middlewares = [ thunk ]
-const mockStore = configureMockStore(middlewares)
+const mockStore = configureStore(middlewares)
 
 let response = {
    "total_entries": 1,

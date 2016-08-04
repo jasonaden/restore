@@ -8,7 +8,7 @@ import {IResourceAdapter} from '../resources/interfaces';
 import {BasePersistor} from '../persistors/base-persistor';
 import { normalize, Schema, arrayOf } from 'normalizr';
 import { buildAction } from '../utils/buildAction';
-
+import { FOUND } from '../resources/constants'; 
 
 /*
 * base adapter implementation.
@@ -52,23 +52,14 @@ export class BaseAdapter implements IResourceAdapter {
 
   // Use the passed-in schema to split out the data
   splitSchema( data ) {
-    // TODO: if needed handle case where array of items returned. 
-    if( Array.isArray(data) ) {
+    let type = data._links.self.class;
+    let split = normalize( data, this.schema[type] )   
 
+    for( let key of Object.getOwnPropertyNames(split.entities) ) {
+      this.store.dispatch( buildAction(FOUND, key.toUpperCase(), split.entities[key]) );
+    }
 
-    // got an individual item
-    } else {
-
-      let type = data._links.self.class;
-      let split = normalize( data, this.schema[type] )   
-
-      for( let key of Object.getOwnPropertyNames(split.entities) ) {
-        // console.log("built action", buildAction('FOUND', key.toUpperCase(), split.entities[key]))
-        // this.store.dispatch( buildAction('FOUND', key.toUpperCase(), split.entities[key]) )
-      }
-
-      return split; 
-    } 
+    return split; 
   }
 
   // Override before* or after* as needed in specific adapters.  

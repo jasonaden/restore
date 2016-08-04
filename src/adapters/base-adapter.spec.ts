@@ -5,6 +5,8 @@ import {$httpPersistor} from '../persistors/$http-persistor';
 import {appSchema} from '../mocks/schemas';
 import {caseEmbedded} from '../mocks/caseEmbedded';
 
+import configureStore = require('redux-mock-store')
+
 describe('BaseAdapter', () => {
   
   let $q: ng.IQService;
@@ -61,12 +63,6 @@ describe('BaseAdapter', () => {
   })
 
   describe('calling methods', () => {
-
-    // instantiate with a dumb persistor
-    // spy on what's passed to it and fake the return
-    //   make sure the findOne for $http-persistor returns a promise
-    // spy on the before*, findOne and after* and make sure they all run 
-    // verify what is passed into/out of them 
     let adapter; 
     beforeEach( () => {
       let tp = Object.assign( {}, testPersistor);
@@ -80,9 +76,6 @@ describe('BaseAdapter', () => {
       spyOn(adapter, 'afterFindOne').and.callThrough();
     })
 
-    // TODO: This is working but am doing a promise.resolve in the beforeFineOne 
-    //  Need to determine if that is right or if it should be a promise.all().
-    //  It might depend on what is being done in the beforeFindOne. 
     it('should invoke before and after when calling findOne', (done) => {
       adapter.findOne({id: 123})
       .then( () => {
@@ -94,16 +87,17 @@ describe('BaseAdapter', () => {
     })
   })
 
-  describe('splitting data', () => {
+  fdescribe('splitting data', () => {
 
-
-    let adapter; 
+    let adapter, mockStore;
+    let types = ['CASE', 'CUSTOMER', 'DRAFT', 'MESSAGE']
     beforeEach( () => {
-      // persistor findOne returns a case with embedded data
-      adapter = new BaseAdapter(appSchema, null, testPersistor);
+
+      mockStore = configureStore()({});
+
+      adapter = new BaseAdapter(appSchema, mockStore, testPersistor);
 
       spyOn(adapter.persistor, "findOne").and.callThrough();
-
       spyOn(adapter, 'beforeFindOne').and.callThrough();
       spyOn(adapter, 'findOne').and.callThrough();
       spyOn(adapter, 'afterFindOne').and.callThrough();
@@ -124,17 +118,20 @@ describe('BaseAdapter', () => {
         expect(adapter.persistor.findOne).toHaveBeenCalledWith({id: 123});
         expect(adapter.afterFindOne).toHaveBeenCalledWith( caseEmbedded );
         done();
-      })
-
-      // expect(adapter.afterFindOne).toHaveBeenCalledWith({id: 123});
-
-      
+      })      
     })
 
-
+    it('should dispatch events for each of the types of data returned', (done) => {
+      adapter.findOne( {id:123} )
+      .then( () => {
+        mockStore.getActions().map( (item) => {
+          // verify that we dispatched events for all the individual resources
+          expect( types.indexOf( item.type.split("_")[1] ) > -1).toBeTruthy();
+        })
+        done();
+      })
+    })
   })
-
-
 
   describe('has an add method that', () => {
     let adapter;
