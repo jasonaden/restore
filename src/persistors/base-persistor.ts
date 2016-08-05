@@ -13,7 +13,8 @@ export class BasePersistor implements IPersistor {
   }
   
   findOne (options) {
-    return  Promise.resolve({id: 123});
+    // Do some work to get data and then resolve it
+    return  Promise.all([{id: 123}]);
   }
 
   find (options): Promise<any[]> {

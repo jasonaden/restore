@@ -20,7 +20,7 @@ describe('BaseAdapter', () => {
   let testPersistor = {
       create: (data, params?) => Promise.resolve(Object.assign({}, data, {created: true})),
       update: (data, params?, base?) => Promise.resolve(Object.assign({}, data, {updated: true})),
-      findOne: (params) => Promise.resolve(caseEmbedded),
+      findOne: (params) => Promise.all([caseEmbedded]),
       find: (params) => Promise.resolve([{id: 123}, {id: 456}]),
       destroy: (params) => Promise.resolve(null)
     }
@@ -62,21 +62,46 @@ describe('BaseAdapter', () => {
 
   })
 
-  describe('calling methods', () => {
+  // Error version -- used when forcing an error from the beforeFindOne()
+  // describe('error version should use a promise chain', () => {
+  //   let adapter; 
+  //   beforeEach( () => {
+  //     let tp = Object.assign( {}, testPersistor);
+  //     tp.findOne = (params) => { return Promise.all([{id: 567}]) };
+
+  //     adapter = new BaseAdapter(null, null, tp); 
+
+  //     spyOn(adapter, 'findOne').and.callThrough();
+  //     spyOn(adapter, 'beforeFindOne').and.callThrough();
+  //     spyOn(adapter.persistor, "findOne").and.callThrough();
+  //     spyOn(adapter, 'afterFindOne').and.callThrough();
+  //   })
+
+  //   it('when invoking findOne', (done) => {
+  //     adapter.findOne({id: 123})
+  //     .then( () => {
+  //       expect(adapter.beforeFindOne).toHaveBeenCalledWith({id: 123});
+  //       done();
+  //     })    
+  //   })
+  // })
+
+
+  describe('should use a promise chain', () => {
     let adapter; 
     beforeEach( () => {
       let tp = Object.assign( {}, testPersistor);
-      tp.findOne = (params) => { return Promise.resolve({id: 567}) };
+      tp.findOne = (params) => { return Promise.all([{id: 567}]) };
+
       adapter = new BaseAdapter(null, null, tp); 
 
-      spyOn(adapter.persistor, "findOne").and.callThrough();
-
-      spyOn(adapter, 'beforeFindOne').and.callThrough();
       spyOn(adapter, 'findOne').and.callThrough();
+      spyOn(adapter, 'beforeFindOne').and.callThrough();
+      spyOn(adapter.persistor, "findOne").and.callThrough();
       spyOn(adapter, 'afterFindOne').and.callThrough();
     })
 
-    it('should invoke before and after when calling findOne', (done) => {
+    it('when invoking findOne', (done) => {
       adapter.findOne({id: 123})
       .then( () => {
         expect(adapter.beforeFindOne).toHaveBeenCalledWith({id: 123});
@@ -87,23 +112,64 @@ describe('BaseAdapter', () => {
     })
   })
 
-  fdescribe('splitting data', () => {
+  describe('splitSchema', () => {
 
     let adapter, mockStore;
     let types = ['CASE', 'CUSTOMER', 'DRAFT', 'MESSAGE']
     beforeEach( () => {
 
       mockStore = configureStore()({});
-
       adapter = new BaseAdapter(appSchema, mockStore, testPersistor);
 
-      spyOn(adapter.persistor, "findOne").and.callThrough();
-      spyOn(adapter, 'beforeFindOne').and.callThrough();
       spyOn(adapter, 'findOne').and.callThrough();
+      spyOn(adapter, 'beforeFindOne').and.callThrough();
+      spyOn(adapter.persistor, "findOne").and.callThrough();
       spyOn(adapter, 'afterFindOne').and.callThrough();
-
       spyOn(adapter, 'splitSchema').and.callThrough();
+    }) 
+ 
+    it('should be called when a schema is provided', (done) => {
+      adapter.findOne({id:123})
+      .then( () => {
+        expect(adapter.beforeFindOne).toHaveBeenCalledWith({id: 123});
+        expect(adapter.persistor.findOne).toHaveBeenCalledWith({id: 123});
+        expect(adapter.afterFindOne).toHaveBeenCalledWith( caseEmbedded );
+        expect(adapter.splitSchema).toHaveBeenCalledWith( caseEmbedded )
+        done();
+      })
     })
+
+    // TODO: Need to figure out how to test when the splitSchema() recieves
+    //  something when it has no data about how to normalize
+    xit('should fail if a type is received for which there is no schema', (done) => {
+      let caseTemp = Object.assign( {}, caseEmbedded );
+      caseTemp._embedded.foo = { id: 1, name: 'bear'};
+      // console.log("caseTemp._embedded", caseTemp._embedded.foo)
+
+      let tp = Object.assign( {}, testPersistor);
+      tp.findOne = (params) => { return Promise.all([caseTemp]) };
+      console.log('tp', tp.findOne.toString());
+
+      mockStore = configureStore()({});
+      adapter = new BaseAdapter(appSchema, mockStore, tp);
+
+      try {
+        adapter.findOne( {id:123} )
+          .then( () => {
+            console.log("in the then")
+            expect(adapter.splitSchema).toHaveBeenCalled();
+            done();
+          })
+      } catch(err) {
+        console.log("err", err)
+      }
+      // .then( () => {
+      //   expect(adapter.splitSchema) toHaveBeenCalledWith( caseEmbedded );
+      //   done();
+      // })
+
+    })
+
 
     // TODO: This is working but am doing a promise.resolve in the beforeFineOne 
     //  Need to determine if that is right or if it should be a promise.all().
@@ -111,15 +177,7 @@ describe('BaseAdapter', () => {
     // May need to make them all promise.all() until the end to make sure
     //  that if a promise is used anywhere along the line that it will be 
     //  properly handled. 
-    it('should invoke before and after when calling findOne', (done) => {
-      adapter.findOne({id: 123})
-      .then( () => {
-        expect(adapter.beforeFindOne).toHaveBeenCalledWith({id: 123});
-        expect(adapter.persistor.findOne).toHaveBeenCalledWith({id: 123});
-        expect(adapter.afterFindOne).toHaveBeenCalledWith( caseEmbedded );
-        done();
-      })      
-    })
+    
 
     it('should dispatch events for each of the types of data returned', (done) => {
       adapter.findOne( {id:123} )
