@@ -6,7 +6,17 @@ export {
 // resource reducer
 export {
   defaultReducer
-} from './resources/resource-reducer';
+} from './reducers/resource-reducer';
+
+// ResourceList class
+export {
+  ResourceList
+} from './resources/resource-list';
+
+// resource-list reducer
+export {
+  defaultListReducer
+} from './reducers/resource-list-reducer';
 
 // interfaces
 // don't need to export since they will be in .d.ts file?
@@ -17,6 +27,12 @@ export {
   IEntityState
 } from './resources/interfaces';
 
+// base adapter
+export { BaseAdapter } from './adapters/base-adapter';
+
+// $http sample persistor
+export { $httpPersistor } from './persistors/$http-persistor';
+export { IPersistor } from './persistors/i-persistor';
 
 // utils
 export {

@@ -20,3 +20,7 @@ export declare const REFRESH: string;
 export declare const REFRESHING: string;
 export declare const REFRESHED: string;
 export declare const ERROR: string;
+export declare const SET_ONE: string;
+export declare const REMOVE_ONE: string;
+export declare const SET_LIST: string;
+export declare const REMOVE_LIST: string;

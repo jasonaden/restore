@@ -21,3 +21,7 @@ export const REFRESH = "REFRESH";
 export const REFRESHING = "REFRESHING";
 export const REFRESHED = "REFRESHED";
 export const ERROR = "ERROR";
+export const SET_ONE = "SET_ONE";
+export const REMOVE_ONE = "REMOVE_ONE";
+export const SET_LIST = "SET_LIST";
+export const REMOVE_LIST = "REMOVE_LIST";

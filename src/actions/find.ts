@@ -1,25 +1,25 @@
 
 import {action} from './action';
 import {IResourceRequestConfig} from '../resources/interfaces';
-import {FINDING, ERROR} from '../resources/constants';
+import {FINDING, FOUND, ERROR} from '../resources/constants';
 import {splitSchema} from '../utils/splitSchema';
 import {ActionConfig} from './action-config';
 
-export function find (actionConfig: ActionConfig, config?: any) {
-  // return thunk
+export function find (ResourceList, config: ActionConfig) {
+
   return (dispatch, store) => {
-    // Set a status of "FINDING_RESOURCE_NAME"
-    dispatch(action(FINDING, actionConfig.className));
-    
-    return actionConfig.adapter.find(actionConfig)
+
+    dispatch(action(FINDING, config.className));
+    //debugger;
+    return ResourceList.adapter.find(config)
     .then(
       res => {
-        dispatch(splitSchema(actionConfig.schema, actionConfig.className, res.data || res));
+        dispatch(action(FOUND, config.className));
         return [res.data];
       },
       error => {
-        dispatch(action(ERROR, actionConfig.className, error));
-        return actionConfig.promise.reject(error);
+        dispatch(action(ERROR, config.className, error));
+        return config.promise.reject(error);
       }
     );
   }

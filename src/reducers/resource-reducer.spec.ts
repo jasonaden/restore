@@ -1,5 +1,5 @@
 import {defaultReducer} from './resource-reducer';
-import {IEntityState} from './interfaces';
+import {IEntityState} from '../resources/interfaces';
 import {Reducer} from 'redux';
 // import 'angular-mocks';
 
@@ -12,7 +12,7 @@ import {
   UPDATE, UPDATING, UPDATED,
   REFRESH, REFRESHING, REFRESHED,
   ERROR
-} from './constants';
+} from '../resources/constants';
 
 let type: string = 'CASE';
 let reducer: Reducer;
@@ -129,10 +129,10 @@ xdescribe('defaultReducer', () => {
      );
   });
   
-  it ('should handle FIND_CASE', () => {
+  it ('should handle FOUND_CASE', () => {
     expect(
        reducer(undefined, {
-         type: `${FIND}_${type}`,
+         type: `${FOUND}_${type}`,
          payload: {
            result: ['/cases/1'],
            items: {
@@ -144,18 +144,13 @@ xdescribe('defaultReducer', () => {
        })
      ).toEqual(
        {
-          result: ['/cases/1'],
+          result: [],
           loadingMany: false,
           loadingOne: false,
           deleting: false,
           patching: false,
-          adding: false,
-          items: {
-            '/cases/1': {
-               _links: {self: {href: '/cases/1'}}, _embedded: {entries: [{}]}
-             }
-          },
-          meta: {}
+          adding: true,
+          items: {}
         }
      );
   });

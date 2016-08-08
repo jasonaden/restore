@@ -6,13 +6,22 @@ function __export(m) {
 var resource_1 = require('./resources/resource');
 exports.Resource = resource_1.Resource;
 // resource reducer
-var resource_reducer_1 = require('./resources/resource-reducer');
+var resource_reducer_1 = require('./reducers/resource-reducer');
 exports.defaultReducer = resource_reducer_1.defaultReducer;
+// ResourceList class
+var resource_list_1 = require('./resources/resource-list');
+exports.ResourceList = resource_list_1.ResourceList;
+// resource-list reducer
+var resource_list_reducer_1 = require('./reducers/resource-list-reducer');
+exports.defaultListReducer = resource_list_reducer_1.defaultListReducer;
 // interfaces
 // don't need to export since they will be in .d.ts file?
-// resource-adapter
-var resource_adapter_1 = require('./resources/resource-adapter');
-exports.ResourceAdapter = resource_adapter_1.ResourceAdapter;
+// base adapter
+var base_adapter_1 = require('./adapters/base-adapter');
+exports.BaseAdapter = base_adapter_1.BaseAdapter;
+// $http sample persistor
+var _http_persistor_1 = require('./persistors/$http-persistor');
+exports.$httpPersistor = _http_persistor_1.$httpPersistor;
 // utils
 var utils_1 = require('./utils');
 exports.flattenEmbedded = utils_1.flattenEmbedded;

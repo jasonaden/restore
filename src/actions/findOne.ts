@@ -1,29 +1,26 @@
-// TODO: Map to updated way of interfacing with adapter
 
 import {action} from './action';
 import {IResourceRequestConfig} from '../resources/interfaces';
-import {FINDING_ONE, ERROR} from '../resources/constants';
+import {FINDING_ONE, FOUND_ONE, ERROR} from '../resources/constants';
 import {splitSchema} from '../utils/splitSchema';
 import {ActionConfig} from './action-config';
 
-export function findOne (config: ActionConfig, args?: IResourceRequestConfig) {
+export function findOne (payload: any, config: ActionConfig) {
+
   return (dispatch, store) => {
+
     dispatch(action(FINDING_ONE, config.className));
     
-    // 8/3/16: daden: adapter doesn't current have execute method
-    // return config.adapter.execute({
-    //   url: config.url, 
-    //   method: 'GET'
-    // })
-    // .then(
-    //   res => {
-    //     dispatch(splitSchema(config.schema, config.className, res.data));
-    //     return res.data;
-    //   },
-    //   error => {
-    //     dispatch(action(ERROR, config.className, error));
-    //     return config.$q.reject(error);
-    //   }
-    // );
+    return config.adapter.findOne(payload, config)
+    .then(
+      res => {
+        dispatch(action(FOUND_ONE, config.className));
+        return [res.data];
+      },
+      error => {
+        dispatch(action(ERROR, config.className, error));
+        return config.promise.reject(error);
+      }
+    );
   }
 }

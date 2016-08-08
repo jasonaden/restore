@@ -61,7 +61,7 @@ export class BaseAdapter implements IResourceAdapter {
     let split = normalize( data, this.schema[type] )   
 
     for( let key of Object.getOwnPropertyNames(split.entities) ) {
-      this.store.dispatch( buildAction(FOUND, key.toUpperCase(), split.entities[key]) );
+      this.store.dispatch( buildAction(SET_ONE, key.toUpperCase(), split.entities[key]) );
     }
 
     return split; 
@@ -173,8 +173,8 @@ export class BaseAdapter implements IResourceAdapter {
     .then(x => this.afterDestroy(x));
   }
 
-  beforeDestroy(params): Promise<(any)[]> {
-    return this.promise.all([params]);
+  beforeDestroy(data, params?): Promise<(any)[]> {
+    return this.promise.all([data, params]);
   }
   
   afterDestroy(data: any): Promise<any> {

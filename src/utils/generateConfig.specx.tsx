@@ -1,9 +1,10 @@
 // TODO: Work out what to do with this file. It's probably got to be pushed down to 
 // the persistence layer. It's Angularized, but doesn't really need to be (I don't think)
 
-import {ResourceAdapter} from '../resources/resource-adapter';
+import {BaseAdapter} from '../adapters/base-adapter';
 import {generateConfig} from '../utils';
 import {IResourceAdapter, IResourceRequestConfig} from '../resources/interfaces';
+import {Schema} from 'normalizr';
 
 var $http: ng.IHttpService;
 var $q: ng.IQService;
@@ -15,7 +16,8 @@ describe('generateConfig', () => {
   beforeEach(inject(function(_$http_, _$httpBackend_, _$q_, _$rootScope_) {
     $q = _$q_;
     $rootScope = _$rootScope_;
-    adapter = new ResourceAdapter($http, $q);
+    let schema = new Schema('testResource');
+    let adapter = new BaseAdapter();
     config = {
       method: 'GET',
       url: '/foo/bar'      

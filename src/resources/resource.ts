@@ -8,23 +8,11 @@ import {identity} from 'lodash';
 import {IResourceAdapter, IResourceRequestConfig, IEntityState} from './interfaces';
 
 import {add} from '../actions/add';
-import {find} from '../actions/find';
 import {findOne} from '../actions/findOne';
 import {destroy} from '../actions/destroy';
-import {action} from '../actions/action';
+import {update} from '../actions/update';
 
-import {
-  FIND_ONE, FINDING_ONE, FOUND_ONE,
-  FIND, FINDING, FOUND,
-  ADD, ADDING, ADDED, 
-  DESTROY, DESTROYING, DESTROYED,
-  PATCH, PATCHING, PATCHED,
-  UPDATE, UPDATING, UPDATED,
-  REFRESH, REFRESHING, REFRESHED,
-  ERROR
-} from './constants';
-
-import {defaultEntityState} from './resource-reducer';
+import {defaultEntityState} from '../reducers/resource-reducer';
 
 /**
  * 
@@ -98,7 +86,7 @@ export class Resource<T> {
    */
   add(payload: T, config?: any): PromiseLike<any[]> {
     return this.promise.all([this.beforeAdd(payload, config)])
-    .then(([payload, config]) => this.store.dispatch(add(this, payload, config)))
+    .then(([payload, config]) => this.store.dispatch(add(payload, config)))
     .then(([data]) => this.afterAdd(data));
   }
   
@@ -125,7 +113,7 @@ export class Resource<T> {
   // TODO: Create the update() action creator
   update(payload: T, config?: any): PromiseLike<any[]> {
     return this.promise.all([this.beforeUpdate(payload, config)])
-    .then(([payload, config]) => this.store.dispatch(update(this, payload, config)))
+    .then(([payload, config]) => this.store.dispatch(update(payload, config)))
     .then(([data]) => this.afterUpdate(data));
   }
   
@@ -144,21 +132,6 @@ export class Resource<T> {
   }
   
   /**
-   * Saves data. Will determine whether to create or update.
-   * 
-   * For Lifecycle hooks, see `add` or `update`.
-   */
-  // TODO: Implement save() method. This should determine whether to call update() or create()
-  // therefore it needs more params passed in. Like the payload and the original object so 
-  // comparison can be done.
-  save(payload: T, config?: any): PromiseLike<any[]> {
-    throw('Implement save method');
-    // return this.promise.all([this.beforeUpdate(payload, config)])
-    // .then(([payload, config]) => this.store.dispatch(update(this, payload, config)))
-    // .then(([data]) => this.afterUpdate(data));
-  }
-  
-  /**
    * Removes an item from the store.
    * 
    * * `beforeDestroy(payload[, cb])`
@@ -166,8 +139,8 @@ export class Resource<T> {
    */
   destroy(id: string | number, config?: any): PromiseLike<any[]> {
     return this.promise.all([this.beforeDestroy(id, config)])
-    .then(args => this.store.dispatch(destroy(this, id, config)))
-    .then(data => this.afterFind(data));
+    .then(args => this.store.dispatch(destroy(id, config)))
+    .then(data => this.afterDestroy(data));
   }
   
   /**
@@ -183,34 +156,7 @@ export class Resource<T> {
   afterDestroy(data: any): PromiseLike<any[]> {
     return this.promise.all([data]);
   }
-  
-  /**
-   * Finds items and puts them into the store.
-   * 
-   * * `beforeFind(payload[, cb])`
-   * * `afterFind(payload[, cb])`
-   */
-  // TODO: Determine if type OR is needed
-  find(config?: any): PromiseLike<any[]> | Promise<any[]> {
-    return this.promise.all([this.beforeFind(config)])
-    .then(([config]) => this.store.dispatch(find(this, config)))
-    .then(([data]) => this.afterFind(data));
-  }
-  
-  /**
-   * Default identity hook (return what was passed in)
-   */
-  beforeFind(config?: any): PromiseLike<any[]> {
-    return this.promise.all([config]);
-  }
-  
-  /**
-   * Default identity hook (return what was passed in)
-   */
-  afterFind(data: any): PromiseLike<any[]> {
-    return this.promise.all([data]);
-  }
-  
+ 
   /**
    * Finds a single and puts it into the store.
    * 
@@ -220,7 +166,7 @@ export class Resource<T> {
   // TODO: Fix findOne()
   findOne(id: number, config?: any): PromiseLike<any[]> {
     return this.promise.all([this.beforeFindOne(id, config)])
-    .then(([id, config]) => this.store.dispatch(findOne(this, id, config)))
+    .then(([id, config]) => this.store.dispatch(findOne(id, config)))
     .then(([data]) => this.afterFindOne(data));
   }
   
@@ -237,12 +183,5 @@ export class Resource<T> {
   afterFindOne(data: any): PromiseLike<any[]> {
     return this.promise.all([data]);
   }
-  
-  reloadMany(): void {
-    this.store.dispatch(action(REFRESH, this.className, []))
-    this.find();
-  }
-  
 
-  
 }

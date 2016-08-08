@@ -1,6 +1,9 @@
+// TODO: Work out what to do with this file. It's probably got to be pushed down to 
+// the persistence layer. It's Angularized, but doesn't really need to be (I don't think)
 "use strict";
-var resource_adapter_1 = require('../resources/resource-adapter');
+var base_adapter_1 = require('../adapters/base-adapter');
 var utils_1 = require('../utils');
+var normalizr_1 = require('normalizr');
 var $http;
 var $q;
 var adapter;
@@ -10,7 +13,8 @@ describe('generateConfig', function () {
     beforeEach(inject(function (_$http_, _$httpBackend_, _$q_, _$rootScope_) {
         $q = _$q_;
         $rootScope = _$rootScope_;
-        adapter = new resource_adapter_1.ResourceAdapter($http, $q);
+        var schema = new normalizr_1.Schema('testResource');
+        var adapter = new base_adapter_1.BaseAdapter();
         config = {
             method: 'GET',
             url: '/foo/bar'

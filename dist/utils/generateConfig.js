@@ -1,3 +1,4 @@
+// TODO: Get rid of $q and ng.IPromise and IResourceRequestConfig. See notes in generateConfig.specx.ts
 "use strict";
 var joinUrl_1 = require('./joinUrl');
 function generateConfig($q, adapter, config) {
