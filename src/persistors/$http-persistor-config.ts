@@ -137,7 +137,7 @@ export class $httpPersistorConfig implements IHttpPersistorConfig {
     }
 
     /**
-     * Create and return a new AdapterConfig with new or updated properties assigned to it.
+     * Create and return a new PersistorConfig with new or updated properties assigned to it.
      */
     extend (data = {}): this {
       let extended = new $httpPersistorConfig(this)

@@ -8,16 +8,16 @@ import * as angular from 'angular';
 * $http-based persistence layer.
 */
 export class $httpPersistor extends BasePersistor {
+  // sets the static config
   private static config: IHttpPersistorConfig = new $httpPersistorConfig();
   private static $http: ng.IHttpService;
   private static $q: ng.IQService;
+  // uses the instance config for all operations
   private config: IHttpPersistorConfig;
 
-  // TODO: this requires an IHttpPersistorConfig but 
-  //  this.setConfig() takes anything -- should these be consistent?  
+  // Set the instance config based on static config and what's passed in
   constructor (config?: IHttpPersistorConfig) {
     super()
-
     this.config = $httpPersistor.config.extend(config);
   }
 
@@ -34,6 +34,8 @@ export class $httpPersistor extends BasePersistor {
   static getQ() {
     return $httpPersistor.$q;
   }
+  // Running this static method only makes a difference before 
+  //  instantiation
   static setConfig (config: IHttpPersistorConfig) {
     $httpPersistor.config = config;
   }
@@ -41,29 +43,31 @@ export class $httpPersistor extends BasePersistor {
     return $httpPersistor.config;
   }
 
-  // instance method 
+  // instance methods 
+  // Originally, this overrode the instance config set in the constructor
+  // 8/9/16: Changed this to build on the instance config set in the 
+  //  constructor instead of overriding it. 
   setConfig (config: any) {
-    this.config = $httpPersistor.config.extend(config);
+    // this.config = $httpPersistor.config.extend(config);
+    this.config = this.config.extend(config);
   }
   getConfig () {
     return this.config;
   }
 
-  // Execute request based on the existing config and any new config. 
-  execute (config?: any): ng.IPromise<any> {
+  // Execute request based on the existing config and 
+  //  object passed in that overrides the existing config.  
+  // execute (config?: any): ng.IPromise<any> {
+  execute (config?: Object): ng.IPromise<any> {
     let requestConfig = this.config.extend(config).build();
     return this.doRequest(requestConfig);
   }
 
-  doRequest (config: IHttpPersistorConfig): ng.IPromise<any> {
-    return generateHttpConfig( $httpPersistor.$q, config )
-    .then( (config) => {
-      
-      return $httpPersistor.$http(config);
+  doRequest (requestConfig: IHttpPersistorConfig): ng.IPromise<any> {
+    return generateHttpConfig( $httpPersistor.$q, requestConfig )
+    .then( (httpConfig) => {
+      return $httpPersistor.$http(httpConfig);
     })
-      // .then( (ret) => {
-      //   console.log("$http-persistor doRequest", ret)
-      // })
   }
 
   /*
@@ -75,15 +79,12 @@ export class $httpPersistor extends BasePersistor {
   }
   */
 
-  // TODO: I added the function return to avoid a TS error, but it
-  //  is not probably not actually returning a Promise as this
-  //  persistor is not in use. 
-  findOne(data): Promise<{id: number}> {
-    let config = {
-      method: 'GET',
-      type: data.type,
-      id: data.id
+  findOne(config): ng.IPromise<any> {
+    if( ! (config.id && config.type) ) {
+      return $httpPersistor.$q.reject("persistor findOne requires type and id"); 
     }
+    config.method = 'GET';
+    config.type = config.type || 'case';
 
     return this.execute(config)
   }

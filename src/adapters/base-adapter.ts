@@ -11,6 +11,7 @@ import { buildAction, promiseError } from '../utils/index';
 
 import { FOUND } from '../resources/constants'; 
 
+
 /*
 * base adapter implementation.
 */
@@ -51,64 +52,90 @@ export class BaseAdapter implements IResourceAdapter {
     return entity.id;
   }
 
+  // TODO: The following is a placeholder for a static Resource
+  //  method or something outside the adapter that will be invoked by the adapter
+  //  and handed the normalized data. It takes the normalized 
+  //  data and dispatches appropriate Redux actions to update
+  //  the store. 
+  handleAdapterData( store, split ) {
+      for( let key of Object.getOwnPropertyNames(split.entities) ) {
+        this.store.dispatch( buildAction(FOUND, key.toUpperCase(), split.entities[key]) );
+      }
+  }
+
+
   // Use the passed-in schema to split out the data
-  splitSchema( data ) {
-    let type = data._links.self.class;
-    if( ! this.schema[type] ) {
-      console.log("throwing an error", type)
-      // throw( new Error(`normalizr schema missing a property for type: ${type}`) );
+  splitSchema( data ): Promise<any[]> {
+    // if we recieve a single item
+    let type = (data._links && data._links.self.class) || undefined;
+
+    // Specify the schema for other types of things
+    if( ! type ) {
+      // schema for /api/v2/changes
+      if( data.changed ) {
+        type = 'changes'
+      }
     }
+
+    // Reject if no schema match
+    if( ! this.schema[type] ) {
+      this.promise.reject(`No schema exists for: ${type}`)
+    }
+
     let split = normalize( data, this.schema[type] )   
 
-    for( let key of Object.getOwnPropertyNames(split.entities) ) {
-      this.store.dispatch( buildAction(SET_ONE, key.toUpperCase(), split.entities[key]) );
-    }
+    this.handleAdapterData(this.store, split);
 
-    return split; 
+    return this.promise.all([split]); 
   }
 
   // with chained error catching
   // need to see about simplifying this and still letting  
   // it catch errors along the way.
-  findOne (params) {
-    return this.beforeFindOne(params)
+  // This sets up a promise chain that: 
+  //  1) Passes the received params to beforeFindOne()
+  //  2) Passes the beforeFindOne promise to persistor.findOne()
+  //  3) Passes the persistor.beforeFineOne promise to afterFindOne()
+  //  4) Passes the afterFindOne promise to splitSchema to normalize the data
+  findOne (config) {
+    return this.beforeFindOne(config)
       .then( (beforePromise) => {
-        let [params] = beforePromise;
-        return this.persistor.findOne(params)
-                .then(null, promiseError('persistor')) ;
-      }, promiseError('beforePromise')) 
+        let [config] = beforePromise;
+        return this.persistor.findOne(config);
+      }) 
 
       .then( (persistorPromise) => {
         let [data] = persistorPromise;
-        return this.afterFindOne(data)
-                .then(null, promiseError('afterFindOne'))
-      }, promiseError('persistorPromise'))      
+        return this.afterFindOne(data);
+      })      
      
       // Normalize the data
-      .then( (afterPromise) => {
-        let [data] = afterPromise;
-        if( Object.keys(this.schema).length ) {
-          return this.promise.all( [this.splitSchema( data )])
-                  .then(null, promiseError('normalize'));
-        } else {
-          return this.promise.all( [data] )
-                  .then(null, promiseError('non-normalize'));
+      .then( 
+        (afterPromise) => {
+          let [data] = afterPromise;
+          if( Object.keys(this.schema).length ) {
+            return this.splitSchema( data )
+          } else {
+            return this.promise.all( [data] )
+          }
+        }, 
+        (err) => {
+          // TODO: Need to use some general error handler
+          return this.promise.reject("findOne failed " + err)
         }
-      }, promiseError)
+      )
   } 
 
   // Default version is a no-op that passes along the
   //  params passed in 
   beforeFindOne(params): Promise<any[]> {
     return this.promise.all([params]);
-    // return this.promise.all([this.promise.reject("because")]);
   }
   
   // Default version is a no-op that passes along the 
   //  persistor's returned promise. 
   afterFindOne(data: any): Promise<any[]> {
     return this.promise.all([data]);
-    // return this.promise.all([this.promise.reject('no way')]);
   }
 
   /**
@@ -173,8 +200,8 @@ export class BaseAdapter implements IResourceAdapter {
     .then(x => this.afterDestroy(x));
   }
 
-  beforeDestroy(data, params?): Promise<(any)[]> {
-    return this.promise.all([data, params]);
+  beforeDestroy(params): Promise<(any)[]> {
+    return this.promise.all([params]);
   }
   
   afterDestroy(data: any): Promise<any> {

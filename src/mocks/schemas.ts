@@ -25,6 +25,8 @@ export const replySchema = new Schema('reply', getOptions());
  */
 export const customerSchema = new Schema('customer', getOptions());
 
+export const caseChangesSchema = new Schema('changes', getOptions());
+
 
 interactionSchema.define({
   case: caseSchema
@@ -42,9 +44,13 @@ caseSchema.define({
     replies: arrayOf(interactionSchema),
     foober: customerSchema
   },  
-
-  
 });
+
+caseChangesSchema.define( {
+  new: arrayOf(caseSchema),
+  changed: arrayOf(caseSchema),
+  removed: arrayOf(caseSchema)
+})
 
 export const appSchema = {
   case: caseSchema, 
@@ -52,5 +58,6 @@ export const appSchema = {
   draft: draftSchema,
   message: messageSchema,
   reply: replySchema,
-  customer: customerSchema
+  customer: customerSchema,
+  changes: caseChangesSchema
 }

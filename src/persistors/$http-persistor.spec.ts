@@ -1,6 +1,8 @@
 import {$httpPersistor} from './$http-persistor';
+
 import { $httpPersistorConfig} from './$http-persistor-config';
 import { caseEmbedded } from '../mocks/caseEmbedded';
+import { caseList } from '../mocks/caseList';
 
 describe('$httpPersistor', () => {
   let $httpBackend: ng.IHttpBackendService;
@@ -33,15 +35,22 @@ describe('$httpPersistor', () => {
 
     it('to get the config', () => {
       expect(typeof PersistorClass.getConfig).toEqual('function')
+      expect(PersistorClass.getConfig()).toEqual(config)
     })
 
-    it('to set a default config', () => {
-      expect(PersistorClass.getConfig()).toEqual(config)
+    it('to set a default static config with the static setConfig method', () => {
+      let configNew = new $httpPersistorConfig();
+      configNew.method = "PUT";
+      PersistorClass.setConfig( configNew );
+      expect(PersistorClass.getConfig().method).toEqual('PUT')
+
+      // need to set it back since there is only one class and changing
+      //  the class default affects the rest of the tests
+      configNew.method = "GET";
+      PersistorClass.setConfig( configNew );      
       expect(PersistorClass.getConfig().method).toEqual('GET')
     })
 
-    // $http and $q properties are marked private for the TS compiler
-    // but are available so we can verify they exist
     it('to set the $http service', () => {
       expect(typeof PersistorClass.setHttp).toEqual('function')
       expect(typeof PersistorClass.getHttp()).toEqual('function')
@@ -55,7 +64,7 @@ describe('$httpPersistor', () => {
   })
 
   describe('should have instance methods: ', () => {
-    let methods = ['setConfig','execute','doRequest'];
+    let methods = ['setConfig','execute','doRequest', 'findOne'];
     it(methods.join(','), () => {
       methods.forEach( (item) => {
         expect( typeof persistor[item] ).toEqual('function')
@@ -76,7 +85,7 @@ describe('$httpPersistor', () => {
       expect( newPersistor.getConfig().method ).toEqual('PUT');
     })
 
-    it('by calling setConfig', () => {
+    it('by calling the instance setConfig method', () => {
       // verify default persistor has the default config
       expect( persistor.getConfig().method ).toEqual('GET');
 
@@ -89,6 +98,7 @@ describe('$httpPersistor', () => {
 
   })
 
+  // HERE 
   describe('execute method', () => {
     beforeEach(() => {
       persistor.setConfig({
@@ -123,21 +133,17 @@ describe('$httpPersistor', () => {
       $httpBackend.flush();
     })
     
-    it('should return an array of data as it was received from the server', (done) => {
-      let localConfig = {
-        data: {id: 13}
-      };      
-      $httpBackend.expectGET('/foo/13').respond(200, caseEmbedded);
-      persistor.execute(localConfig)
+    it('should return an object that contains an array of data as it was received from the server', (done) => {
+      $httpBackend.expectGET('/foo').respond(200, caseList);
+      persistor.execute()
       .then( (response) => {
-        expect(response.data).toEqual(caseEmbedded)
+        expect(response.data).toEqual(caseList)
         done(); 
       })
       $httpBackend.flush();
     })
 
   })
-
 
   describe('makes GET requests', () => {
     beforeEach(() => {
