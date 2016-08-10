@@ -73,16 +73,12 @@ var ResourceList = (function () {
     // TODO: Determine if type OR is needed
     ResourceList.prototype.find = function (config) {
         var _this = this;
-        return this.promise.all([this.beforeFind(config)])
+        return this.beforeFind(config)
             .then(function (_a) {
             var config = _a[0];
-            debugger;
-            _this.store.dispatch(find_1.find(_this, config[0]));
+            return _this.store.dispatch(find_1.find(_this, config));
         })
-            .then(function (_a) {
-            var data = _a[0];
-            return _this.afterFind(data);
-        });
+            .then(function (data) { return _this.afterFind(data); });
     };
     /**
      * Default identity hook (return what was passed in)

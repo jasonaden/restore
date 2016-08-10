@@ -91,7 +91,6 @@ export class $httpPersistor extends BasePersistor {
   find(config): ng.IPromise<any> {
     config.method = config.method || 'GET';
     config.className = config.className || 'case';
-    debugger;
     return this.execute(config);
   }
 

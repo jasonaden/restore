@@ -4,7 +4,6 @@ var constants_1 = require('../resources/constants');
 function find(ResourceList, config) {
     return function (dispatch, store) {
         dispatch(action_1.action(constants_1.FINDING, ResourceList.listName));
-        debugger;
         return ResourceList.adapter.find(config)
             .then(function (res) {
             dispatch(action_1.action(constants_1.FOUND, config.className));

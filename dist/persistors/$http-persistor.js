@@ -78,7 +78,6 @@ var $httpPersistor = (function (_super) {
     $httpPersistor.prototype.find = function (config) {
         config.method = config.method || 'GET';
         config.className = config.className || 'case';
-        debugger;
         return this.execute(config);
     };
     // sets the static config

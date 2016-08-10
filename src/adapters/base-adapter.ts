@@ -9,7 +9,7 @@ import {BasePersistor} from '../persistors/base-persistor';
 import { normalize, Schema, arrayOf } from 'normalizr';
 import { buildAction, promiseError } from '../utils/index';
 
-import { FOUND } from '../resources/constants'; 
+import { SET_ONE } from '../resources/constants'; 
 
 
 /*
@@ -59,7 +59,7 @@ export class BaseAdapter implements IResourceAdapter {
   //  the store. 
   handleAdapterData( store, split ) {
       for( let key of Object.getOwnPropertyNames(split.entities) ) {
-        this.store.dispatch( buildAction(FOUND, key.toUpperCase(), split.entities[key]) );
+        this.store.dispatch( buildAction(SET_ONE, key.toUpperCase(), split.entities[key]) );
       }
   }
 
@@ -87,6 +87,11 @@ export class BaseAdapter implements IResourceAdapter {
     this.handleAdapterData(this.store, split);
 
     return this.promise.all([split]); 
+  }
+
+  splitList( data ): Promise<any[]> {
+    
+    return this.promise.all([]);
   }
 
   // with chained error catching
@@ -138,6 +143,20 @@ export class BaseAdapter implements IResourceAdapter {
     return this.promise.all([data]);
   }
 
+  find (params?) {
+    return this.beforeFind(params)
+    .then( ([params]) => this.persistor.find(params) )
+    .then( (res) => this.afterFind(res.data) )
+  }
+
+
+  beforeFind(params?): Promise<(any)[]> {
+    return this.promise.all([params]);
+  }
+  
+  afterFind(data: any): Promise<any> {
+    return Promise.resolve(data);
+  }
   /**
    * Lifecycle Hooks:
    * 
@@ -166,20 +185,6 @@ export class BaseAdapter implements IResourceAdapter {
     return Promise.resolve(data);
   }
   
-  find (params?) {
-    return this.promise.all([this.beforeFind(params)])
-    .then(([params]) => this.persistor.find(params[0]))
-    .then(x => this.afterFind(x));
-  }
-
-  beforeFind(params?): Promise<(any)[]> {
-    return this.promise.all([params]);
-  }
-  
-  afterFind(data: any): Promise<any> {
-    return Promise.resolve(data);
-  }
-
   update (data, params?) {
     return this.beforeUpdate(data, params)
     .then(([data, config]) => this.persistor.update(data, config))

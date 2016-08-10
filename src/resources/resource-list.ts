@@ -75,12 +75,9 @@ export class ResourceList<T> {
    */
   // TODO: Determine if type OR is needed
   find(config): PromiseLike<any[]> | Promise<any[]> {
-    return this.promise.all([this.beforeFind(config)])
-    .then(([config]) => {
-      debugger;
-      this.store.dispatch(find(this, config[0]))
-    })
-    .then(([data]) => this.afterFind(data));
+    return this.beforeFind(config)
+    .then( ([config]) => this.store.dispatch(find(this, config)) )
+    .then((data) => this.afterFind(data));
   }
   
   /**

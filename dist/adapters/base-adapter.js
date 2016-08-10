@@ -32,7 +32,7 @@ var BaseAdapter = (function () {
     BaseAdapter.prototype.handleAdapterData = function (store, split) {
         for (var _i = 0, _a = Object.getOwnPropertyNames(split.entities); _i < _a.length; _i++) {
             var key = _a[_i];
-            this.store.dispatch(index_1.buildAction(constants_1.FOUND, key.toUpperCase(), split.entities[key]));
+            this.store.dispatch(index_1.buildAction(constants_1.SET_ONE, key.toUpperCase(), split.entities[key]));
         }
     };
     // Use the passed-in schema to split out the data
@@ -53,6 +53,9 @@ var BaseAdapter = (function () {
         var split = normalizr_1.normalize(data, this.schema[type]);
         this.handleAdapterData(this.store, split);
         return this.promise.all([split]);
+    };
+    BaseAdapter.prototype.splitList = function (data) {
+        return this.promise.all([]);
     };
     // with chained error catching
     // need to see about simplifying this and still letting  
@@ -96,6 +99,21 @@ var BaseAdapter = (function () {
     BaseAdapter.prototype.afterFindOne = function (data) {
         return this.promise.all([data]);
     };
+    BaseAdapter.prototype.find = function (params) {
+        var _this = this;
+        return this.beforeFind(params)
+            .then(function (_a) {
+            var params = _a[0];
+            return _this.persistor.find(params);
+        })
+            .then(function (res) { return _this.afterFind(res.data); });
+    };
+    BaseAdapter.prototype.beforeFind = function (params) {
+        return this.promise.all([params]);
+    };
+    BaseAdapter.prototype.afterFind = function (data) {
+        return Promise.resolve(data);
+    };
     /**
      * Lifecycle Hooks:
      *
@@ -123,21 +141,6 @@ var BaseAdapter = (function () {
      * Default identity hook (return what was passed in)
      */
     BaseAdapter.prototype.afterAdd = function (data) {
-        return Promise.resolve(data);
-    };
-    BaseAdapter.prototype.find = function (params) {
-        var _this = this;
-        return this.promise.all([this.beforeFind(params)])
-            .then(function (_a) {
-            var params = _a[0];
-            return _this.persistor.find(params[0]);
-        })
-            .then(function (x) { return _this.afterFind(x); });
-    };
-    BaseAdapter.prototype.beforeFind = function (params) {
-        return this.promise.all([params]);
-    };
-    BaseAdapter.prototype.afterFind = function (data) {
         return Promise.resolve(data);
     };
     BaseAdapter.prototype.update = function (data, params) {

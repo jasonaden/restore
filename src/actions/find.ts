@@ -10,7 +10,7 @@ export function find (ResourceList, config: ActionConfig) {
   return (dispatch, store) => {
 
     dispatch(action(FINDING, ResourceList.listName));
-    debugger;
+
     return ResourceList.adapter.find(config)
     .then(
       res => {

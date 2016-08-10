@@ -26,9 +26,13 @@ export declare class BaseAdapter implements IResourceAdapter {
     generateSlug(entity: any): string;
     handleAdapterData(store: any, split: any): void;
     splitSchema(data: any): Promise<any[]>;
+    splitList(data: any): Promise<any[]>;
     findOne(config: any): Promise<any[]>;
     beforeFindOne(params: any): Promise<any[]>;
     afterFindOne(data: any): Promise<any[]>;
+    find(params?: any): Promise<any>;
+    beforeFind(params?: any): Promise<(any)[]>;
+    afterFind(data: any): Promise<any>;
     /**
      * Lifecycle Hooks:
      *
@@ -46,9 +50,6 @@ export declare class BaseAdapter implements IResourceAdapter {
      * Default identity hook (return what was passed in)
      */
     afterAdd(data: any): Promise<any>;
-    find(params?: any): Promise<any>;
-    beforeFind(params?: any): Promise<(any)[]>;
-    afterFind(data: any): Promise<any>;
     update(data: any, params?: any): Promise<any>;
     beforeUpdate(data: any, params?: any): Promise<(any)[]>;
     afterUpdate(data: any): Promise<any>;
