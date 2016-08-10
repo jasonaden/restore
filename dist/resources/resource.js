@@ -21,10 +21,9 @@ var Resource = (function () {
      * @param schema Schema         The Normalizr schema to use when parsing API data
      *                              returned for this Resource.
      */
-    function Resource(store, adapter, schema) {
+    function Resource(store, adapter) {
         this.store = store;
         this.adapter = adapter;
-        this.schema = schema;
         /**
          * Promise library to use throughout the adapter
          */

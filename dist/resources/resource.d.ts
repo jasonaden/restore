@@ -1,4 +1,3 @@
-import { Schema } from 'normalizr';
 import { IResourceAdapter, IResourceRequestConfig } from './interfaces';
 /**
  *
@@ -6,7 +5,6 @@ import { IResourceAdapter, IResourceRequestConfig } from './interfaces';
 export declare class Resource<T> {
     store: any;
     adapter: IResourceAdapter;
-    schema: Schema;
     url: string;
     baseUrl: string;
     className: string;
@@ -28,7 +26,7 @@ export declare class Resource<T> {
      * @param schema Schema         The Normalizr schema to use when parsing API data
      *                              returned for this Resource.
      */
-    constructor(store: any, adapter: IResourceAdapter, schema: Schema);
+    constructor(store: any, adapter: IResourceAdapter);
     /**
      * Check whether this resource type is loading or optionally a specific resource.
      *

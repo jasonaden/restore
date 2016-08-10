@@ -4,7 +4,8 @@ var C = require('../resources/constants');
 exports.defaultListState = Immutable.Record({
     result: Immutable.List(),
     loading: false,
-    meta: null
+    page: 1,
+    count: null
 });
 // TODO: Look at splitting out the Resource.items and ResourceList.result/sequence, etc.
 /**
@@ -48,7 +49,7 @@ function defaultListReducer(type) {
      * ```
      */
     function t(str, type) {
-        return str + '_' + type;
+        return str + '_' + type.toUpperCase();
     }
     return function (state, action) {
         if (state === void 0) { state = new exports.defaultListState(); }
@@ -57,8 +58,12 @@ function defaultListReducer(type) {
                 return state.set('loading', true);
             case t(C.FOUND, type):
                 return state.set('loading', false);
-            case t(C.SET_LIST, type):
-                return state.set('items', action.payload);
+            case t('SET_LIST_RESULT', type):
+                return state.set('result', Immutable.List(action.payload));
+            case t('SET_LIST_PAGE', type):
+                return state.set('page', action.payload);
+            case t('SET_LIST_COUNT', type):
+                return state.set('count', action.payload);
             default:
                 return state;
         }

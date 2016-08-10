@@ -24,13 +24,10 @@ export declare class BaseAdapter implements IResourceAdapter {
      * generateSlug is used when storing data in the redux store. It's the key by which the data is put into the store.
      */
     generateSlug(entity: any): string;
-    handleAdapterData(store: any, split: any): void;
-    splitSchema(data: any): Promise<any[]>;
-    splitList(data: any): Promise<any[]>;
     findOne(config: any): Promise<any[]>;
     beforeFindOne(params: any): Promise<any[]>;
     afterFindOne(data: any): Promise<any[]>;
-    find(params?: any): Promise<any>;
+    find(config?: any): Promise<any>;
     beforeFind(params?: any): Promise<(any)[]>;
     afterFind(data: any): Promise<any>;
     /**
