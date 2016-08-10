@@ -14,7 +14,8 @@ import {find} from '../actions/find';
  */
 export class ResourceList<T> {
   
-  public baseUrl: string;
+  public className: string;
+  public url: string;
 
   /**
    * Promise library to use throughout the adapter
@@ -23,7 +24,7 @@ export class ResourceList<T> {
   promise = Promise;
   
   get state () {
-    return this._state[this.listKey.toLowerCase()] || new defaultListState();
+    return this._state[this.listName.toLowerCase()] || new defaultListState();
   };
   
   private get _state () {
@@ -42,7 +43,7 @@ export class ResourceList<T> {
    * @param schema Schema         The Normalizr schema to use when parsing API data 
    *                              returned for this Resource.
    */
-  constructor(public listKey: string, public store, public adapter: IResourceAdapter) {}
+  constructor(public listName: string, public store, public adapter: IResourceAdapter) {}
     
   /**
    * Check whether this resource list is loading.
@@ -74,16 +75,11 @@ export class ResourceList<T> {
    */
   // TODO: Determine if type OR is needed
   find(config): PromiseLike<any[]> | Promise<any[]> {
-    // process config, set defaults
-    //debugger;
-    config = config ? config : {adapter:null};
-    config.adapter = config.adapter ? config.adapter : this.adapter;
-    config.className = config.className ? config.className : this.listKey;
-    config.params = config.params ? config.params : {};
-    
-
     return this.promise.all([this.beforeFind(config)])
-    .then(([config]) => this.store.dispatch(find(this, config[0])))
+    .then(([config]) => {
+      debugger;
+      this.store.dispatch(find(this, config[0]))
+    })
     .then(([data]) => this.afterFind(data));
   }
   

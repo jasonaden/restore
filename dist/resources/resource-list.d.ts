@@ -3,10 +3,11 @@ import { IResourceAdapter } from './interfaces';
  *
  */
 export declare class ResourceList<T> {
-    listKey: string;
+    listName: string;
     store: any;
     adapter: IResourceAdapter;
-    baseUrl: string;
+    className: string;
+    url: string;
     /**
      * Promise library to use throughout the adapter
      */
@@ -25,7 +26,7 @@ export declare class ResourceList<T> {
      * @param schema Schema         The Normalizr schema to use when parsing API data
      *                              returned for this Resource.
      */
-    constructor(listKey: string, store: any, adapter: IResourceAdapter);
+    constructor(listName: string, store: any, adapter: IResourceAdapter);
     /**
      * Check whether this resource list is loading.
      *

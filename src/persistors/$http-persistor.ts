@@ -10,8 +10,8 @@ import * as angular from 'angular';
 export class $httpPersistor extends BasePersistor {
   // sets the static config
   private static config: IHttpPersistorConfig = new $httpPersistorConfig();
-  private static $http: ng.IHttpService;
-  private static $q: ng.IQService;
+  public static $http: ng.IHttpService;
+  public static $q: ng.IQService;
   // uses the instance config for all operations
   private config: IHttpPersistorConfig;
 
@@ -80,13 +80,19 @@ export class $httpPersistor extends BasePersistor {
   */
 
   findOne(config): ng.IPromise<any> {
-    if( ! (config.id && config.type) ) {
-      return $httpPersistor.$q.reject("persistor findOne requires type and id"); 
+    if( ! (config.id && config.className) ) {
+      return $httpPersistor.$q.reject("persistor findOne requires className and id"); 
     }
-    config.method = 'GET';
-    config.type = config.type || 'case';
+    
+    return this.execute(config);
 
-    return this.execute(config)
+  }
+
+  find(config): ng.IPromise<any> {
+    config.method = config.method || 'GET';
+    config.className = config.className || 'case';
+    debugger;
+    return this.execute(config);
   }
 
   /* OLD

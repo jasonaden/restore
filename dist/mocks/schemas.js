@@ -24,6 +24,7 @@ exports.replySchema = new normalizr_1.Schema('reply', getOptions());
  * Schema setup for Customer
  */
 exports.customerSchema = new normalizr_1.Schema('customer', getOptions());
+exports.caseChangesSchema = new normalizr_1.Schema('changes', getOptions());
 exports.interactionSchema.define({
     case: exports.caseSchema
 });
@@ -39,11 +40,17 @@ exports.caseSchema.define({
         foober: exports.customerSchema
     },
 });
+exports.caseChangesSchema.define({
+    new: normalizr_1.arrayOf(exports.caseSchema),
+    changed: normalizr_1.arrayOf(exports.caseSchema),
+    removed: normalizr_1.arrayOf(exports.caseSchema)
+});
 exports.appSchema = {
     case: exports.caseSchema,
     interaction: exports.interactionSchema,
     draft: exports.draftSchema,
     message: exports.messageSchema,
     reply: exports.replySchema,
-    customer: exports.customerSchema
+    customer: exports.customerSchema,
+    changes: exports.caseChangesSchema
 };

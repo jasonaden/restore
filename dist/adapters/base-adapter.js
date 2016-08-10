@@ -4,6 +4,7 @@
 var base_persistor_1 = require('../persistors/base-persistor');
 var normalizr_1 = require('normalizr');
 var index_1 = require('../utils/index');
+var constants_1 = require('../resources/constants');
 /*
 * base adapter implementation.
 */
@@ -23,58 +24,77 @@ var BaseAdapter = (function () {
     BaseAdapter.prototype.generateSlug = function (entity) {
         return entity.id;
     };
-    // Use the passed-in schema to split out the data
-    BaseAdapter.prototype.splitSchema = function (data) {
-        var type = data._links.self.class;
-        if (!this.schema[type]) {
-            console.log("throwing an error", type);
-        }
-        var split = normalizr_1.normalize(data, this.schema[type]);
+    // TODO: The following is a placeholder for a static Resource
+    //  method or something outside the adapter that will be invoked by the adapter
+    //  and handed the normalized data. It takes the normalized 
+    //  data and dispatches appropriate Redux actions to update
+    //  the store. 
+    BaseAdapter.prototype.handleAdapterData = function (store, split) {
         for (var _i = 0, _a = Object.getOwnPropertyNames(split.entities); _i < _a.length; _i++) {
             var key = _a[_i];
-            this.store.dispatch(index_1.buildAction(SET_ONE, key.toUpperCase(), split.entities[key]));
+            this.store.dispatch(index_1.buildAction(constants_1.FOUND, key.toUpperCase(), split.entities[key]));
         }
-        return split;
+    };
+    // Use the passed-in schema to split out the data
+    BaseAdapter.prototype.splitSchema = function (data) {
+        // if we recieve a single item
+        var type = (data._links && data._links.self.class) || undefined;
+        // Specify the schema for other types of things
+        if (!type) {
+            // schema for /api/v2/changes
+            if (data.changed) {
+                type = 'changes';
+            }
+        }
+        // Reject if no schema match
+        if (!this.schema[type]) {
+            this.promise.reject("No schema exists for: " + type);
+        }
+        var split = normalizr_1.normalize(data, this.schema[type]);
+        this.handleAdapterData(this.store, split);
+        return this.promise.all([split]);
     };
     // with chained error catching
     // need to see about simplifying this and still letting  
     // it catch errors along the way.
-    BaseAdapter.prototype.findOne = function (params) {
+    // This sets up a promise chain that: 
+    //  1) Passes the received params to beforeFindOne()
+    //  2) Passes the beforeFindOne promise to persistor.findOne()
+    //  3) Passes the persistor.beforeFineOne promise to afterFindOne()
+    //  4) Passes the afterFindOne promise to splitSchema to normalize the data
+    BaseAdapter.prototype.findOne = function (config) {
         var _this = this;
-        return this.beforeFindOne(params)
+        return this.beforeFindOne(config)
             .then(function (beforePromise) {
-            var params = beforePromise[0];
-            return _this.persistor.findOne(params)
-                .then(null, index_1.promiseError('persistor'));
-        }, index_1.promiseError('beforePromise'))
+            var config = beforePromise[0];
+            return _this.persistor.findOne(config);
+        })
             .then(function (persistorPromise) {
             var data = persistorPromise[0];
-            return _this.afterFindOne(data)
-                .then(null, index_1.promiseError('afterFindOne'));
-        }, index_1.promiseError('persistorPromise'))
+            return _this.afterFindOne(data);
+        })
             .then(function (afterPromise) {
             var data = afterPromise[0];
             if (Object.keys(_this.schema).length) {
-                return _this.promise.all([_this.splitSchema(data)])
-                    .then(null, index_1.promiseError('normalize'));
+                return _this.splitSchema(data);
             }
             else {
-                return _this.promise.all([data])
-                    .then(null, index_1.promiseError('non-normalize'));
+                return _this.promise.all([data]);
             }
-        }, index_1.promiseError);
+        }, function (err) {
+            // TODO: Need to use some general error handler
+            return _this.promise.reject("findOne failed " + err);
+        });
     };
     // Default version is a no-op that passes along the
     //  params passed in 
     BaseAdapter.prototype.beforeFindOne = function (params) {
         return this.promise.all([params]);
-        // return this.promise.all([this.promise.reject("because")]);
     };
     // Default version is a no-op that passes along the 
     //  persistor's returned promise. 
     BaseAdapter.prototype.afterFindOne = function (data) {
         return this.promise.all([data]);
-        // return this.promise.all([this.promise.reject('no way')]);
     };
     /**
      * Lifecycle Hooks:
@@ -110,7 +130,7 @@ var BaseAdapter = (function () {
         return this.promise.all([this.beforeFind(params)])
             .then(function (_a) {
             var params = _a[0];
-            return _this.persistor.find(params);
+            return _this.persistor.find(params[0]);
         })
             .then(function (x) { return _this.afterFind(x); });
     };
@@ -144,8 +164,8 @@ var BaseAdapter = (function () {
         })
             .then(function (x) { return _this.afterDestroy(x); });
     };
-    BaseAdapter.prototype.beforeDestroy = function (data, params) {
-        return this.promise.all([data, params]);
+    BaseAdapter.prototype.beforeDestroy = function (params) {
+        return this.promise.all([params]);
     };
     BaseAdapter.prototype.afterDestroy = function (data) {
         return Promise.resolve(data);

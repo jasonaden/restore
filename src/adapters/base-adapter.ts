@@ -168,7 +168,7 @@ export class BaseAdapter implements IResourceAdapter {
   
   find (params?) {
     return this.promise.all([this.beforeFind(params)])
-    .then(([params]) => this.persistor.find(params))
+    .then(([params]) => this.persistor.find(params[0]))
     .then(x => this.afterFind(x));
   }
 

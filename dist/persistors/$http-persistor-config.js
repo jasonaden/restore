@@ -35,7 +35,7 @@ var $httpPersistorConfig = (function () {
         Object.assign(this, options);
     }
     /**
-     * Create and return a new AdapterConfig with new or updated properties assigned to it.
+     * Create and return a new PersistorConfig with new or updated properties assigned to it.
      */
     $httpPersistorConfig.prototype.extend = function (data) {
         if (data === void 0) { data = {}; }

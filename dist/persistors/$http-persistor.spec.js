@@ -2,6 +2,7 @@
 var _http_persistor_1 = require('./$http-persistor');
 var _http_persistor_config_1 = require('./$http-persistor-config');
 var caseEmbedded_1 = require('../mocks/caseEmbedded');
+var caseList_1 = require('../mocks/caseList');
 describe('$httpPersistor', function () {
     var $httpBackend;
     var $rootScope;
@@ -25,13 +26,19 @@ describe('$httpPersistor', function () {
         });
         it('to get the config', function () {
             expect(typeof PersistorClass.getConfig).toEqual('function');
-        });
-        it('to set a default config', function () {
             expect(PersistorClass.getConfig()).toEqual(config);
+        });
+        it('to set a default static config with the static setConfig method', function () {
+            var configNew = new _http_persistor_config_1.$httpPersistorConfig();
+            configNew.method = "PUT";
+            PersistorClass.setConfig(configNew);
+            expect(PersistorClass.getConfig().method).toEqual('PUT');
+            // need to set it back since there is only one class and changing
+            //  the class default affects the rest of the tests
+            configNew.method = "GET";
+            PersistorClass.setConfig(configNew);
             expect(PersistorClass.getConfig().method).toEqual('GET');
         });
-        // $http and $q properties are marked private for the TS compiler
-        // but are available so we can verify they exist
         it('to set the $http service', function () {
             expect(typeof PersistorClass.setHttp).toEqual('function');
             expect(typeof PersistorClass.getHttp()).toEqual('function');
@@ -42,7 +49,7 @@ describe('$httpPersistor', function () {
         });
     });
     describe('should have instance methods: ', function () {
-        var methods = ['setConfig', 'execute', 'doRequest'];
+        var methods = ['setConfig', 'execute', 'doRequest', 'findOne'];
         it(methods.join(','), function () {
             methods.forEach(function (item) {
                 expect(typeof persistor[item]).toEqual('function');
@@ -59,7 +66,7 @@ describe('$httpPersistor', function () {
             var newPersistor = new _http_persistor_1.$httpPersistor(newConfig);
             expect(newPersistor.getConfig().method).toEqual('PUT');
         });
-        it('by calling setConfig', function () {
+        it('by calling the instance setConfig method', function () {
             // verify default persistor has the default config
             expect(persistor.getConfig().method).toEqual('GET');
             persistor.setConfig({ method: "PATCH" });
@@ -68,6 +75,7 @@ describe('$httpPersistor', function () {
         // Can also override the config when calling persistor.execute -- 
         //  see tests below where that is done.
     });
+    // HERE 
     describe('execute method', function () {
         beforeEach(function () {
             persistor.setConfig({
@@ -97,14 +105,11 @@ describe('$httpPersistor', function () {
             });
             $httpBackend.flush();
         });
-        it('should return an array of data as it was received from the server', function (done) {
-            var localConfig = {
-                data: { id: 13 }
-            };
-            $httpBackend.expectGET('/foo/13').respond(200, caseEmbedded_1.caseEmbedded);
-            persistor.execute(localConfig)
+        it('should return an object that contains an array of data as it was received from the server', function (done) {
+            $httpBackend.expectGET('/foo').respond(200, caseList_1.caseList);
+            persistor.execute()
                 .then(function (response) {
-                expect(response.data).toEqual(caseEmbedded_1.caseEmbedded);
+                expect(response.data).toEqual(caseList_1.caseList);
                 done();
             });
             $httpBackend.flush();

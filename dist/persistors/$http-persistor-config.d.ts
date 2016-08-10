@@ -90,7 +90,7 @@ export declare class $httpPersistorConfig implements IHttpPersistorConfig {
     paramSerializer: string | ((obj: any) => string);
     constructor(options?: {});
     /**
-     * Create and return a new AdapterConfig with new or updated properties assigned to it.
+     * Create and return a new PersistorConfig with new or updated properties assigned to it.
      */
     extend(data?: {}): this;
     /**

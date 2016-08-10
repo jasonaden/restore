@@ -18,8 +18,8 @@ var ResourceList = (function () {
      * @param schema Schema         The Normalizr schema to use when parsing API data
      *                              returned for this Resource.
      */
-    function ResourceList(listKey, store, adapter) {
-        this.listKey = listKey;
+    function ResourceList(listName, store, adapter) {
+        this.listName = listName;
         this.store = store;
         this.adapter = adapter;
         /**
@@ -30,7 +30,7 @@ var ResourceList = (function () {
     }
     Object.defineProperty(ResourceList.prototype, "state", {
         get: function () {
-            return this._state[this.listKey.toLowerCase()] || new resource_list_reducer_1.defaultListState();
+            return this._state[this.listName.toLowerCase()] || new resource_list_reducer_1.defaultListState();
         },
         enumerable: true,
         configurable: true
@@ -73,16 +73,11 @@ var ResourceList = (function () {
     // TODO: Determine if type OR is needed
     ResourceList.prototype.find = function (config) {
         var _this = this;
-        // process config, set defaults
-        debugger;
-        config = config ? config : { adapter: null };
-        config.adapter = config.adapter ? config.adapter : this.adapter;
-        config.className = config.className ? config.className : this.listKey;
-        config.params = config.params ? config.params : {};
         return this.promise.all([this.beforeFind(config)])
             .then(function (_a) {
             var config = _a[0];
-            return _this.store.dispatch(find_1.find(config[0]));
+            debugger;
+            _this.store.dispatch(find_1.find(_this, config[0]));
         })
             .then(function (_a) {
             var data = _a[0];

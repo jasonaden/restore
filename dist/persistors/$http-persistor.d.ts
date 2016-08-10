@@ -3,8 +3,8 @@ import { IHttpPersistorConfig } from './$http-persistor-config';
 import * as angular from 'angular';
 export declare class $httpPersistor extends BasePersistor {
     private static config;
-    private static $http;
-    private static $q;
+    static $http: ng.IHttpService;
+    static $q: ng.IQService;
     private config;
     constructor(config?: IHttpPersistorConfig);
     static setHttp($http: ng.IHttpService): void;
@@ -15,9 +15,8 @@ export declare class $httpPersistor extends BasePersistor {
     static getConfig(): IHttpPersistorConfig;
     setConfig(config: any): void;
     getConfig(): IHttpPersistorConfig;
-    execute(config?: any): ng.IPromise<any>;
-    doRequest(config: IHttpPersistorConfig): ng.IPromise<any>;
-    findOne(data: any): Promise<{
-        id: number;
-    }>;
+    execute(config?: Object): ng.IPromise<any>;
+    doRequest(requestConfig: IHttpPersistorConfig): ng.IPromise<any>;
+    findOne(config: any): ng.IPromise<any>;
+    find(config: any): ng.IPromise<any>;
 }
