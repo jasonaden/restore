@@ -51,7 +51,7 @@ export class Resource<T> {
    * @param schema Schema         The Normalizr schema to use when parsing API data 
    *                              returned for this Resource.
    */
-  constructor(public store, public adapter: IResourceAdapter, public schema: Schema) {}
+  constructor(public store, public adapter: IResourceAdapter) {}
     
   // TODO: ADD METHODS TO GET DATA OUT OF THE RESOURCE.
   

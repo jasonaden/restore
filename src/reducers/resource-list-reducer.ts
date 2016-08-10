@@ -7,7 +7,8 @@ import * as C from '../resources/constants';
 export const defaultListState = Immutable.Record({
   result: Immutable.List(),
   loading: false,
-  meta: null
+  page: 1,
+  count: null
 });
 
 // TODO: Look at splitting out the Resource.items and ResourceList.result/sequence, etc.
@@ -52,7 +53,7 @@ export function defaultListReducer<T> (type: string): Reducer {
    * ``` 
    */
   function t (str: string, type: string): string {
-    return str + '_' + type;
+    return str + '_' + type.toUpperCase();
   }
   
   return (state = new defaultListState(), action: any) => {
@@ -64,8 +65,13 @@ export function defaultListReducer<T> (type: string): Reducer {
       case t(C.FOUND, type):
         return state.set('loading', false);
 
-      case t(C.SET_LIST, type):
-        return state.set('items', action.payload);
+      case t('SET_LIST_RESULT', type):
+        return state.set('result', Immutable.List(action.payload));
+      case t('SET_LIST_PAGE', type):
+        return state.set('page', action.payload);
+      case t('SET_LIST_COUNT', type):
+        return state.set('count', action.payload);
+
 
       default:
         return state;

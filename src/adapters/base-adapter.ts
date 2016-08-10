@@ -52,48 +52,6 @@ export class BaseAdapter implements IResourceAdapter {
     return entity.id;
   }
 
-  // TODO: The following is a placeholder for a static Resource
-  //  method or something outside the adapter that will be invoked by the adapter
-  //  and handed the normalized data. It takes the normalized 
-  //  data and dispatches appropriate Redux actions to update
-  //  the store. 
-  handleAdapterData( store, split ) {
-      for( let key of Object.getOwnPropertyNames(split.entities) ) {
-        this.store.dispatch( buildAction(SET_ONE, key.toUpperCase(), split.entities[key]) );
-      }
-  }
-
-
-  // Use the passed-in schema to split out the data
-  splitSchema( data ): Promise<any[]> {
-    // if we recieve a single item
-    let type = (data._links && data._links.self.class) || undefined;
-
-    // Specify the schema for other types of things
-    if( ! type ) {
-      // schema for /api/v2/changes
-      if( data.changed ) {
-        type = 'changes'
-      }
-    }
-
-    // Reject if no schema match
-    if( ! this.schema[type] ) {
-      this.promise.reject(`No schema exists for: ${type}`)
-    }
-
-    let split = normalize( data, this.schema[type] )   
-
-    this.handleAdapterData(this.store, split);
-
-    return this.promise.all([split]); 
-  }
-
-  splitList( data ): Promise<any[]> {
-    
-    return this.promise.all([]);
-  }
-
   // with chained error catching
   // need to see about simplifying this and still letting  
   // it catch errors along the way.
@@ -113,22 +71,6 @@ export class BaseAdapter implements IResourceAdapter {
         let [data] = persistorPromise;
         return this.afterFindOne(data);
       })      
-     
-      // Normalize the data
-      .then( 
-        (afterPromise) => {
-          let [data] = afterPromise;
-          if( Object.keys(this.schema).length ) {
-            return this.splitSchema( data )
-          } else {
-            return this.promise.all( [data] )
-          }
-        }, 
-        (err) => {
-          // TODO: Need to use some general error handler
-          return this.promise.reject("findOne failed " + err)
-        }
-      )
   } 
 
   // Default version is a no-op that passes along the
@@ -143,10 +85,12 @@ export class BaseAdapter implements IResourceAdapter {
     return this.promise.all([data]);
   }
 
-  find (params?) {
-    return this.beforeFind(params)
-    .then( ([params]) => this.persistor.find(params) )
-    .then( (res) => this.afterFind(res.data) )
+  find (config?) {
+    return this.beforeFind(config)
+    .then( ([config]) => { 
+      return this.persistor.find(config.params) 
+    })
+    .then( (res) => this.afterFind(config.listName, res.data) )
   }
 
 
