@@ -36,9 +36,8 @@ var BaseAdapter = (function () {
             var config = beforePromise[0];
             return _this.persistor.findOne(config);
         })
-            .then(function (persistorPromise) {
-            var data = persistorPromise[0];
-            return _this.afterFindOne(data);
+            .then(function (res) {
+            return _this.afterFindOne(res.data);
         });
     };
     // Default version is a no-op that passes along the

@@ -163,8 +163,8 @@ var Resource = (function () {
         var _this = this;
         return this.promise.all([this.beforeFindOne(id, config)])
             .then(function (_a) {
-            var id = _a[0], config = _a[1];
-            return _this.store.dispatch(findOne_1.findOne(id, config));
+            var config = _a[0];
+            return _this.store.dispatch(findOne_1.findOne(_this, config[0]));
         })
             .then(function (_a) {
             var data = _a[0];
