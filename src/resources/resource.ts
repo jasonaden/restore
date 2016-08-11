@@ -166,7 +166,7 @@ export class Resource<T> {
   // TODO: Fix findOne()
   findOne(id: number, config?: any): PromiseLike<any[]> {
     return this.promise.all([this.beforeFindOne(id, config)])
-    .then(([id, config]) => this.store.dispatch(findOne(id, config)))
+    .then(([config]) => this.store.dispatch(findOne(this, config[0])))
     .then(([data]) => this.afterFindOne(data));
   }
   

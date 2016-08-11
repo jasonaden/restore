@@ -67,9 +67,8 @@ export class BaseAdapter implements IResourceAdapter {
         return this.persistor.findOne(config);
       }) 
 
-      .then( (persistorPromise) => {
-        let [data] = persistorPromise;
-        return this.afterFindOne(data);
+      .then( (res) => {
+        return this.afterFindOne(res.data);
       })      
   } 
 

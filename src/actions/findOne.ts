@@ -5,21 +5,21 @@ import {FINDING_ONE, FOUND_ONE, ERROR} from '../resources/constants';
 import {splitSchema} from '../utils/splitSchema';
 import {ActionConfig} from './action-config';
 
-export function findOne (payload: any, config: ActionConfig) {
+export function findOne (Resource, config: ActionConfig) {
 
   return (dispatch, store) => {
 
-    dispatch(action(FINDING_ONE, config.className));
+    dispatch(action(FINDING_ONE, Resource.className));
     
-    return config.adapter.findOne(payload, config)
+    return Resource.adapter.findOne(config)
     .then(
       res => {
-        dispatch(action(FOUND_ONE, config.className));
+        dispatch(action(FOUND_ONE, Resource.className));
         return [res.data];
       },
       error => {
-        dispatch(action(ERROR, config.className, error));
-        return config.promise.reject(error);
+        dispatch(action(ERROR, Resource.className, error));
+        return Promise.reject(error);
       }
     );
   }
