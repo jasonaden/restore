@@ -203,7 +203,7 @@ export class Resource<T> {
    * Default identity hook (return what was passed in)
    */
   beforeFind(config?:any): any {
-    return this.promise.all([config]);
+    return config;
   }
   
   /**
