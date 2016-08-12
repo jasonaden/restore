@@ -32,6 +32,7 @@ export { BaseAdapter } from './adapters/base-adapter';
 
 // $http sample persistor
 export { $httpPersistor } from './persistors/$http-persistor';
+export { $httpPersistorConfig } from './persistors/$http-persistor-config';
 export { IPersistor } from './persistors/i-persistor';
 
 // utils

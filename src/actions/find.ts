@@ -14,11 +14,11 @@ export function find (ResourceList, config: ActionConfig) {
     return ResourceList.adapter.find(config)
     .then(
       res => {
-        dispatch(action(FOUND, config.className));
-        return [res.data];
+        dispatch(action(FOUND, config.listName.toUpperCase()));
+        return res.data;
       },
       error => {
-        dispatch(action(ERROR, config.className, error));
+        dispatch(action(ERROR, config.listName.toUpperCase(), error));
         return config.promise.reject(error);
       }
     );

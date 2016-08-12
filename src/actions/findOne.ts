@@ -15,7 +15,7 @@ export function findOne (Resource, config: ActionConfig) {
     .then(
       res => {
         dispatch(action(FOUND_ONE, Resource.className));
-        return [res.data];
+        return res.data;
       },
       error => {
         dispatch(action(ERROR, Resource.className, error));
