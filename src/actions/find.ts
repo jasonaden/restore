@@ -9,16 +9,16 @@ export function find (ResourceList, config: ActionConfig) {
 
   return (dispatch, store) => {
 
-    dispatch(action(FINDING, ResourceList.listName));
+    dispatch(action(FINDING, config.listName));
 
     return ResourceList.adapter.find(config)
     .then(
       res => {
-        dispatch(action(FOUND, config.listName.toUpperCase()));
+        dispatch(action(FOUND, config.listName));
         return res.data;
       },
       error => {
-        dispatch(action(ERROR, config.listName.toUpperCase(), error));
+        dispatch(action(ERROR, config.listName, error));
         return config.promise.reject(error);
       }
     );

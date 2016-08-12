@@ -9,10 +9,12 @@ import {IResourceAdapter, IResourceRequestConfig, IEntityState} from './interfac
 
 import {add} from '../actions/add';
 import {findOne} from '../actions/findOne';
+import {find} from '../actions/find';
 import {destroy} from '../actions/destroy';
 import {update} from '../actions/update';
 
 import {defaultEntityState} from '../reducers/resource-reducer';
+import {defaultListState} from '../reducers/resource-reducer';
 
 /**
  * 
@@ -181,6 +183,33 @@ export class Resource<T> {
    * Default identity hook (return what was passed in)
    */
   afterFindOne(data: any): PromiseLike<any[]> {
+    return this.promise.all([data]);
+  }
+
+  /**
+   * Finds items and puts them into the store.
+   * 
+   * * `beforeFind(payload[, cb])`
+   * * `afterFind(payload[, cb])`
+   */
+  // TODO: Determine if type OR is needed
+  find(config): PromiseLike<any[]> | Promise<any[]> {
+    return this.promise.all([this.beforeFind(config)])
+    .then( ([config]) => this.store.dispatch(find(this, config)) )
+    .then((data) => this.afterFind(data));
+  }
+  
+  /**
+   * Default identity hook (return what was passed in)
+   */
+  beforeFind(config?:any): any {
+    return this.promise.all([config]);
+  }
+  
+  /**
+   * Default identity hook (return what was passed in)
+   */
+  afterFind(data: any): any {
     return this.promise.all([data]);
   }
 

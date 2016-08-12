@@ -8,11 +8,6 @@ export {
   defaultReducer
 } from './reducers/resource-reducer';
 
-// ResourceList class
-export {
-  ResourceList
-} from './resources/resource-list';
-
 // resource-list reducer
 export {
   defaultListReducer
