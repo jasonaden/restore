@@ -5,21 +5,21 @@ import {FINDING, FOUND, ERROR} from '../resources/constants';
 import {splitSchema} from '../utils/splitSchema';
 import {ActionConfig} from './action-config';
 
-export function find (ResourceList, config: ActionConfig) {
+export function find (Resource, persistorConfig, adapterConfig) {
 
   return (dispatch, store) => {
 
-    dispatch(action(FINDING, config.listName));
+    dispatch(action(FINDING, adapterConfig.listName));
 
-    return ResourceList.adapter.find(config)
+    return Resource.adapter.find(persistorConfig, adapterConfig)
     .then(
       res => {
-        dispatch(action(FOUND, config.listName));
+        dispatch(action(FOUND, adapterConfig.listName));
         return res.data;
       },
       error => {
-        dispatch(action(ERROR, config.listName, error));
-        return config.promise.reject(error);
+        dispatch(action(ERROR, adapterConfig.listName, error));
+        return Promise.reject(error);
       }
     );
   }

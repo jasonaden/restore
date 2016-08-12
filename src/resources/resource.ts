@@ -113,17 +113,18 @@ export class Resource<T> {
    * * `afterUpdate(payload[, cb])`
    */
   // TODO: Create the update() action creator
-  update(payload: T, config?: any): PromiseLike<any[]> {
-    return this.promise.all([this.beforeUpdate(payload, config)])
-    .then(([payload, config]) => this.store.dispatch(update(payload, config)))
-    .then(([data]) => this.afterUpdate(data));
+  update(id:number, patch: T, persistorConfig, adapterConfig?: any): PromiseLike<any[]> {
+    return this.promise.all([this.beforeUpdate(id, patch, persistorConfig, adapterConfig)])
+    .then(([config]) => this.store.dispatch(update(this, persistorConfig, adapterConfig)))
+    .then((data) => this.afterUpdate(data));
   }
   
   /**
    * Default identity hook (return what was passed in)
    */
-  beforeUpdate(payload: T, config?: any): PromiseLike<any[]> {
-    return this.promise.all([payload, config]);
+  beforeUpdate(id: number, patch: T, persistorConfig, adapterConfig?: any) {
+    persistorConfig.data = patch;
+    return [persistorConfig, adapterConfig];
   }
   
   /**
@@ -166,17 +167,17 @@ export class Resource<T> {
    * * `afterFindOne(payload[, cb])`
    */
   // TODO: Fix findOne()
-  findOne(id: number, config?: any): PromiseLike<any[]> {
-    return this.promise.all([this.beforeFindOne(id, config)])
-    .then(([config]) => this.store.dispatch(findOne(this, config[0])))
+  findOne(id: number, persistorConfig, adapterConfig?: any): PromiseLike<any[]> {
+    return this.promise.all(this.beforeFindOne(id, persistorConfig, adapterConfig))
+    .then(([persistorConfig, adapterConfig]) => this.store.dispatch(findOne(this, persistorConfig, adapterConfig)))
     .then((data) => this.afterFindOne(data));
   }
   
   /**
    * Default identity hook (return what was passed in)
    */
-  beforeFindOne(id: number, config?: IResourceRequestConfig): PromiseLike<any[]> {
-    return this.promise.all([id, config]);
+  beforeFindOne(id: number, persistorConfig, adapterConfig?: any): PromiseLike<any[]> {
+    return [persistorConfig, adapterConfig];
   }
   
   /**
@@ -193,17 +194,17 @@ export class Resource<T> {
    * * `afterFind(payload[, cb])`
    */
   // TODO: Determine if type OR is needed
-  find(config): PromiseLike<any[]> | Promise<any[]> {
-    return this.promise.all([this.beforeFind(config)])
-    .then( ([config]) => this.store.dispatch(find(this, config)) )
+  find(persistorConfig, adapterConfig): PromiseLike<any[]> | Promise<any[]> {
+    return this.promise.all(this.beforeFind(persistorConfig, adapterConfig))
+    .then( ([persistorConfig, adapterConfig]) => this.store.dispatch(find(this, persistorConfig, adapterConfig)) )
     .then((data) => this.afterFind(data));
   }
   
   /**
    * Default identity hook (return what was passed in)
    */
-  beforeFind(config?:any): any {
-    return config;
+  beforeFind(persistorConfig, adapterConfig?:any): any {
+    return [persistorConfig, adapterConfig];
   }
   
   /**

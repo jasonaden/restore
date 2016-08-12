@@ -60,44 +60,42 @@ export class BaseAdapter implements IResourceAdapter {
   //  2) Passes the beforeFindOne promise to persistor.findOne()
   //  3) Passes the persistor.beforeFineOne promise to afterFindOne()
   //  4) Passes the afterFindOne promise to splitSchema to normalize the data
-  findOne (config) {
-    return this.beforeFindOne(config)
-      .then( (beforePromise) => {
-        let [config] = beforePromise;
-        return this.persistor.findOne(config);
+  findOne (persistorConfig, adapterConfig) {
+    return this.promise.all(this.beforeFindOne(persistorConfig, adapterConfig))
+      .then( ([persistorConfig, adapterConfig]) => {
+        return this.persistor.findOne(persistorConfig);
       }) 
-
       .then( (res) => {
-        return this.afterFindOne(res.data);
+        return this.afterFindOne(res.data, adapterConfig);
       })      
   } 
 
   // Default version is a no-op that passes along the
   //  params passed in 
-  beforeFindOne(params): Promise<any[]> {
-    return this.promise.all([params]);
+  beforeFindOne(persistorConfig, adapterConfig) {
+    return [persistorConfig, adapterConfig];
   }
   
   // Default version is a no-op that passes along the 
   //  persistor's returned promise. 
-  afterFindOne(data: any): Promise<any[]> {
+  afterFindOne(data: any, adapterConfig?:any): Promise<any[]> {
     return this.promise.all([data]);
   }
 
-  find (config?) {
-    return this.beforeFind(config)
-    .then( ([config]) => { 
-      return this.persistor.find(config.params) 
+  find (persistorConfig, adapterConfig) {
+    return this.promise.all(this.beforeFind(persistorConfig, adapterConfig))
+    .then( ([persistorConfig, adapterConfig]) => { 
+      return this.persistor.find(persistorConfig) 
     })
-    .then( (res) => this.afterFind(config.listName, res.data) )
+    .then( (res) => this.afterFind(res.data, adapterConfig) )
   }
 
 
-  beforeFind(params?): Promise<(any)[]> {
-    return this.promise.all([params]);
+  beforeFind(persistorConfig, adapterConfig): any {
+    return [persistorConfig, adapterConfig];
   }
   
-  afterFind(data: any): Promise<any> {
+  afterFind(data: any, adapterConfig?:any): Promise<any> {
     return Promise.resolve(data);
   }
   /**
@@ -128,14 +126,14 @@ export class BaseAdapter implements IResourceAdapter {
     return Promise.resolve(data);
   }
   
-  update (data, params?) {
-    return this.beforeUpdate(data, params)
-    .then(([data, config]) => this.persistor.update(data, config))
-    .then(x => this.afterUpdate(x));
+  update (config) {
+    return this.promise.all([this.beforeUpdate(config)])
+    .then(([config]) => this.persistor.update(config))
+    .then(x => this.afterUpdate(x.data));
   }
 
-  beforeUpdate(data, params?): Promise<(any)[]> {
-    return this.promise.all([data, params]);
+  beforeUpdate(config): Promise<(any)[]> {
+    return config;
   }
   
   afterUpdate(data: any): Promise<any> {

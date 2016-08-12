@@ -6,7 +6,7 @@ import {joinUrl} from '../utils/joinUrl';
 
 
 export function generateHttpConfig ($q: ng.IQService, config: IResourceRequestConfig): ng.IPromise<IResourceRequestConfig> {
-  
+
   config = Object.assign({}, config);
   
   config.url = joinUrl(config.url, config.baseUrl);

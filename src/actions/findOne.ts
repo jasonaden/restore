@@ -5,13 +5,13 @@ import {FINDING_ONE, FOUND_ONE, ERROR} from '../resources/constants';
 import {splitSchema} from '../utils/splitSchema';
 import {ActionConfig} from './action-config';
 
-export function findOne (Resource, config: ActionConfig) {
+export function findOne (Resource, persistorConfig, adapterConfig) {
 
   return (dispatch, store) => {
 
     dispatch(action(FINDING_ONE, Resource.className));
     
-    return Resource.adapter.findOne(config)
+    return Resource.adapter.findOne(persistorConfig, adapterConfig)
     .then(
       res => {
         dispatch(action(FOUND_ONE, Resource.className));

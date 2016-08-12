@@ -80,17 +80,15 @@ export class $httpPersistor extends BasePersistor {
   */
 
   findOne(config): ng.IPromise<any> {
-    if( ! (config.url && config.className) ) {
-      return $httpPersistor.$q.reject("persistor findOne requires className and url"); 
-    }
-    
     return this.execute(config);
-
   }
 
   find(config): ng.IPromise<any> {
-    config.method = config.method || 'GET';
-    config.className = config.className || 'case';
+    return this.execute(config);
+  }
+
+  update(config): ng.IPromise<any> {
+    config.method = config.method || 'PATCH';
     return this.execute(config);
   }
 
