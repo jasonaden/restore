@@ -92,25 +92,14 @@ export class $httpPersistor extends BasePersistor {
     return this.execute(config);
   }
 
+  destroy(config): ng.IPromise<any> {
+    config.method = config.method || 'DELETE';
+    return this.execute(config);
+  }
+
   /* OLD
   create (data, params?) {
     return $httpPersistor.$http.post('', data);
-  }
-
-  update (data, params?, base?) {
-    return $httpPersistor.$http.patch('', data);
-  }
-
-  findOne (params) {
-    return $httpPersistor.$http.get('');
-  }
-
-  find (options): Promise<any[]> {
-    return $httpPersistor.$http.get('')
-  }
-
-  destroy (params) {
-    return $httpPersistor.$http.delete('');
   }
   */
 

@@ -142,14 +142,14 @@ export class BaseAdapter implements IResourceAdapter {
     return Promise.resolve(data);
   }
   
-  destroy (persistorConfig, adapterConfig) {
-    return this.promise.all(this.beforeDestroy(persistorConfig, adapterConfig))
+  destroy (id, persistorConfig, adapterConfig) {
+    return this.promise.all(this.beforeDestroy(id, persistorConfig, adapterConfig))
     .then(([persistorConfig, adapterConfig]) => this.persistor.destroy(persistorConfig))
     .then(x => this.afterDestroy(x));
   }
 
-  beforeDestroy(params): Promise<(any)[]> {
-    return this.promise.all([params]);
+  beforeDestroy(persistorConfig, adapterConfig):any {
+    return [persistorConfig, adapterConfig];
   }
   
   afterDestroy(data: any): Promise<any> {

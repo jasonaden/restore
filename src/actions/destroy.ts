@@ -15,7 +15,7 @@ export function destroy (Resource, persistorConfig, adapterConfig) {
     .then(
       res => {
         dispatch(action(DESTROYED, Resource.className));
-        return [res.data];
+        return res;
       },
       error => {
         dispatch(action(ERROR, Resource.className, error));
