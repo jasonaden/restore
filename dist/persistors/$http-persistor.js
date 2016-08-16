@@ -70,14 +70,13 @@ var $httpPersistor = (function (_super) {
     }
     */
     $httpPersistor.prototype.findOne = function (config) {
-        if (!(config.url && config.className)) {
-            return $httpPersistor.$q.reject("persistor findOne requires className and url");
-        }
         return this.execute(config);
     };
     $httpPersistor.prototype.find = function (config) {
-        config.method = config.method || 'GET';
-        config.className = config.className || 'case';
+        return this.execute(config);
+    };
+    $httpPersistor.prototype.update = function (config) {
+        config.method = config.method || 'PATCH';
         return this.execute(config);
     };
     // sets the static config

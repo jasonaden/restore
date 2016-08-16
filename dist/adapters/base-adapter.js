@@ -29,40 +29,40 @@ var BaseAdapter = (function () {
     //  2) Passes the beforeFindOne promise to persistor.findOne()
     //  3) Passes the persistor.beforeFineOne promise to afterFindOne()
     //  4) Passes the afterFindOne promise to splitSchema to normalize the data
-    BaseAdapter.prototype.findOne = function (config) {
+    BaseAdapter.prototype.findOne = function (persistorConfig, adapterConfig) {
         var _this = this;
-        return this.beforeFindOne(config)
-            .then(function (beforePromise) {
-            var config = beforePromise[0];
-            return _this.persistor.findOne(config);
+        return this.promise.all(this.beforeFindOne(persistorConfig, adapterConfig))
+            .then(function (_a) {
+            var persistorConfig = _a[0], adapterConfig = _a[1];
+            return _this.persistor.findOne(persistorConfig);
         })
             .then(function (res) {
-            return _this.afterFindOne(res.data);
+            return _this.afterFindOne(res.data, adapterConfig);
         });
     };
     // Default version is a no-op that passes along the
     //  params passed in 
-    BaseAdapter.prototype.beforeFindOne = function (params) {
-        return this.promise.all([params]);
+    BaseAdapter.prototype.beforeFindOne = function (persistorConfig, adapterConfig) {
+        return [persistorConfig, adapterConfig];
     };
     // Default version is a no-op that passes along the 
     //  persistor's returned promise. 
-    BaseAdapter.prototype.afterFindOne = function (data) {
+    BaseAdapter.prototype.afterFindOne = function (data, adapterConfig) {
         return this.promise.all([data]);
     };
-    BaseAdapter.prototype.find = function (config) {
+    BaseAdapter.prototype.find = function (persistorConfig, adapterConfig) {
         var _this = this;
-        return this.beforeFind(config)
+        return this.promise.all(this.beforeFind(persistorConfig, adapterConfig))
             .then(function (_a) {
-            var config = _a[0];
-            return _this.persistor.find(config.params);
+            var persistorConfig = _a[0], adapterConfig = _a[1];
+            return _this.persistor.find(persistorConfig);
         })
-            .then(function (res) { return _this.afterFind(config.listName, res.data); });
+            .then(function (res) { return _this.afterFind(res.data, adapterConfig); });
     };
-    BaseAdapter.prototype.beforeFind = function (params) {
-        return this.promise.all([params]);
+    BaseAdapter.prototype.beforeFind = function (persistorConfig, adapterConfig) {
+        return [persistorConfig, adapterConfig];
     };
-    BaseAdapter.prototype.afterFind = function (data) {
+    BaseAdapter.prototype.afterFind = function (data, adapterConfig) {
         return Promise.resolve(data);
     };
     /**
@@ -94,17 +94,17 @@ var BaseAdapter = (function () {
     BaseAdapter.prototype.afterAdd = function (data) {
         return Promise.resolve(data);
     };
-    BaseAdapter.prototype.update = function (data, params) {
+    BaseAdapter.prototype.update = function (config) {
         var _this = this;
-        return this.beforeUpdate(data, params)
+        return this.promise.all([this.beforeUpdate(config)])
             .then(function (_a) {
-            var data = _a[0], config = _a[1];
-            return _this.persistor.update(data, config);
+            var config = _a[0];
+            return _this.persistor.update(config);
         })
-            .then(function (x) { return _this.afterUpdate(x); });
+            .then(function (x) { return _this.afterUpdate(x.data); });
     };
-    BaseAdapter.prototype.beforeUpdate = function (data, params) {
-        return this.promise.all([data, params]);
+    BaseAdapter.prototype.beforeUpdate = function (config) {
+        return config;
     };
     BaseAdapter.prototype.afterUpdate = function (data) {
         return Promise.resolve(data);

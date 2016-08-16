@@ -1,2 +1,1 @@
-import { ActionConfig } from './action-config';
-export declare function findOne(Resource: any, config: ActionConfig): (dispatch: any, store: any) => any;
+export declare function findOne(Resource: any, persistorConfig: any, adapterConfig: any): (dispatch: any, store: any) => any;

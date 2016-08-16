@@ -14,23 +14,18 @@ import {destroy} from '../actions/destroy';
 import {update} from '../actions/update';
 
 import {defaultEntityState} from '../reducers/resource-reducer';
-import {defaultListState} from '../reducers/resource-reducer';
 
 /**
  * 
  */
 export class Resource<T> {
   
-  // TODO: Move URL down the stack. Needs to be part of the adapter config passed into the Resource constructor
   public url: string;
-  // TODO: Move baseUrl down into the adapter or probably the persistence layer
-  public baseUrl: string;
   public className: string;
 
   /**
    * Promise library to use throughout the adapter
    */
-  // TODO: Move to constructor? So it can be there when creating the resource instance.
   promise = Promise;
   
   get state () {
@@ -86,25 +81,25 @@ export class Resource<T> {
    * * `beforeCreate(payload[, cb])`
    * * `afterCreate(payload[, cb])`
    */
-  add(payload: T, config?: any): PromiseLike<any[]> {
-    return this.promise.all([this.beforeAdd(payload, config)])
-    .then(([payload, config]) => this.store.dispatch(add(payload, config)))
-    .then(([data]) => this.afterAdd(data));
-  }
+  // add(payload: T, config?: any): PromiseLike<any[]> {
+  //   return this.promise.all([this.beforeAdd(payload, config)])
+  //   .then(([payload, config]) => this.store.dispatch(add(payload, config)))
+  //   .then(([data]) => this.afterAdd(data));
+  // }
   
   /**
    * Default identity hook (return what was passed in)
    */
-  beforeAdd(payload: T, config?: any): PromiseLike<any[]> {
-    return this.promise.all([payload, config]);
-  }
+  // beforeAdd(payload: T, config?: any): PromiseLike<any[]> {
+  //   return this.promise.all([payload, config]);
+  // }
   
   /**
    * Default identity hook (return what was passed in)
    */
-  afterAdd(data: any): PromiseLike<any[]> {
-    return this.promise.all([data]);
-  }
+  // afterAdd(data: any): PromiseLike<any[]> {
+  //   return this.promise.all([data]);
+  // }
   
   /**
    * Lifecycle Hooks:
@@ -112,27 +107,26 @@ export class Resource<T> {
    * * `beforeUpdate(payload[, cb])`
    * * `afterUpdate(payload[, cb])`
    */
-  // TODO: Create the update() action creator
-  update(id:number, patch: T, persistorConfig, adapterConfig?: any): PromiseLike<any[]> {
-    return this.promise.all([this.beforeUpdate(id, patch, persistorConfig, adapterConfig)])
-    .then(([config]) => this.store.dispatch(update(this, persistorConfig, adapterConfig)))
-    .then((data) => this.afterUpdate(data));
-  }
+  // update(id:number, patch: T, persistorConfig, adapterConfig?: any): PromiseLike<any[]> {
+  //   return this.promise.all([this.beforeUpdate(id, patch, persistorConfig, adapterConfig)])
+  //   .then(([config]) => this.store.dispatch(update(this, persistorConfig, adapterConfig)))
+  //   .then((data) => this.afterUpdate(data));
+  // }
   
   /**
    * Default identity hook (return what was passed in)
    */
-  beforeUpdate(id: number, patch: T, persistorConfig, adapterConfig?: any) {
-    persistorConfig.data = patch;
-    return [persistorConfig, adapterConfig];
-  }
+  // beforeUpdate(id: number, patch: T, persistorConfig, adapterConfig?: any) {
+  //   persistorConfig.data = patch;
+  //   return [persistorConfig, adapterConfig];
+  // }
   
   /**
    * Default identity hook (return what was passed in)
    */
-  afterUpdate(data: any): PromiseLike<any[]> {
-    return this.promise.all([data]);
-  }
+  // afterUpdate(data: any): PromiseLike<any[]> {
+  //   return this.promise.all([data]);
+  // }
   
   /**
    * Removes an item from the store.
@@ -140,11 +134,11 @@ export class Resource<T> {
    * * `beforeDestroy(payload[, cb])`
    * * `afterDestroy(payload[, cb])`
    */
-  destroy(id: string | number, config?: any): PromiseLike<any[]> {
-    return this.promise.all([this.beforeDestroy(id, config)])
-    .then(args => this.store.dispatch(destroy(id, config)))
-    .then(data => this.afterDestroy(data));
-  }
+  // destroy(id: string | number, config?: any): PromiseLike<any[]> {
+  //   return this.promise.all([this.beforeDestroy(id, config)])
+  //   .then(args => this.store.dispatch(destroy(id, config)))
+  //   .then(data => this.afterDestroy(data));
+  // }
   
   /**
    * Default identity hook (return what was passed in)
@@ -161,29 +155,31 @@ export class Resource<T> {
   }
  
   /**
-   * Finds a single and puts it into the store.
+   * Finds a single and puts it into the server store.
    * 
    * * `beforeFindOne(payload[, cb])`
    * * `afterFindOne(payload[, cb])`
    */
-  // TODO: Fix findOne()
   findOne(id: number, persistorConfig, adapterConfig?: any): PromiseLike<any[]> {
-    return this.promise.all(this.beforeFindOne(id, persistorConfig, adapterConfig))
-    .then(([persistorConfig, adapterConfig]) => this.store.dispatch(findOne(this, persistorConfig, adapterConfig)))
-    .then((data) => this.afterFindOne(data));
+    return this.promise.all( [this.beforeFindOne(id, persistorConfig, adapterConfig)] )
+    .then( ([persistorConfig, adapterConfig]) => {
+      return this.store.dispatch( findOne(this, persistorConfig, adapterConfig) )
+    })
+    .then( (data) => this.afterFindOne(data) );
   }
   
   /**
    * Default identity hook (return what was passed in)
    */
-  beforeFindOne(id: number, persistorConfig, adapterConfig?: any): PromiseLike<any[]> {
+  beforeFindOne(id: number, persistorConfig, adapterConfig?: any): (PromiseLike<any[]> | Array<any>) {
     return [persistorConfig, adapterConfig];
   }
   
   /**
    * Default identity hook (return what was passed in)
    */
-  afterFindOne(data: any): PromiseLike<any[]> {
+  afterFindOne(data: any): (PromiseLike<any[]> | Array<any>) {
+    console.log("Resource afterFindOne")
     return this.promise.all([data]);
   }
 

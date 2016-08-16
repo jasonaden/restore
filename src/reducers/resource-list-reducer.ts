@@ -23,10 +23,10 @@ export function defaultListReducer<T> (type: string): Reducer {
     return str + '_' + type.toUpperCase();
   }
   
-  return (state = new defaultListState(), action: any) => {
+  return (state: any = new defaultListState(), action: any) => {
 
     switch (action.type) {
-
+ 
       case t(C.FINDING, type):
         return state.set('loading', true);
       case t(C.FOUND, type):

@@ -19,4 +19,5 @@ export declare class $httpPersistor extends BasePersistor {
     doRequest(requestConfig: IHttpPersistorConfig): ng.IPromise<any>;
     findOne(config: any): ng.IPromise<any>;
     find(config: any): ng.IPromise<any>;
+    update(config: any): ng.IPromise<any>;
 }

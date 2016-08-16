@@ -1,16 +1,16 @@
 "use strict";
 var action_1 = require('./action');
 var constants_1 = require('../resources/constants');
-function destroy(payload, config) {
+function destroy(Resource, persistorConfig, adapterConfig) {
     return function (dispatch, store) {
-        dispatch(action_1.action(constants_1.DESTROYING, config.className));
-        return config.adapter.destroy(payload, config)
+        dispatch(action_1.action(constants_1.DESTROYING, adapterConfig.listName));
+        return Resource.adapter.destroy(persistorConfig, adapterConfig)
             .then(function (res) {
-            dispatch(action_1.action(constants_1.DESTROYED, config.className));
+            dispatch(action_1.action(constants_1.DESTROYED, adapterConfig.listName));
             return [res.data];
         }, function (error) {
-            dispatch(action_1.action(constants_1.ERROR, config.className, error));
-            return config.promise.reject(error);
+            dispatch(action_1.action(constants_1.ERROR, adapterConfig.listName, error));
+            return Promise.reject(error);
         });
     };
 }

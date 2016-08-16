@@ -5,21 +5,21 @@ import {DESTROYING, DESTROYED, ERROR} from '../resources/constants';
 import {splitSchema} from '../utils/splitSchema';
 import {ActionConfig} from './action-config';
 
-export function destroy (payload: any, config: ActionConfig) {
+export function destroy (Resource, persistorConfig, adapterConfig) {
 
   return (dispatch, store) => {
 
-    dispatch(action(DESTROYING, config.className));
+    dispatch(action(DESTROYING, adapterConfig.listName));
     
-    return config.adapter.destroy(payload, config)
+    return Resource.adapter.destroy(persistorConfig, adapterConfig)
     .then(
       res => {
-        dispatch(action(DESTROYED, config.className));
+        dispatch(action(DESTROYED, adapterConfig.listName));
         return [res.data];
       },
       error => {
-        dispatch(action(ERROR, config.className, error));
-        return config.promise.reject(error);
+        dispatch(action(ERROR, adapterConfig.listName, error));
+        return Promise.reject(error);
       }
     );
   }

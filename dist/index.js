@@ -8,9 +8,6 @@ exports.Resource = resource_1.Resource;
 // resource reducer
 var resource_reducer_1 = require('./reducers/resource-reducer');
 exports.defaultReducer = resource_reducer_1.defaultReducer;
-// ResourceList class
-var resource_list_1 = require('./resources/resource-list');
-exports.ResourceList = resource_list_1.ResourceList;
 // resource-list reducer
 var resource_list_reducer_1 = require('./reducers/resource-list-reducer');
 exports.defaultListReducer = resource_list_reducer_1.defaultListReducer;
@@ -22,6 +19,8 @@ exports.BaseAdapter = base_adapter_1.BaseAdapter;
 // $http sample persistor
 var _http_persistor_1 = require('./persistors/$http-persistor');
 exports.$httpPersistor = _http_persistor_1.$httpPersistor;
+var _http_persistor_config_1 = require('./persistors/$http-persistor-config');
+exports.$httpPersistorConfig = _http_persistor_config_1.$httpPersistorConfig;
 // utils
 var utils_1 = require('./utils');
 exports.flattenEmbedded = utils_1.flattenEmbedded;

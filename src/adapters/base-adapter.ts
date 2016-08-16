@@ -72,7 +72,7 @@ export class BaseAdapter implements IResourceAdapter {
 
   // Default version is a no-op that passes along the
   //  params passed in 
-  beforeFindOne(persistorConfig, adapterConfig) {
+  beforeFindOne(persistorConfig, adapterConfig?) {
     return [persistorConfig, adapterConfig];
   }
   

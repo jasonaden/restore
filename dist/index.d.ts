@@ -1,10 +1,10 @@
 export { Resource } from './resources/resource';
 export { defaultReducer } from './reducers/resource-reducer';
-export { ResourceList } from './resources/resource-list';
 export { defaultListReducer } from './reducers/resource-list-reducer';
 export { IResourceAdapter, IResourceRequestConfig, IEntityState } from './resources/interfaces';
 export { BaseAdapter } from './adapters/base-adapter';
 export { $httpPersistor } from './persistors/$http-persistor';
+export { $httpPersistorConfig } from './persistors/$http-persistor-config';
 export { IPersistor } from './persistors/i-persistor';
 export { flattenEmbedded, generateConfig, joinUrl, parseJson, transform } from './utils';
 export * from './resources/constants';

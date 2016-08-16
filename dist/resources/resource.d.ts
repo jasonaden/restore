@@ -1,4 +1,4 @@
-import { IResourceAdapter, IResourceRequestConfig } from './interfaces';
+import { IResourceAdapter } from './interfaces';
 /**
  *
  */
@@ -6,7 +6,6 @@ export declare class Resource<T> {
     store: any;
     adapter: IResourceAdapter;
     url: string;
-    baseUrl: string;
     className: string;
     /**
      * Promise library to use throughout the adapter
@@ -45,37 +44,30 @@ export declare class Resource<T> {
      * * `beforeCreate(payload[, cb])`
      * * `afterCreate(payload[, cb])`
      */
-    add(payload: T, config?: any): PromiseLike<any[]>;
     /**
      * Default identity hook (return what was passed in)
      */
-    beforeAdd(payload: T, config?: any): PromiseLike<any[]>;
     /**
      * Default identity hook (return what was passed in)
      */
-    afterAdd(data: any): PromiseLike<any[]>;
     /**
      * Lifecycle Hooks:
      *
      * * `beforeUpdate(payload[, cb])`
      * * `afterUpdate(payload[, cb])`
      */
-    update(payload: T, config?: any): PromiseLike<any[]>;
     /**
      * Default identity hook (return what was passed in)
      */
-    beforeUpdate(payload: T, config?: any): PromiseLike<any[]>;
     /**
      * Default identity hook (return what was passed in)
      */
-    afterUpdate(data: any): PromiseLike<any[]>;
     /**
      * Removes an item from the store.
      *
      * * `beforeDestroy(payload[, cb])`
      * * `afterDestroy(payload[, cb])`
      */
-    destroy(id: string | number, config?: any): PromiseLike<any[]>;
     /**
      * Default identity hook (return what was passed in)
      */
@@ -85,18 +77,33 @@ export declare class Resource<T> {
      */
     afterDestroy(data: any): PromiseLike<any[]>;
     /**
-     * Finds a single and puts it into the store.
+     * Finds a single and puts it into the server store.
      *
      * * `beforeFindOne(payload[, cb])`
      * * `afterFindOne(payload[, cb])`
      */
-    findOne(id: number, config?: any): PromiseLike<any[]>;
+    findOne(id: number, persistorConfig: any, adapterConfig?: any): PromiseLike<any[]>;
     /**
      * Default identity hook (return what was passed in)
      */
-    beforeFindOne(id: number, config?: IResourceRequestConfig): PromiseLike<any[]>;
+    beforeFindOne(id: number, persistorConfig: any, adapterConfig?: any): (PromiseLike<any[]> | Array<any>);
     /**
      * Default identity hook (return what was passed in)
      */
-    afterFindOne(data: any): PromiseLike<any[]>;
+    afterFindOne(data: any): (PromiseLike<any[]> | Array<any>);
+    /**
+     * Finds items and puts them into the store.
+     *
+     * * `beforeFind(payload[, cb])`
+     * * `afterFind(payload[, cb])`
+     */
+    find(persistorConfig: any, adapterConfig: any): PromiseLike<any[]> | Promise<any[]>;
+    /**
+     * Default identity hook (return what was passed in)
+     */
+    beforeFind(persistorConfig: any, adapterConfig?: any): any;
+    /**
+     * Default identity hook (return what was passed in)
+     */
+    afterFind(data: any): any;
 }

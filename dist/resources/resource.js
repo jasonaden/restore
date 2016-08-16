@@ -1,9 +1,7 @@
 "use strict";
 var Immutable = require('immutable');
-var add_1 = require('../actions/add');
 var findOne_1 = require('../actions/findOne');
-var destroy_1 = require('../actions/destroy');
-var update_1 = require('../actions/update');
+var find_1 = require('../actions/find');
 var resource_reducer_1 = require('../reducers/resource-reducer');
 /**
  *
@@ -27,7 +25,6 @@ var Resource = (function () {
         /**
          * Promise library to use throughout the adapter
          */
-        // TODO: Move to constructor? So it can be there when creating the resource instance.
         this.promise = Promise;
     }
     Object.defineProperty(Resource.prototype, "state", {
@@ -73,73 +70,58 @@ var Resource = (function () {
      * * `beforeCreate(payload[, cb])`
      * * `afterCreate(payload[, cb])`
      */
-    Resource.prototype.add = function (payload, config) {
-        var _this = this;
-        return this.promise.all([this.beforeAdd(payload, config)])
-            .then(function (_a) {
-            var payload = _a[0], config = _a[1];
-            return _this.store.dispatch(add_1.add(payload, config));
-        })
-            .then(function (_a) {
-            var data = _a[0];
-            return _this.afterAdd(data);
-        });
-    };
+    // add(payload: T, config?: any): PromiseLike<any[]> {
+    //   return this.promise.all([this.beforeAdd(payload, config)])
+    //   .then(([payload, config]) => this.store.dispatch(add(payload, config)))
+    //   .then(([data]) => this.afterAdd(data));
+    // }
     /**
      * Default identity hook (return what was passed in)
      */
-    Resource.prototype.beforeAdd = function (payload, config) {
-        return this.promise.all([payload, config]);
-    };
+    // beforeAdd(payload: T, config?: any): PromiseLike<any[]> {
+    //   return this.promise.all([payload, config]);
+    // }
     /**
      * Default identity hook (return what was passed in)
      */
-    Resource.prototype.afterAdd = function (data) {
-        return this.promise.all([data]);
-    };
+    // afterAdd(data: any): PromiseLike<any[]> {
+    //   return this.promise.all([data]);
+    // }
     /**
      * Lifecycle Hooks:
      *
      * * `beforeUpdate(payload[, cb])`
      * * `afterUpdate(payload[, cb])`
      */
-    // TODO: Create the update() action creator
-    Resource.prototype.update = function (payload, config) {
-        var _this = this;
-        return this.promise.all([this.beforeUpdate(payload, config)])
-            .then(function (_a) {
-            var payload = _a[0], config = _a[1];
-            return _this.store.dispatch(update_1.update(payload, config));
-        })
-            .then(function (_a) {
-            var data = _a[0];
-            return _this.afterUpdate(data);
-        });
-    };
+    // update(id:number, patch: T, persistorConfig, adapterConfig?: any): PromiseLike<any[]> {
+    //   return this.promise.all([this.beforeUpdate(id, patch, persistorConfig, adapterConfig)])
+    //   .then(([config]) => this.store.dispatch(update(this, persistorConfig, adapterConfig)))
+    //   .then((data) => this.afterUpdate(data));
+    // }
     /**
      * Default identity hook (return what was passed in)
      */
-    Resource.prototype.beforeUpdate = function (payload, config) {
-        return this.promise.all([payload, config]);
-    };
+    // beforeUpdate(id: number, patch: T, persistorConfig, adapterConfig?: any) {
+    //   persistorConfig.data = patch;
+    //   return [persistorConfig, adapterConfig];
+    // }
     /**
      * Default identity hook (return what was passed in)
      */
-    Resource.prototype.afterUpdate = function (data) {
-        return this.promise.all([data]);
-    };
+    // afterUpdate(data: any): PromiseLike<any[]> {
+    //   return this.promise.all([data]);
+    // }
     /**
      * Removes an item from the store.
      *
      * * `beforeDestroy(payload[, cb])`
      * * `afterDestroy(payload[, cb])`
      */
-    Resource.prototype.destroy = function (id, config) {
-        var _this = this;
-        return this.promise.all([this.beforeDestroy(id, config)])
-            .then(function (args) { return _this.store.dispatch(destroy_1.destroy(id, config)); })
-            .then(function (data) { return _this.afterDestroy(data); });
-    };
+    // destroy(id: string | number, config?: any): PromiseLike<any[]> {
+    //   return this.promise.all([this.beforeDestroy(id, config)])
+    //   .then(args => this.store.dispatch(destroy(id, config)))
+    //   .then(data => this.afterDestroy(data));
+    // }
     /**
      * Default identity hook (return what was passed in)
      */
@@ -153,34 +135,59 @@ var Resource = (function () {
         return this.promise.all([data]);
     };
     /**
-     * Finds a single and puts it into the store.
+     * Finds a single and puts it into the server store.
      *
      * * `beforeFindOne(payload[, cb])`
      * * `afterFindOne(payload[, cb])`
      */
-    // TODO: Fix findOne()
-    Resource.prototype.findOne = function (id, config) {
+    Resource.prototype.findOne = function (id, persistorConfig, adapterConfig) {
         var _this = this;
-        return this.promise.all([this.beforeFindOne(id, config)])
+        return this.promise.all([this.beforeFindOne(id, persistorConfig, adapterConfig)])
             .then(function (_a) {
-            var config = _a[0];
-            return _this.store.dispatch(findOne_1.findOne(_this, config[0]));
+            var persistorConfig = _a[0], adapterConfig = _a[1];
+            return _this.store.dispatch(findOne_1.findOne(_this, persistorConfig, adapterConfig));
         })
-            .then(function (_a) {
-            var data = _a[0];
-            return _this.afterFindOne(data);
-        });
+            .then(function (data) { return _this.afterFindOne(data); });
     };
     /**
      * Default identity hook (return what was passed in)
      */
-    Resource.prototype.beforeFindOne = function (id, config) {
-        return this.promise.all([id, config]);
+    Resource.prototype.beforeFindOne = function (id, persistorConfig, adapterConfig) {
+        return [persistorConfig, adapterConfig];
     };
     /**
      * Default identity hook (return what was passed in)
      */
     Resource.prototype.afterFindOne = function (data) {
+        console.log("Resource afterFindOne");
+        return this.promise.all([data]);
+    };
+    /**
+     * Finds items and puts them into the store.
+     *
+     * * `beforeFind(payload[, cb])`
+     * * `afterFind(payload[, cb])`
+     */
+    // TODO: Determine if type OR is needed
+    Resource.prototype.find = function (persistorConfig, adapterConfig) {
+        var _this = this;
+        return this.promise.all(this.beforeFind(persistorConfig, adapterConfig))
+            .then(function (_a) {
+            var persistorConfig = _a[0], adapterConfig = _a[1];
+            return _this.store.dispatch(find_1.find(_this, persistorConfig, adapterConfig));
+        })
+            .then(function (data) { return _this.afterFind(data); });
+    };
+    /**
+     * Default identity hook (return what was passed in)
+     */
+    Resource.prototype.beforeFind = function (persistorConfig, adapterConfig) {
+        return [persistorConfig, adapterConfig];
+    };
+    /**
+     * Default identity hook (return what was passed in)
+     */
+    Resource.prototype.afterFind = function (data) {
         return this.promise.all([data]);
     };
     return Resource;

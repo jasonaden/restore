@@ -10,7 +10,6 @@ export function findOne (Resource, persistorConfig, adapterConfig) {
   return (dispatch, store) => {
 
     dispatch(action(FINDING_ONE, Resource.className));
-    
     return Resource.adapter.findOne(persistorConfig, adapterConfig)
     .then(
       res => {

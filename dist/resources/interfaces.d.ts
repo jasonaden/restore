@@ -30,11 +30,11 @@ export interface IResourceAdapter {
     add: (data, params?) => Promise<any>;
     beforeAdd: (payload, params) => Promise<(any)[]>;
     afterAdd: (data: any) => Promise<any>;
-    find: (params?) => Promise<any> | PromiseLike<any>;
-    beforeFind: (params?) => Promise<(any)[]>;
+    find: (persistorConfig: any, adapterConfig?) => Promise<any> | PromiseLike<any>;
+    beforeFind: (persistorConfig: any, adapterConfig?) => Promise<(any)[]>;
     afterFind: (data: any) => Promise<any>;
-    findOne: (params) => Promise<any>;
-    beforeFindOne: (params) => Promise<(any)[]>;
+    findOne: (persistorConfig: any, adapterConfig?) => Promise<any>;
+    beforeFindOne: (persistorConfig: any, adapterConfig?) => Promise<(any)[]> | any[];
     afterFindOne: (data: any) => Promise<any>;
     update: (data, params?) => Promise<any>;
     beforeUpdate: (data, params?) => Promise<(any)[]>;
