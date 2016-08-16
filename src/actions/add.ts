@@ -15,7 +15,7 @@ export function add (Resource, persistorConfig, adapterConfig?: any) {
     .then(
       res => {
         dispatch(action(ADDED, Resource.className));
-        return [res.data];
+        return res.data;
       },
       error => {
         dispatch(action(ERROR, Resource.className, error));

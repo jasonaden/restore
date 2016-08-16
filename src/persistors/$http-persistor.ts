@@ -97,10 +97,9 @@ export class $httpPersistor extends BasePersistor {
     return this.execute(config);
   }
 
-  /* OLD
-  create (data, params?) {
-    return $httpPersistor.$http.post('', data);
+  create (config) {
+    config.method = config.method || 'POST';
+    return this.execute(config);
   }
-  */
 
 }
