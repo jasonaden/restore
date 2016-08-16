@@ -5,21 +5,21 @@ import {ADDING, ADDED, ERROR} from '../resources/constants';
 import {splitSchema} from '../utils/splitSchema';
 import {ActionConfig} from './action-config';
 
-export function add (payload: any, config: ActionConfig) {
+export function add (Resource, persistorConfig, adapterConfig?: any) {
 
   return (dispatch, store) => {
 
-    dispatch(action(ADDING, config.className));
+    dispatch(action(ADDING, Resource.className));
     
-    return config.adapter.add(payload, config)
+    return Resource.adapter.add(persistorConfig, adapterConfig)
     .then(
       res => {
-        dispatch(action(ADDED, config.className));
+        dispatch(action(ADDED, Resource.className));
         return [res.data];
       },
       error => {
-        dispatch(action(ERROR, config.className, error));
-        return config.promise.reject(error);
+        dispatch(action(ERROR, Resource.className, error));
+        return Promise.reject(error);
       }
     );
   }

@@ -9,16 +9,16 @@ export function destroy (Resource, persistorConfig, adapterConfig) {
 
   return (dispatch, store) => {
 
-    dispatch(action(DESTROYING, adapterConfig.listName));
+    dispatch(action(DESTROYING, Resource.className));
     
     return Resource.adapter.destroy(persistorConfig, adapterConfig)
     .then(
       res => {
-        dispatch(action(DESTROYED, adapterConfig.listName));
+        dispatch(action(DESTROYED, Resource.className));
         return [res.data];
       },
       error => {
-        dispatch(action(ERROR, adapterConfig.listName, error));
+        dispatch(action(ERROR, Resource.className, error));
         return Promise.reject(error);
       }
     );

@@ -66,7 +66,7 @@ export class BaseAdapter implements IResourceAdapter {
         return this.persistor.findOne(persistorConfig);
       }) 
       .then( (res) => {
-        return this.afterFindOne(res.data, adapterConfig);
+        return this.afterFindOne(res.data);
       })      
   } 
 
@@ -104,10 +104,10 @@ export class BaseAdapter implements IResourceAdapter {
    * * `beforeAdd(payload[, cb])`
    * * `afterAdd(payload[, cb])`
    */
-  add(data, params?): Promise<any> {
-    return this.beforeAdd(data, params) // run before hook
-    .then(([data, params]) => this.persistor.create(data, params)) // persist
-    .then(x => this.afterAdd(x)); // run after hook
+  add(persistorConfig, adapterConfig): Promise<any> {
+    return this.promise.all(this.beforeAdd(persistorConfig, adapterConfig)) // run before hook
+    .then(([persistorConfig, adapterConfig]) => this.persistor.create(persistorConfig)) // persist
+    .then(res => this.afterAdd(res.data)); // run after hook
   }
   
   /**
@@ -115,8 +115,8 @@ export class BaseAdapter implements IResourceAdapter {
    * it's possible that `payload` or `params` could be a promise that returns the 
    * payload or params, so it's not a pure identity function.
    */
-  beforeAdd(payload, params): Promise<(any)[]> {
-    return this.promise.all([payload, params]);
+  beforeAdd(persistorConfig, adapterConfig): Promise<(any)[]> {
+    return [persistorConfig, adapterConfig];
   }
   
   /**
@@ -126,23 +126,25 @@ export class BaseAdapter implements IResourceAdapter {
     return Promise.resolve(data);
   }
   
-  update (config) {
-    return this.promise.all([this.beforeUpdate(config)])
-    .then(([config]) => this.persistor.update(config))
-    .then(x => this.afterUpdate(x.data));
+  update (persistorConfig, adapterConfig) {
+    return this.promise.all(this.beforeUpdate(persistorConfig, adapterConfig))
+    .then(([persistorConfig, adapterConfig]) => {
+      return this.persistor.update(persistorConfig);
+    })
+    .then(res => this.afterUpdate(res.data));
   }
 
-  beforeUpdate(config): Promise<(any)[]> {
-    return config;
+  beforeUpdate(persistorConfig, adapterConfig): any {
+    return [persistorConfig, adapterConfig];
   }
   
   afterUpdate(data: any): Promise<any> {
     return Promise.resolve(data);
   }
   
-  destroy (params) {
-    return this.beforeDestroy(params)
-    .then(([params]) => this.persistor.destroy(params))
+  destroy (persistorConfig, adapterConfig) {
+    return this.promise.all(this.beforeDestroy(persistorConfig, adapterConfig))
+    .then(([persistorConfig, adapterConfig]) => this.persistor.destroy(persistorConfig))
     .then(x => this.afterDestroy(x));
   }
 

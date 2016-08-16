@@ -5,21 +5,21 @@ import {PATCHING, PATCHED, ERROR} from '../resources/constants';
 import {splitSchema} from '../utils/splitSchema';
 import {ActionConfig} from './action-config';
 
-export function update (Resource, config: ActionConfig) {
+export function update (Resource, persistorConfig, adapterConfig) {
 
   return (dispatch, store) => {
 
-    dispatch(action(PATCHING, config.className));
+    dispatch(action(PATCHING, Resource.className));
     
-    return Resource.adapter.update(config)
+    return Resource.adapter.update(persistorConfig, adapterConfig)
     .then(
       res => {
-        dispatch(action(PATCHED, config.className));
+        dispatch(action(PATCHED, Resource.className));
         return res.data;
       },
       error => {
-        dispatch(action(ERROR, config.className, error));
-        return config.promise.reject(error);
+        dispatch(action(ERROR, Resource.className, error));
+        return Promise.reject(error);
       }
     );
   }
