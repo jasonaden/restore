@@ -11,7 +11,6 @@ import { buildAction, promiseError } from '../utils/index';
 
 import { SET_ONE } from '../resources/constants'; 
 
-
 /*
 * base adapter implementation.
 */
@@ -52,15 +51,13 @@ export class BaseAdapter implements IResourceAdapter {
     return entity.id;
   }
 
-  // with chained error catching
-  // need to see about simplifying this and still letting  
-  // it catch errors along the way.
-  // This sets up a promise chain that: 
-  //  1) Passes the received params to beforeFindOne()
-  //  2) Passes the beforeFindOne promise to persistor.findOne()
-  //  3) Passes the persistor.beforeFineOne promise to afterFindOne()
-  //  4) Passes the afterFindOne promise to splitSchema to normalize the data
-  findOne (persistorConfig, adapterConfig) {
+  // This sets up promise chains that: 
+  //  1) Pass the received configurations to beforeFindOne() which returns an array
+  //  2) Pass the beforeFindOne array to persistor.findOne() which returns a promise
+  //  3) Pass the persistor.beforeFineOne promise to afterFindOne() which return a promise
+
+  // ******* FINDONE ********* //
+  findOne (persistorConfig:Object, adapterConfig?: Object): Promise<any> | PromiseLike<any> {
     return this.promise.all(this.beforeFindOne(persistorConfig, adapterConfig))
       .then( ([persistorConfig, adapterConfig]) => {
         return this.persistor.findOne(persistorConfig);
@@ -72,39 +69,33 @@ export class BaseAdapter implements IResourceAdapter {
 
   // Default version is a no-op that passes along the
   //  params passed in 
-  beforeFindOne(persistorConfig, adapterConfig?) {
+  beforeFindOne(persistorConfig:Object, adapterConfig?: Object): Array<Object> {
     return [persistorConfig, adapterConfig];
   }
   
   // Default version is a no-op that passes along the 
   //  persistor's returned promise. 
-  afterFindOne(data: any, adapterConfig?:any): Promise<any[]> {
+  afterFindOne(data: any, adapterConfig?: Object): Promise<any[]> {
     return this.promise.all([data]);
   }
 
-  find (persistorConfig, adapterConfig) {
+  // ******* FIND ********* //
+  find (persistorConfig:Object, adapterConfig:Object): Promise<any> | PromiseLike<any> {
     return this.promise.all(this.beforeFind(persistorConfig, adapterConfig))
     .then( ([persistorConfig, adapterConfig]) => { 
       return this.persistor.find(persistorConfig) 
     })
     .then( (res) => this.afterFind(res.data, adapterConfig) )
   }
-
-
-  beforeFind(persistorConfig, adapterConfig): any {
+  beforeFind(persistorConfig:Object, adapterConfig:Object): Array<Object> {
     return [persistorConfig, adapterConfig];
   }
-  
-  afterFind(data: any, adapterConfig?:any): Promise<any> {
+  afterFind(data: any, adapterConfig: Object): Promise<any> {
     return Promise.resolve(data);
   }
-  /**
-   * Lifecycle Hooks:
-   * 
-   * * `beforeAdd(payload[, cb])`
-   * * `afterAdd(payload[, cb])`
-   */
-  add(persistorConfig, adapterConfig): Promise<any> {
+
+  // ******* ADD ********* //
+  add(persistorConfig:Object, adapterConfig?:Object): Promise<any> | PromiseLike<any> {
     return this.promise.all(this.beforeAdd(persistorConfig, adapterConfig)) // run before hook
     .then(([persistorConfig, adapterConfig]) => this.persistor.create(persistorConfig)) // persist
     .then(res => this.afterAdd(res.data)); // run after hook
@@ -115,10 +106,9 @@ export class BaseAdapter implements IResourceAdapter {
    * it's possible that `payload` or `params` could be a promise that returns the 
    * payload or params, so it's not a pure identity function.
    */
-  beforeAdd(persistorConfig, adapterConfig): Promise<(any)[]> {
+  beforeAdd(persistorConfig: Object, adapterConfig?: Object): Array<Object> {
     return [persistorConfig, adapterConfig];
   }
-  
   /**
    * Default identity hook (return what was passed in)
    */
@@ -126,7 +116,8 @@ export class BaseAdapter implements IResourceAdapter {
     return Promise.resolve(data);
   }
   
-  update (persistorConfig, adapterConfig) {
+  // ******* UPDATE ********* //
+  update (persistorConfig: Object, adapterConfig?: Object): Promise<any> | PromiseLike<any> {
     return this.promise.all(this.beforeUpdate(persistorConfig, adapterConfig))
     .then(([persistorConfig, adapterConfig]) => {
       return this.persistor.update(persistorConfig);
@@ -134,7 +125,7 @@ export class BaseAdapter implements IResourceAdapter {
     .then(res => this.afterUpdate(res.data));
   }
 
-  beforeUpdate(persistorConfig, adapterConfig): any {
+  beforeUpdate(persistorConfig: Object, adapterConfig?: Object): Array<Object> {
     return [persistorConfig, adapterConfig];
   }
   
@@ -142,14 +133,15 @@ export class BaseAdapter implements IResourceAdapter {
     return Promise.resolve(data);
   }
   
-  destroy (persistorConfig, adapterConfig) {
-    return this.promise.all(this.beforeDestroy(persistorConfig, adapterConfig))
+  // ******* DESTROY ********* //
+  destroy (persistorConfig: Object, adapterConfig?: Object): Promise<any> | PromiseLike<any> {
+    return this.promise.all( this.beforeDestroy(persistorConfig, adapterConfig) )
     .then(([persistorConfig, adapterConfig]) => this.persistor.destroy(persistorConfig))
     .then(x => this.afterDestroy(x));
   }
 
-  beforeDestroy(params): Promise<(any)[]> {
-    return this.promise.all([params]);
+  beforeDestroy(persistorConfig: Object, adapterConfig?: Object): Array<Object> {
+    return [persistorConfig, adapterConfig];
   }
   
   afterDestroy(data: any): Promise<any> {
