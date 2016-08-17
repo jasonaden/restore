@@ -49,9 +49,6 @@ export class Resource<T> {
    *                              returned for this Resource.
    */
   constructor(public store, public adapter: IResourceAdapter) {}
-    
-  // TODO: ADD METHODS TO GET DATA OUT OF THE RESOURCE.
-  
   
   /**
    * Check whether this resource type is loading or optionally a specific resource.
@@ -81,8 +78,8 @@ export class Resource<T> {
    * * `beforeCreate(payload[, cb])`
    * * `afterCreate(payload[, cb])`
    */
-  add(payload: T, persistorConfig, adapterConfig?: any): PromiseLike<any[]> {
-    return this.promise.all(this.beforeAdd(payload, persistorConfig, adapterConfig))
+  add(payload: T, persistorConfig, adapterConfig?: Object): PromiseLike<any[]> {
+    return this.promise.all( this.beforeAdd(payload, persistorConfig, adapterConfig) )
     .then(([persistorConfig, adapterConfig]) => this.store.dispatch(add(this, persistorConfig, adapterConfig)))
     .then(([res]) => this.afterAdd(res.data));
   }
@@ -90,7 +87,8 @@ export class Resource<T> {
   /**
    * Default identity hook (return what was passed in)
    */
-  beforeAdd(payload: T, persistorConfig, adapterConfig): PromiseLike<any[]> {
+  beforeAdd(payload: T, persistorConfig, adapterConfig): Array<Object> {
+    persistorConfig.data = payload;
     return [persistorConfig, adapterConfig];
   }
   
@@ -116,7 +114,7 @@ export class Resource<T> {
   /**
    * Default identity hook (return what was passed in)
    */
-  beforeUpdate(id: number, patch: T, persistorConfig, adapterConfig?: any) {
+  beforeUpdate(id: number, patch: T, persistorConfig, adapterConfig?: Array<Object> ) {
     persistorConfig.data = patch;
     return [persistorConfig, adapterConfig];
   }
@@ -143,7 +141,7 @@ export class Resource<T> {
   /**
    * Default identity hook (return what was passed in)
    */
-  beforeDestroy(id: string | number, persistorConfig, adapterConfig): PromiseLike<any[]> {
+  beforeDestroy(id: string | number, persistorConfig, adapterConfig): Array<Object> {
     return [persistorConfig, adapterConfig];
   }
   
@@ -161,7 +159,7 @@ export class Resource<T> {
    * * `afterFindOne(payload[, cb])`
    */
   findOne(id: number, persistorConfig, adapterConfig?: any): PromiseLike<any[]> {
-    return this.promise.all( [this.beforeFindOne(id, persistorConfig, adapterConfig)] )
+    return this.promise.all( this.beforeFindOne(id, persistorConfig, adapterConfig) )
     .then( ([persistorConfig, adapterConfig]) => {
       return this.store.dispatch( findOne(this, persistorConfig, adapterConfig) )
     })
@@ -169,9 +167,9 @@ export class Resource<T> {
   }
   
   /**
-   * Default identity hook (return what was passed in)
+   * Default identity hook (return what was passed in) 
    */
-  beforeFindOne(id: number, persistorConfig, adapterConfig?: any): (PromiseLike<any[]> | Array<any>) {
+  beforeFindOne(id: number, persistorConfig: Object, adapterConfig?: Object): Array<Object> {
     return [persistorConfig, adapterConfig];
   }
   
@@ -190,7 +188,7 @@ export class Resource<T> {
    * * `afterFind(payload[, cb])`
    */
   // TODO: Determine if type OR is needed
-  find(persistorConfig, adapterConfig): PromiseLike<any[]> | Promise<any[]> {
+  find(persistorConfig, adapterConfig): PromiseLike<any[]>  {
     return this.promise.all(this.beforeFind(persistorConfig, adapterConfig))
     .then( ([persistorConfig, adapterConfig]) => this.store.dispatch(find(this, persistorConfig, adapterConfig)) )
     .then((data) => this.afterFind(data));
@@ -199,7 +197,7 @@ export class Resource<T> {
   /**
    * Default identity hook (return what was passed in)
    */
-  beforeFind(persistorConfig, adapterConfig?:any): any {
+  beforeFind(persistorConfig, adapterConfig?:any): Array<Object> {
     return [persistorConfig, adapterConfig];
   }
   

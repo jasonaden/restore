@@ -21,14 +21,11 @@ var BaseAdapter = (function () {
     BaseAdapter.prototype.generateSlug = function (entity) {
         return entity.id;
     };
-    // with chained error catching
-    // need to see about simplifying this and still letting  
-    // it catch errors along the way.
-    // This sets up a promise chain that: 
-    //  1) Passes the received params to beforeFindOne()
-    //  2) Passes the beforeFindOne promise to persistor.findOne()
-    //  3) Passes the persistor.beforeFineOne promise to afterFindOne()
-    //  4) Passes the afterFindOne promise to splitSchema to normalize the data
+    // This sets up promise chains that: 
+    //  1) Pass the received configurations to beforeFindOne() which returns an array
+    //  2) Pass the beforeFindOne array to persistor.findOne() which returns a promise
+    //  3) Pass the persistor.beforeFineOne promise to afterFindOne() which return a promise
+    // ******* FINDONE ********* //
     BaseAdapter.prototype.findOne = function (persistorConfig, adapterConfig) {
         var _this = this;
         return this.promise.all(this.beforeFindOne(persistorConfig, adapterConfig))
@@ -37,7 +34,7 @@ var BaseAdapter = (function () {
             return _this.persistor.findOne(persistorConfig);
         })
             .then(function (res) {
-            return _this.afterFindOne(res.data, adapterConfig);
+            return _this.afterFindOne(res.data);
         });
     };
     // Default version is a no-op that passes along the
@@ -50,6 +47,7 @@ var BaseAdapter = (function () {
     BaseAdapter.prototype.afterFindOne = function (data, adapterConfig) {
         return this.promise.all([data]);
     };
+    // ******* FIND ********* //
     BaseAdapter.prototype.find = function (persistorConfig, adapterConfig) {
         var _this = this;
         return this.promise.all(this.beforeFind(persistorConfig, adapterConfig))
@@ -65,28 +63,23 @@ var BaseAdapter = (function () {
     BaseAdapter.prototype.afterFind = function (data, adapterConfig) {
         return Promise.resolve(data);
     };
-    /**
-     * Lifecycle Hooks:
-     *
-     * * `beforeAdd(payload[, cb])`
-     * * `afterAdd(payload[, cb])`
-     */
-    BaseAdapter.prototype.add = function (data, params) {
+    // ******* ADD ********* //
+    BaseAdapter.prototype.add = function (persistorConfig, adapterConfig) {
         var _this = this;
-        return this.beforeAdd(data, params) // run before hook
+        return this.promise.all(this.beforeAdd(persistorConfig, adapterConfig)) // run before hook
             .then(function (_a) {
-            var data = _a[0], params = _a[1];
-            return _this.persistor.create(data, params);
+            var persistorConfig = _a[0], adapterConfig = _a[1];
+            return _this.persistor.create(persistorConfig);
         }) // persist
-            .then(function (x) { return _this.afterAdd(x); }); // run after hook
+            .then(function (res) { return _this.afterAdd(res.data); }); // run after hook
     };
     /**
      * Default hook (return what was passed in). Because .all is being used,
      * it's possible that `payload` or `params` could be a promise that returns the
      * payload or params, so it's not a pure identity function.
      */
-    BaseAdapter.prototype.beforeAdd = function (payload, params) {
-        return this.promise.all([payload, params]);
+    BaseAdapter.prototype.beforeAdd = function (persistorConfig, adapterConfig) {
+        return [persistorConfig, adapterConfig];
     };
     /**
      * Default identity hook (return what was passed in)
@@ -94,32 +87,34 @@ var BaseAdapter = (function () {
     BaseAdapter.prototype.afterAdd = function (data) {
         return Promise.resolve(data);
     };
-    BaseAdapter.prototype.update = function (config) {
+    // ******* UPDATE ********* //
+    BaseAdapter.prototype.update = function (persistorConfig, adapterConfig) {
         var _this = this;
-        return this.promise.all([this.beforeUpdate(config)])
+        return this.promise.all(this.beforeUpdate(persistorConfig, adapterConfig))
             .then(function (_a) {
-            var config = _a[0];
-            return _this.persistor.update(config);
+            var persistorConfig = _a[0], adapterConfig = _a[1];
+            return _this.persistor.update(persistorConfig);
         })
-            .then(function (x) { return _this.afterUpdate(x.data); });
+            .then(function (res) { return _this.afterUpdate(res.data); });
     };
-    BaseAdapter.prototype.beforeUpdate = function (config) {
-        return config;
+    BaseAdapter.prototype.beforeUpdate = function (persistorConfig, adapterConfig) {
+        return [persistorConfig, adapterConfig];
     };
     BaseAdapter.prototype.afterUpdate = function (data) {
         return Promise.resolve(data);
     };
-    BaseAdapter.prototype.destroy = function (params) {
+    // ******* DESTROY ********* //
+    BaseAdapter.prototype.destroy = function (persistorConfig, adapterConfig) {
         var _this = this;
-        return this.beforeDestroy(params)
+        return this.promise.all(this.beforeDestroy(persistorConfig, adapterConfig))
             .then(function (_a) {
-            var params = _a[0];
-            return _this.persistor.destroy(params);
+            var persistorConfig = _a[0], adapterConfig = _a[1];
+            return _this.persistor.destroy(persistorConfig);
         })
             .then(function (x) { return _this.afterDestroy(x); });
     };
-    BaseAdapter.prototype.beforeDestroy = function (params) {
-        return this.promise.all([params]);
+    BaseAdapter.prototype.beforeDestroy = function (persistorConfig, adapterConfig) {
+        return [persistorConfig, adapterConfig];
     };
     BaseAdapter.prototype.afterDestroy = function (data) {
         return Promise.resolve(data);

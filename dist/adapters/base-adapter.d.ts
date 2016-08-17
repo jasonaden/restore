@@ -24,33 +24,27 @@ export declare class BaseAdapter implements IResourceAdapter {
      * generateSlug is used when storing data in the redux store. It's the key by which the data is put into the store.
      */
     generateSlug(entity: any): string;
-    findOne(persistorConfig: any, adapterConfig: any): Promise<any[]>;
-    beforeFindOne(persistorConfig: any, adapterConfig?: any): any[];
-    afterFindOne(data: any, adapterConfig?: any): Promise<any[]>;
-    find(persistorConfig: any, adapterConfig: any): Promise<any>;
-    beforeFind(persistorConfig: any, adapterConfig: any): any;
-    afterFind(data: any, adapterConfig?: any): Promise<any>;
-    /**
-     * Lifecycle Hooks:
-     *
-     * * `beforeAdd(payload[, cb])`
-     * * `afterAdd(payload[, cb])`
-     */
-    add(data: any, params?: any): Promise<any>;
+    findOne(persistorConfig: Object, adapterConfig?: Object): Promise<any> | PromiseLike<any>;
+    beforeFindOne(persistorConfig: Object, adapterConfig?: Object): Array<Object>;
+    afterFindOne(data: any, adapterConfig?: Object): Promise<any[]>;
+    find(persistorConfig: Object, adapterConfig: Object): Promise<any> | PromiseLike<any>;
+    beforeFind(persistorConfig: Object, adapterConfig: Object): Array<Object>;
+    afterFind(data: any, adapterConfig: Object): Promise<any>;
+    add(persistorConfig: Object, adapterConfig?: Object): Promise<any> | PromiseLike<any>;
     /**
      * Default hook (return what was passed in). Because .all is being used,
      * it's possible that `payload` or `params` could be a promise that returns the
      * payload or params, so it's not a pure identity function.
      */
-    beforeAdd(payload: any, params: any): Promise<(any)[]>;
+    beforeAdd(persistorConfig: Object, adapterConfig?: Object): Array<Object>;
     /**
      * Default identity hook (return what was passed in)
      */
     afterAdd(data: any): Promise<any>;
-    update(config: any): Promise<any>;
-    beforeUpdate(config: any): Promise<(any)[]>;
+    update(persistorConfig: Object, adapterConfig?: Object): Promise<any> | PromiseLike<any>;
+    beforeUpdate(persistorConfig: Object, adapterConfig?: Object): Array<Object>;
     afterUpdate(data: any): Promise<any>;
-    destroy(params: any): Promise<any>;
-    beforeDestroy(params: any): Promise<(any)[]>;
+    destroy(persistorConfig: Object, adapterConfig?: Object): Promise<any> | PromiseLike<any>;
+    beforeDestroy(persistorConfig: Object, adapterConfig?: Object): Array<Object>;
     afterDestroy(data: any): Promise<any>;
 }

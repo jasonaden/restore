@@ -31,21 +31,26 @@ export interface IResourceAdapter {
   // constructor (persistor?: IAdapterPersistor) {
   //   this.persistor = persistor ? persistor : new BaseAdapterpersistor();
   // }
-  add: (data, params?) => Promise<any>;
-  beforeAdd: (payload, params) => Promise<(any)[]>;
-  afterAdd: (data: any) => Promise<any>;
-  find: (persistorConfig: any, adapterConfig?) => Promise<any> | PromiseLike<any>;
-  beforeFind: (persistorConfig: any, adapterConfig?) => Promise<(any)[]>;
-  afterFind: (data: any) => Promise<any>;
-  findOne: (persistorConfig: any, adapterConfig?) => Promise<any>;
-  beforeFindOne: (persistorConfig: any, adapterConfig?) => Promise<(any)[]> | any[];
-  afterFindOne: (data: any) => Promise<any>;
-  update: (data, params?) => Promise<any>;
-  beforeUpdate: (data, params?) => Promise<(any)[]>;
-  afterUpdate: (data: any) => Promise<any>;
-  destroy: (params) => Promise<any>;
-  beforeDestroy: (params) => Promise<(any)[]>;
-  afterDestroy: (data: any) => Promise<any>;
+  // add: (data, params?) => Promise<any>;
+  add: (persistorConfig: Object, adapterConfig?: Object) => Promise<any> | PromiseLike<any>;
+  beforeAdd: (persistorConfig: Object, adapterConfig?: Object) => Array<Object>;
+  afterAdd: (data: any, adapterConfig?: Object) => Promise<any>;
+
+  find: (persistorConfig: Object, adapterConfig: Object) => Promise<any> | PromiseLike<any>;
+  beforeFind: (persistorConfig: Object, adapterConfig: Object) => Array<Object>;
+  afterFind: (data: any, adapterConfig: Object) => Promise<any>;
+
+  findOne: (persistorConfig: Object, adapterConfig?: Object) => Promise<any> | PromiseLike<any>;
+  beforeFindOne: (persistorConfig: Object, adapterConfig?: Object) => Array<Object>;
+  afterFindOne: (data: any, adapterConfig?: Object) => Promise<any>;
+
+  update: (data, persistorConfig: Object, adapterConfig?: Object) => Promise<any> | PromiseLike<any>;
+  beforeUpdate: (data, persistorConfig: Object, adapterConfig?: Object) => Array<Object>;
+  afterUpdate: (data: any, adapterConfig?: Object) => Promise<any>;
+
+  destroy: (persistorConfig: Object, adapterConfig?: Object) => Promise<any> | PromiseLike<any>;
+  beforeDestroy: (persistorConfig: Object, adapterConfig?: Object) => Array<Object>;
+  afterDestroy: (data: any, adapterConfig?: Object) => Promise<any>;
 }
 
 /**

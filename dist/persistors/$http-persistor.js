@@ -79,6 +79,14 @@ var $httpPersistor = (function (_super) {
         config.method = config.method || 'PATCH';
         return this.execute(config);
     };
+    $httpPersistor.prototype.destroy = function (config) {
+        config.method = config.method || 'DELETE';
+        return this.execute(config);
+    };
+    $httpPersistor.prototype.create = function (config) {
+        config.method = config.method || 'POST';
+        return this.execute(config);
+    };
     // sets the static config
     $httpPersistor.config = new _http_persistor_config_1.$httpPersistorConfig();
     return $httpPersistor;

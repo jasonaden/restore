@@ -1,2 +1,1 @@
-import { ActionConfig } from './action-config';
-export declare function add(payload: any, config: ActionConfig): (dispatch: any, store: any) => Promise<any[]>;
+export declare function add(Resource: any, persistorConfig: any, adapterConfig?: any): (dispatch: any, store: any) => any;

@@ -47,7 +47,8 @@ describe('Resource', function () {
     var testResource;
     beforeEach(function () {
         var store = mockStore({});
-        testResource = new TestResource(store, adapter, schema);
+        // testResource = new TestResource(store, adapter, schema);
+        testResource = new TestResource(store, adapter);
     });
     it('should have isLoading method default to false', function () {
         expect(testResource.isLoading()).toBe(false);

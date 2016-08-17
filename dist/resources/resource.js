@@ -1,7 +1,10 @@
 "use strict";
 var Immutable = require('immutable');
+var add_1 = require('../actions/add');
 var findOne_1 = require('../actions/findOne');
 var find_1 = require('../actions/find');
+var destroy_1 = require('../actions/destroy');
+var update_1 = require('../actions/update');
 var resource_reducer_1 = require('../reducers/resource-reducer');
 /**
  *
@@ -42,7 +45,6 @@ var Resource = (function () {
         enumerable: true,
         configurable: true
     });
-    // TODO: ADD METHODS TO GET DATA OUT OF THE RESOURCE.
     /**
      * Check whether this resource type is loading or optionally a specific resource.
      *
@@ -70,63 +72,82 @@ var Resource = (function () {
      * * `beforeCreate(payload[, cb])`
      * * `afterCreate(payload[, cb])`
      */
-    // add(payload: T, config?: any): PromiseLike<any[]> {
-    //   return this.promise.all([this.beforeAdd(payload, config)])
-    //   .then(([payload, config]) => this.store.dispatch(add(payload, config)))
-    //   .then(([data]) => this.afterAdd(data));
-    // }
+    Resource.prototype.add = function (payload, persistorConfig, adapterConfig) {
+        var _this = this;
+        return this.promise.all(this.beforeAdd(payload, persistorConfig, adapterConfig))
+            .then(function (_a) {
+            var persistorConfig = _a[0], adapterConfig = _a[1];
+            return _this.store.dispatch(add_1.add(_this, persistorConfig, adapterConfig));
+        })
+            .then(function (_a) {
+            var res = _a[0];
+            return _this.afterAdd(res.data);
+        });
+    };
     /**
      * Default identity hook (return what was passed in)
      */
-    // beforeAdd(payload: T, config?: any): PromiseLike<any[]> {
-    //   return this.promise.all([payload, config]);
-    // }
+    Resource.prototype.beforeAdd = function (payload, persistorConfig, adapterConfig) {
+        persistorConfig.data = payload;
+        return [persistorConfig, adapterConfig];
+    };
     /**
      * Default identity hook (return what was passed in)
      */
-    // afterAdd(data: any): PromiseLike<any[]> {
-    //   return this.promise.all([data]);
-    // }
+    Resource.prototype.afterAdd = function (data) {
+        return this.promise.all([data]);
+    };
     /**
      * Lifecycle Hooks:
      *
      * * `beforeUpdate(payload[, cb])`
      * * `afterUpdate(payload[, cb])`
      */
-    // update(id:number, patch: T, persistorConfig, adapterConfig?: any): PromiseLike<any[]> {
-    //   return this.promise.all([this.beforeUpdate(id, patch, persistorConfig, adapterConfig)])
-    //   .then(([config]) => this.store.dispatch(update(this, persistorConfig, adapterConfig)))
-    //   .then((data) => this.afterUpdate(data));
-    // }
+    Resource.prototype.update = function (id, patch, persistorConfig, adapterConfig) {
+        var _this = this;
+        return this.promise.all(this.beforeUpdate(id, patch, persistorConfig, adapterConfig))
+            .then(function (_a) {
+            var persistorConfig = _a[0], adapterConfig = _a[1];
+            return _this.store.dispatch(update_1.update(_this, persistorConfig, adapterConfig));
+        })
+            .then(function (data) { return _this.afterUpdate(data); });
+    };
     /**
      * Default identity hook (return what was passed in)
      */
-    // beforeUpdate(id: number, patch: T, persistorConfig, adapterConfig?: any) {
-    //   persistorConfig.data = patch;
-    //   return [persistorConfig, adapterConfig];
-    // }
+    Resource.prototype.beforeUpdate = function (id, patch, persistorConfig, adapterConfig) {
+        persistorConfig.data = patch;
+        return [persistorConfig, adapterConfig];
+    };
     /**
      * Default identity hook (return what was passed in)
      */
-    // afterUpdate(data: any): PromiseLike<any[]> {
-    //   return this.promise.all([data]);
-    // }
+    Resource.prototype.afterUpdate = function (data) {
+        return this.promise.all([data]);
+    };
     /**
      * Removes an item from the store.
      *
      * * `beforeDestroy(payload[, cb])`
      * * `afterDestroy(payload[, cb])`
      */
-    // destroy(id: string | number, config?: any): PromiseLike<any[]> {
-    //   return this.promise.all([this.beforeDestroy(id, config)])
-    //   .then(args => this.store.dispatch(destroy(id, config)))
-    //   .then(data => this.afterDestroy(data));
-    // }
+    Resource.prototype.destroy = function (id, persistorConfig, adapterConfig) {
+        var _this = this;
+        return this.promise.all(this.beforeDestroy(id, persistorConfig, adapterConfig))
+            .then(function (_a) {
+            var persistorConfig = _a[0], adapterConfig = _a[1];
+            return _this.store.dispatch(destroy_1.destroy(_this, persistorConfig, adapterConfig));
+        })
+            .then(function (_a) {
+            var res = _a[0];
+            return _this.afterDestroy(res.data);
+        });
+    };
     /**
      * Default identity hook (return what was passed in)
      */
-    Resource.prototype.beforeDestroy = function (id, config) {
-        return this.promise.all([config]);
+    Resource.prototype.beforeDestroy = function (id, persistorConfig, adapterConfig) {
+        return [persistorConfig, adapterConfig];
     };
     /**
      * Default identity hook (return what was passed in)
@@ -142,7 +163,7 @@ var Resource = (function () {
      */
     Resource.prototype.findOne = function (id, persistorConfig, adapterConfig) {
         var _this = this;
-        return this.promise.all([this.beforeFindOne(id, persistorConfig, adapterConfig)])
+        return this.promise.all(this.beforeFindOne(id, persistorConfig, adapterConfig))
             .then(function (_a) {
             var persistorConfig = _a[0], adapterConfig = _a[1];
             return _this.store.dispatch(findOne_1.findOne(_this, persistorConfig, adapterConfig));

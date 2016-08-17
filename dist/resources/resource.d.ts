@@ -44,34 +44,41 @@ export declare class Resource<T> {
      * * `beforeCreate(payload[, cb])`
      * * `afterCreate(payload[, cb])`
      */
+    add(payload: T, persistorConfig: any, adapterConfig?: Object): PromiseLike<any[]>;
     /**
      * Default identity hook (return what was passed in)
      */
+    beforeAdd(payload: T, persistorConfig: any, adapterConfig: any): Array<Object>;
     /**
      * Default identity hook (return what was passed in)
      */
+    afterAdd(data: any): PromiseLike<any[]>;
     /**
      * Lifecycle Hooks:
      *
      * * `beforeUpdate(payload[, cb])`
      * * `afterUpdate(payload[, cb])`
      */
+    update(id: number, patch: T, persistorConfig: any, adapterConfig?: any): PromiseLike<any[]>;
     /**
      * Default identity hook (return what was passed in)
      */
+    beforeUpdate(id: number, patch: T, persistorConfig: any, adapterConfig?: Array<Object>): any[];
     /**
      * Default identity hook (return what was passed in)
      */
+    afterUpdate(data: any): PromiseLike<any[]>;
     /**
      * Removes an item from the store.
      *
      * * `beforeDestroy(payload[, cb])`
      * * `afterDestroy(payload[, cb])`
      */
+    destroy(id: string | number, persistorConfig: any, adapterConfig: any): PromiseLike<any[]>;
     /**
      * Default identity hook (return what was passed in)
      */
-    beforeDestroy(id: string | number, config?: any): PromiseLike<any[]>;
+    beforeDestroy(id: string | number, persistorConfig: any, adapterConfig: any): Array<Object>;
     /**
      * Default identity hook (return what was passed in)
      */
@@ -86,7 +93,7 @@ export declare class Resource<T> {
     /**
      * Default identity hook (return what was passed in)
      */
-    beforeFindOne(id: number, persistorConfig: any, adapterConfig?: any): (PromiseLike<any[]> | Array<any>);
+    beforeFindOne(id: number, persistorConfig: Object, adapterConfig?: Object): Array<Object>;
     /**
      * Default identity hook (return what was passed in)
      */
@@ -97,11 +104,11 @@ export declare class Resource<T> {
      * * `beforeFind(payload[, cb])`
      * * `afterFind(payload[, cb])`
      */
-    find(persistorConfig: any, adapterConfig: any): PromiseLike<any[]> | Promise<any[]>;
+    find(persistorConfig: any, adapterConfig: any): PromiseLike<any[]>;
     /**
      * Default identity hook (return what was passed in)
      */
-    beforeFind(persistorConfig: any, adapterConfig?: any): any;
+    beforeFind(persistorConfig: any, adapterConfig?: any): Array<Object>;
     /**
      * Default identity hook (return what was passed in)
      */
