@@ -36,10 +36,10 @@ describe('Resource', () => {
   var schema = new Schema('testResource');
   var adapter = new BaseAdapter();
   
-  class TestResource extends Resource<any> {
+  class TestResource extends Resource {
     className = 'TEST_RESOURCE';
   }
-  let testResource: Resource<TestResource>;
+  let testResource: Resource;
 
   
   beforeEach(() => {

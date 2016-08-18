@@ -29,7 +29,7 @@ let defaultMap = {
  * Specifies method used to change the config at runtime
  */
 export interface IPersistorConfig {
-  extend: (config: any) => this;
+  extend: (config: any) => IHttpPersistorConfig;
 }
 
 /**
@@ -139,7 +139,7 @@ export class $httpPersistorConfig implements IHttpPersistorConfig {
     /**
      * Create and return a new PersistorConfig with new or updated properties assigned to it.
      */
-    extend (data = {}): this {
+    extend (data = {}): $httpPersistorConfig {
       let extended = new $httpPersistorConfig(this)
       return Object.assign(extended, data);
     }

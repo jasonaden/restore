@@ -14,7 +14,7 @@ export function update (Resource, persistorConfig, adapterConfig) {
     return Resource.adapter.update(persistorConfig, adapterConfig)
     .then(
       res => {
-        dispatch(action(PATCHED, Resource.className));
+        dispatch(action(PATCHED, Resource.className, false));
         return res.data;
       },
       error => {

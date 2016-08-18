@@ -13,13 +13,12 @@ export {
   defaultListReducer
 } from './reducers/resource-list-reducer';
 
-// interfaces
-// don't need to export since they will be in .d.ts file?
-
 export {
   IResourceAdapter, 
   IResourceRequestConfig,
-  IEntityState
+  IEntityState,
+  IAdapterConfig,
+  IPersistorConfig
 } from './resources/interfaces';
 
 // base adapter

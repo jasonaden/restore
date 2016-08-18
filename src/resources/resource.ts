@@ -5,7 +5,7 @@ import { normalize, Schema, arrayOf } from 'normalizr';
 import * as Immutable from 'immutable';
 import {identity} from 'lodash';
 
-import {IResourceAdapter, IResourceRequestConfig, IEntityState} from './interfaces';
+import {IResourceAdapter, IResourceRequestConfig, IEntityState, IPersistorConfig, IAdapterConfig} from './interfaces';
 
 import {add} from '../actions/add';
 import {findOne} from '../actions/findOne';
@@ -18,7 +18,7 @@ import {defaultEntityState} from '../reducers/resource-reducer';
 /**
  * 
  */
-export class Resource<T> {
+export class Resource {
   
   public url: string;
   public className: string;
@@ -32,7 +32,7 @@ export class Resource<T> {
     return this._state[this.className.toLowerCase()] || new defaultEntityState();
   };
   
-  private get _state () {
+  private get _state () { 
     return this.store.getState().entities || Immutable.Map();
   }
   
@@ -78,7 +78,7 @@ export class Resource<T> {
    * * `beforeCreate(payload[, cb])`
    * * `afterCreate(payload[, cb])`
    */
-  add(payload: T, persistorConfig, adapterConfig?: Object): PromiseLike<any[]> {
+  add(payload: Object, persistorConfig: IPersistorConfig = {}, adapterConfig: IAdapterConfig = {}): PromiseLike<any[]> {
     return this.promise.all( this.beforeAdd(payload, persistorConfig, adapterConfig) )
     .then(([persistorConfig, adapterConfig]) => this.store.dispatch(add(this, persistorConfig, adapterConfig)))
     .then(([res]) => this.afterAdd(res.data));
@@ -87,7 +87,8 @@ export class Resource<T> {
   /**
    * Default identity hook (return what was passed in)
    */
-  beforeAdd(payload: T, persistorConfig, adapterConfig): Array<Object> {
+  // beforeAdd(payload: Object, persistorConfig, adapterConfig): Array<Object> {
+  beforeAdd(payload: Object, persistorConfig: IPersistorConfig, adapterConfig?: IAdapterConfig): Array<any> {
     persistorConfig.data = payload;
     return [persistorConfig, adapterConfig];
   }
@@ -105,16 +106,18 @@ export class Resource<T> {
    * * `beforeUpdate(payload[, cb])`
    * * `afterUpdate(payload[, cb])`
    */
-  update(id:number, patch: T, persistorConfig, adapterConfig?: any): PromiseLike<any[]> {
+  update(id:number, patch: Object, persistorConfig: IPersistorConfig = {}, adapterConfig: IAdapterConfig = {}): PromiseLike<any[]> {
     return this.promise.all(this.beforeUpdate(id, patch, persistorConfig, adapterConfig))
     .then(([persistorConfig, adapterConfig]) => this.store.dispatch(update(this, persistorConfig, adapterConfig)))
-    .then((data) => this.afterUpdate(data));
+    .then(
+      (data) => this.afterUpdate(data)
+    );
   }
   
   /**
    * Default identity hook (return what was passed in)
    */
-  beforeUpdate(id: number, patch: T, persistorConfig, adapterConfig?: Array<Object> ) {
+  beforeUpdate(id: number, patch: Object, persistorConfig: IPersistorConfig, adapterConfig?: IAdapterConfig ): Array<any> {
     persistorConfig.data = patch;
     return [persistorConfig, adapterConfig];
   }
@@ -132,7 +135,7 @@ export class Resource<T> {
    * * `beforeDestroy(payload[, cb])`
    * * `afterDestroy(payload[, cb])`
    */
-  destroy(id: string | number, persistorConfig, adapterConfig): PromiseLike<any[]> {
+  destroy(id: string | number, persistorConfig: IPersistorConfig = {}, adapterConfig: IAdapterConfig = {}): PromiseLike<any[]> {
     return this.promise.all(this.beforeDestroy(id, persistorConfig, adapterConfig))
     .then(([persistorConfig, adapterConfig]) => this.store.dispatch(destroy(this, persistorConfig, adapterConfig)))
     .then(([res]) => this.afterDestroy(res.data));
@@ -141,7 +144,7 @@ export class Resource<T> {
   /**
    * Default identity hook (return what was passed in)
    */
-  beforeDestroy(id: string | number, persistorConfig, adapterConfig): Array<Object> {
+  beforeDestroy(id: string | number, persistorConfig: IPersistorConfig, adapterConfig?: IAdapterConfig): Array<any> {
     return [persistorConfig, adapterConfig];
   }
   
@@ -158,7 +161,7 @@ export class Resource<T> {
    * * `beforeFindOne(payload[, cb])`
    * * `afterFindOne(payload[, cb])`
    */
-  findOne(id: number, persistorConfig, adapterConfig?: any): PromiseLike<any[]> {
+  findOne(id: number, persistorConfig: IPersistorConfig = {}, adapterConfig: IAdapterConfig = {}): PromiseLike<any[]> {
     return this.promise.all( this.beforeFindOne(id, persistorConfig, adapterConfig) )
     .then( ([persistorConfig, adapterConfig]) => {
       return this.store.dispatch( findOne(this, persistorConfig, adapterConfig) )
@@ -169,7 +172,7 @@ export class Resource<T> {
   /**
    * Default identity hook (return what was passed in) 
    */
-  beforeFindOne(id: number, persistorConfig: Object, adapterConfig?: Object): Array<Object> {
+  beforeFindOne(id: number, persistorConfig: IPersistorConfig, adapterConfig?: IAdapterConfig): Array<any> {
     return [persistorConfig, adapterConfig];
   }
   
@@ -188,7 +191,7 @@ export class Resource<T> {
    * * `afterFind(payload[, cb])`
    */
   // TODO: Determine if type OR is needed
-  find(persistorConfig, adapterConfig): PromiseLike<any[]>  {
+  find(persistorConfig: IPersistorConfig = {}, adapterConfig: IAdapterConfig = {}): PromiseLike<any[]>  {
     return this.promise.all(this.beforeFind(persistorConfig, adapterConfig))
     .then( ([persistorConfig, adapterConfig]) => this.store.dispatch(find(this, persistorConfig, adapterConfig)) )
     .then((data) => this.afterFind(data));
@@ -197,7 +200,7 @@ export class Resource<T> {
   /**
    * Default identity hook (return what was passed in)
    */
-  beforeFind(persistorConfig, adapterConfig?:any): Array<Object> {
+  beforeFind(persistorConfig: IPersistorConfig, adapterConfig: IAdapterConfig): Array<any> {
     return [persistorConfig, adapterConfig];
   }
   

@@ -2,26 +2,27 @@
 import {IPersistor} from './i-persistor';
 
 export class BasePersistor implements IPersistor {
-  create (data, options?) {
+  create (data, options?): PromiseLike<any> {
     data = Object.assign({}, data, {created: true});
     return Promise.resolve(this.toJSON(data));
   }
 
-  update (data, options?, base?) {
+  // update (data, options?, base?): ng.IPromise<any> {
+  update (data, options?, base?): PromiseLike<any> {
     data = Object.assign({}, data, {updated: true});
     return Promise.resolve(data);
   }
   
-  findOne (options) {
+  findOne (options): PromiseLike<any> {
     // Do some work to get data and then resolve it
     return  Promise.all([{id: 123}]);
   }
 
-  find (options): Promise<any[]> {
+  find (options): PromiseLike<any[]> {
     return Promise.resolve([{id: 123}, {id: 456}]);
   }
 
-  destroy (params) {
+  destroy (params): PromiseLike<any> {
     return Promise.resolve(undefined);
   }
 
