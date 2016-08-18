@@ -1,4 +1,11 @@
 import { IPersistor } from '../persistors/i-persistor';
+export interface IPersistorConfig {
+    url?: string;
+    data?: Object;
+}
+export interface IAdapterConfig {
+    listName?: string;
+}
 /**
  * Interface for creating a ResourceAdapter. ResourceAdapters are the glue that
  * ties a back-end (API) to the Resource processing and data storage on the front
@@ -27,20 +34,20 @@ export interface IResourceAdapter {
     generateSlug: (entity: any) => string;
     persistor: IPersistor;
     promise: PromiseConstructor;
-    add: (persistorConfig: Object, adapterConfig?: Object) => Promise<any> | PromiseLike<any>;
-    beforeAdd: (persistorConfig: Object, adapterConfig?: Object) => Array<Object>;
+    add: (persistorConfig: IPersistorConfig, adapterConfig?: IAdapterConfig) => Promise<any> | PromiseLike<any>;
+    beforeAdd: (persistorConfig: IPersistorConfig, adapterConfig?: IAdapterConfig) => Array<Object>;
     afterAdd: (data: any, adapterConfig?: Object) => Promise<any>;
-    find: (persistorConfig: Object, adapterConfig: Object) => Promise<any> | PromiseLike<any>;
-    beforeFind: (persistorConfig: Object, adapterConfig: Object) => Array<Object>;
+    find: (persistorConfig: IPersistorConfig, adapterConfig: IAdapterConfig) => Promise<any> | PromiseLike<any>;
+    beforeFind: (persistorConfig: IPersistorConfig, adapterConfig: IAdapterConfig) => Array<Object>;
     afterFind: (data: any, adapterConfig: Object) => Promise<any>;
-    findOne: (persistorConfig: Object, adapterConfig?: Object) => Promise<any> | PromiseLike<any>;
-    beforeFindOne: (persistorConfig: Object, adapterConfig?: Object) => Array<Object>;
+    findOne: (persistorConfig: IPersistorConfig, adapterConfig?: IAdapterConfig) => Promise<any> | PromiseLike<any>;
+    beforeFindOne: (persistorConfig: IPersistorConfig, adapterConfig?: IAdapterConfig) => Array<Object>;
     afterFindOne: (data: any, adapterConfig?: Object) => Promise<any>;
-    update: (data, persistorConfig: Object, adapterConfig?: Object) => Promise<any> | PromiseLike<any>;
-    beforeUpdate: (data, persistorConfig: Object, adapterConfig?: Object) => Array<Object>;
+    update: (data, persistorConfig: IPersistorConfig, adapterConfig?: IAdapterConfig) => Promise<any> | PromiseLike<any>;
+    beforeUpdate: (data, persistorConfig: IPersistorConfig, adapterConfig?: IAdapterConfig) => Array<Object>;
     afterUpdate: (data: any, adapterConfig?: Object) => Promise<any>;
-    destroy: (persistorConfig: Object, adapterConfig?: Object) => Promise<any> | PromiseLike<any>;
-    beforeDestroy: (persistorConfig: Object, adapterConfig?: Object) => Array<Object>;
+    destroy: (persistorConfig: IPersistorConfig, adapterConfig?: IAdapterConfig) => Promise<any> | PromiseLike<any>;
+    beforeDestroy: (persistorConfig: IPersistorConfig, adapterConfig?: IAdapterConfig) => Array<Object>;
     afterDestroy: (data: any, adapterConfig?: Object) => Promise<any>;
 }
 /**

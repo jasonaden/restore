@@ -74,6 +74,8 @@ var Resource = (function () {
      */
     Resource.prototype.add = function (payload, persistorConfig, adapterConfig) {
         var _this = this;
+        if (persistorConfig === void 0) { persistorConfig = {}; }
+        if (adapterConfig === void 0) { adapterConfig = {}; }
         return this.promise.all(this.beforeAdd(payload, persistorConfig, adapterConfig))
             .then(function (_a) {
             var persistorConfig = _a[0], adapterConfig = _a[1];
@@ -87,6 +89,7 @@ var Resource = (function () {
     /**
      * Default identity hook (return what was passed in)
      */
+    // beforeAdd(payload: Object, persistorConfig, adapterConfig): Array<Object> {
     Resource.prototype.beforeAdd = function (payload, persistorConfig, adapterConfig) {
         persistorConfig.data = payload;
         return [persistorConfig, adapterConfig];
@@ -105,6 +108,8 @@ var Resource = (function () {
      */
     Resource.prototype.update = function (id, patch, persistorConfig, adapterConfig) {
         var _this = this;
+        if (persistorConfig === void 0) { persistorConfig = {}; }
+        if (adapterConfig === void 0) { adapterConfig = {}; }
         return this.promise.all(this.beforeUpdate(id, patch, persistorConfig, adapterConfig))
             .then(function (_a) {
             var persistorConfig = _a[0], adapterConfig = _a[1];
@@ -133,6 +138,8 @@ var Resource = (function () {
      */
     Resource.prototype.destroy = function (id, persistorConfig, adapterConfig) {
         var _this = this;
+        if (persistorConfig === void 0) { persistorConfig = {}; }
+        if (adapterConfig === void 0) { adapterConfig = {}; }
         return this.promise.all(this.beforeDestroy(id, persistorConfig, adapterConfig))
             .then(function (_a) {
             var persistorConfig = _a[0], adapterConfig = _a[1];
@@ -163,6 +170,8 @@ var Resource = (function () {
      */
     Resource.prototype.findOne = function (id, persistorConfig, adapterConfig) {
         var _this = this;
+        if (persistorConfig === void 0) { persistorConfig = {}; }
+        if (adapterConfig === void 0) { adapterConfig = {}; }
         return this.promise.all(this.beforeFindOne(id, persistorConfig, adapterConfig))
             .then(function (_a) {
             var persistorConfig = _a[0], adapterConfig = _a[1];
@@ -192,6 +201,8 @@ var Resource = (function () {
     // TODO: Determine if type OR is needed
     Resource.prototype.find = function (persistorConfig, adapterConfig) {
         var _this = this;
+        if (persistorConfig === void 0) { persistorConfig = {}; }
+        if (adapterConfig === void 0) { adapterConfig = {}; }
         return this.promise.all(this.beforeFind(persistorConfig, adapterConfig))
             .then(function (_a) {
             var persistorConfig = _a[0], adapterConfig = _a[1];

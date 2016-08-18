@@ -1,8 +1,8 @@
-import { IResourceAdapter } from './interfaces';
+import { IResourceAdapter, IPersistorConfig, IAdapterConfig } from './interfaces';
 /**
  *
  */
-export declare class Resource<T> {
+export declare class Resource {
     store: any;
     adapter: IResourceAdapter;
     url: string;
@@ -44,11 +44,11 @@ export declare class Resource<T> {
      * * `beforeCreate(payload[, cb])`
      * * `afterCreate(payload[, cb])`
      */
-    add(payload: T, persistorConfig: any, adapterConfig?: Object): PromiseLike<any[]>;
+    add(payload: Object, persistorConfig?: IPersistorConfig, adapterConfig?: IAdapterConfig): PromiseLike<any[]>;
     /**
      * Default identity hook (return what was passed in)
      */
-    beforeAdd(payload: T, persistorConfig: any, adapterConfig: any): Array<Object>;
+    beforeAdd(payload: Object, persistorConfig: IPersistorConfig, adapterConfig?: IAdapterConfig): Array<any>;
     /**
      * Default identity hook (return what was passed in)
      */
@@ -59,11 +59,11 @@ export declare class Resource<T> {
      * * `beforeUpdate(payload[, cb])`
      * * `afterUpdate(payload[, cb])`
      */
-    update(id: number, patch: T, persistorConfig: any, adapterConfig?: any): PromiseLike<any[]>;
+    update(id: number, patch: Object, persistorConfig?: IPersistorConfig, adapterConfig?: IAdapterConfig): PromiseLike<any[]>;
     /**
      * Default identity hook (return what was passed in)
      */
-    beforeUpdate(id: number, patch: T, persistorConfig: any, adapterConfig?: Array<Object>): any[];
+    beforeUpdate(id: number, patch: Object, persistorConfig: IPersistorConfig, adapterConfig?: IAdapterConfig): Array<any>;
     /**
      * Default identity hook (return what was passed in)
      */
@@ -74,11 +74,11 @@ export declare class Resource<T> {
      * * `beforeDestroy(payload[, cb])`
      * * `afterDestroy(payload[, cb])`
      */
-    destroy(id: string | number, persistorConfig: any, adapterConfig: any): PromiseLike<any[]>;
+    destroy(id: string | number, persistorConfig?: IPersistorConfig, adapterConfig?: IAdapterConfig): PromiseLike<any[]>;
     /**
      * Default identity hook (return what was passed in)
      */
-    beforeDestroy(id: string | number, persistorConfig: any, adapterConfig: any): Array<Object>;
+    beforeDestroy(id: string | number, persistorConfig: IPersistorConfig, adapterConfig?: IAdapterConfig): Array<any>;
     /**
      * Default identity hook (return what was passed in)
      */
@@ -89,11 +89,11 @@ export declare class Resource<T> {
      * * `beforeFindOne(payload[, cb])`
      * * `afterFindOne(payload[, cb])`
      */
-    findOne(id: number, persistorConfig: any, adapterConfig?: any): PromiseLike<any[]>;
+    findOne(id: number, persistorConfig?: IPersistorConfig, adapterConfig?: IAdapterConfig): PromiseLike<any[]>;
     /**
      * Default identity hook (return what was passed in)
      */
-    beforeFindOne(id: number, persistorConfig: Object, adapterConfig?: Object): Array<Object>;
+    beforeFindOne(id: number, persistorConfig: IPersistorConfig, adapterConfig?: IAdapterConfig): Array<any>;
     /**
      * Default identity hook (return what was passed in)
      */
@@ -104,11 +104,11 @@ export declare class Resource<T> {
      * * `beforeFind(payload[, cb])`
      * * `afterFind(payload[, cb])`
      */
-    find(persistorConfig: any, adapterConfig: any): PromiseLike<any[]>;
+    find(persistorConfig?: IPersistorConfig, adapterConfig?: IAdapterConfig): PromiseLike<any[]>;
     /**
      * Default identity hook (return what was passed in)
      */
-    beforeFind(persistorConfig: any, adapterConfig?: any): Array<Object>;
+    beforeFind(persistorConfig: IPersistorConfig, adapterConfig: IAdapterConfig): Array<any>;
     /**
      * Default identity hook (return what was passed in)
      */

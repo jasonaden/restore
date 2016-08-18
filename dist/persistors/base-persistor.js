@@ -6,6 +6,7 @@ var BasePersistor = (function () {
         data = Object.assign({}, data, { created: true });
         return Promise.resolve(this.toJSON(data));
     };
+    // update (data, options?, base?): ng.IPromise<any> {
     BasePersistor.prototype.update = function (data, options, base) {
         data = Object.assign({}, data, { updated: true });
         return Promise.resolve(data);

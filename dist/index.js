@@ -11,8 +11,6 @@ exports.defaultReducer = resource_reducer_1.defaultReducer;
 // resource-list reducer
 var resource_list_reducer_1 = require('./reducers/resource-list-reducer');
 exports.defaultListReducer = resource_list_reducer_1.defaultListReducer;
-// interfaces
-// don't need to export since they will be in .d.ts file?
 // base adapter
 var base_adapter_1 = require('./adapters/base-adapter');
 exports.BaseAdapter = base_adapter_1.BaseAdapter;

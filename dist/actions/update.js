@@ -6,7 +6,7 @@ function update(Resource, persistorConfig, adapterConfig) {
         dispatch(action_1.action(constants_1.PATCHING, Resource.className));
         return Resource.adapter.update(persistorConfig, adapterConfig)
             .then(function (res) {
-            dispatch(action_1.action(constants_1.PATCHED, Resource.className));
+            dispatch(action_1.action(constants_1.PATCHED, Resource.className, false));
             return res.data;
         }, function (error) {
             dispatch(action_1.action(constants_1.ERROR, Resource.className, error));
