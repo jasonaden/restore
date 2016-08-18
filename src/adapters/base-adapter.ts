@@ -57,6 +57,10 @@ export class BaseAdapter implements IResourceAdapter {
   //  3) Pass the persistor.beforeFineOne promise to afterFindOne() which return a promise
 
   // ******* FINDONE ********* //
+
+  // NOTE: The adapter findOne just calls the persistor directly rather than 
+  //  having it called from the thunk and the splitting happens in 
+  //  as usual in the apiv2-adapter afterOne
   findOne (persistorConfig:Object, adapterConfig?: Object): Promise<any> | PromiseLike<any> {
     return this.promise.all(this.beforeFindOne(persistorConfig, adapterConfig))
       .then( ([persistorConfig, adapterConfig]) => {

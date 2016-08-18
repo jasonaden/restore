@@ -158,10 +158,15 @@ export class Resource<T> {
    * * `beforeFindOne(payload[, cb])`
    * * `afterFindOne(payload[, cb])`
    */
+  // NOTE: We get rid of the thunk which confused things and crosses layers by informing the 
+  //  store the findOne has started/finished and calling down to the adapter
+  //  to do the data fetching. With this approach, the resource just calls
+  //  the next level down (the adapter).
   findOne(id: number, persistorConfig, adapterConfig?: any): PromiseLike<any[]> {
     return this.promise.all( this.beforeFindOne(id, persistorConfig, adapterConfig) )
     .then( ([persistorConfig, adapterConfig]) => {
-      return this.store.dispatch( findOne(this, persistorConfig, adapterConfig) )
+      //return this.store.dispatch( findOne(this, persistorConfig, adapterConfig) )
+      return this.adapter.findOne(persistorConfig, adapterConfig)
     })
     .then( (data) => this.afterFindOne(data) );
   }
@@ -177,7 +182,6 @@ export class Resource<T> {
    * Default identity hook (return what was passed in)
    */
   afterFindOne(data: any): (PromiseLike<any[]> | Array<any>) {
-    console.log("Resource afterFindOne")
     return this.promise.all([data]);
   }
 
