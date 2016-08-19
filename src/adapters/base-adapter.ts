@@ -4,7 +4,9 @@
 import {Store, Reducer, combineReducers} from 'redux';
 import {Action} from 'flux-standard-action';
 import {IPersistor} from '../persistors/i-persistor';
-import {IResourceAdapter} from '../resources/interfaces';
+import {IResourceAdapter,
+  IPersistorConfig,
+  IAdapterConfig} from '../resources/interfaces';
 import {BasePersistor} from '../persistors/base-persistor';
 import { normalize, Schema, arrayOf } from 'normalizr';
 import { buildAction, promiseError } from '../utils/index';
@@ -57,14 +59,20 @@ export class BaseAdapter implements IResourceAdapter {
   //  3) Pass the persistor.beforeFineOne promise to afterFindOne() which return a promise
 
   // ******* FINDONE ********* //
-  findOne (persistorConfig:Object, adapterConfig?: Object): Promise<any> | PromiseLike<any> {
+  findOne (persistorConfig: IPersistorConfig, adapterConfig?: IAdapterConfig): PromiseLike<any> {
     return this.promise.all(this.beforeFindOne(persistorConfig, adapterConfig))
       .then( ([persistorConfig, adapterConfig]) => {
         return this.persistor.findOne(persistorConfig);
       }) 
       .then( (res) => {
-        return this.afterFindOne(res.data);
-      })      
+        return this.afterFindOne(res.data, adapterConfig);
+      })
+      .then( null,
+        // TODO: We probably need to add some kind of logging here
+        //  to log failures 
+        (err) => {
+          return Promise.reject(err);
+        })    
   } 
 
   // Default version is a no-op that passes along the
@@ -75,7 +83,7 @@ export class BaseAdapter implements IResourceAdapter {
   
   // Default version is a no-op that passes along the 
   //  persistor's returned promise. 
-  afterFindOne(data: any, adapterConfig?: Object): Promise<any[]> {
+  afterFindOne(data: any, adapterConfig?: Object): PromiseLike<any[]> {
     return this.promise.all([data]);
   }
 

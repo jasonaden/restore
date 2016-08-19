@@ -1,5 +1,8 @@
 
 import {IPersistor} from './i-persistor';
+import {
+  IPersistorConfig,
+  IAdapterConfig} from '../resources/interfaces';
 
 export class BasePersistor implements IPersistor {
   create (data, options?): PromiseLike<any> {
@@ -13,12 +16,12 @@ export class BasePersistor implements IPersistor {
     return Promise.resolve(data);
   }
   
-  findOne (options): PromiseLike<any> {
+  findOne (persistorConfig: IPersistorConfig): PromiseLike<any> {
     // Do some work to get data and then resolve it
-    return  Promise.all([{id: 123}]);
+    return  Promise.resolve();
   }
 
-  find (options): PromiseLike<any[]> {
+  find (persistorConfig: IPersistorConfig): PromiseLike<any[]> {
     return Promise.resolve([{id: 123}, {id: 456}]);
   }
 

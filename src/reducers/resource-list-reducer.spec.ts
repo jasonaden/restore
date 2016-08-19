@@ -1,6 +1,7 @@
-import {defaultReducer} from './resource-reducer';
+import {defaultListReducer} from './resource-list-reducer';
 import {IEntityState} from '../resources/interfaces';
 import {Reducer} from 'redux';
+import * as Immutable from 'immutable';
 // import 'angular-mocks';
 
 import * as C from '../resources/constants';
@@ -8,137 +9,66 @@ import * as C from '../resources/constants';
 let type: string = 'CASE';
 let reducer: Reducer;
 
-xdescribe('defaultReducer', () => {
+let verifyDefault = (reduc, exclude?) => {
+  // let defaults = ['loadingMany', 'loadingOne', 'deleting', 'patching', 'adding'];
+  let defaults = ['loadingMany', 'page', 'count'];
+  if( exclude ) {
+    defaults.splice( defaults.indexOf(exclude), 1);
+  }
+  defaults.forEach( (item) => {
+    expect(reduc[item]).toBeFalsy();
+  })
+} 
+
+describe('defaultListReducer', () => {
   
   beforeEach(() => {
-    reducer = defaultReducer(type);    
+    reducer = defaultListReducer(type);    
   })
-        
+
   it ('returns a default state', () => {   
-    expect(
-       reducer(undefined, {})
-     ).toEqual(
-       {
-          result: [],
-          loadingMany: false
-        }
-     );
+    let reduc = reducer(undefined, {})
+
+    verifyDefault(reduc);
+    expect( Immutable.is(reduc.result, Immutable.Map()) ).toBeTruthy();
   });  
-  
+
   it ('should handle FINDING_CASE', () => {
-    expect(
-       reducer(undefined, {
-         type: `${C.FINDING}_${type}`
-       })
-     ).toEqual(
-       {
-          result: [],
-          loadingMany: true,
-          loadingOne: false,
-          deleting: false,
-          patching: false,
-          adding: false,
-          items: {}
-        }
-     );
+    let reduc = reducer(undefined, {
+      type: `${C.FINDING}_${type}`
+    })
+
+    verifyDefault(reduc, 'loading');
+    expect( reduc.loading ).toBeTruthy();
   });
-  
-  it ('should handle FINDING_ONE_CASE', () => {
-    expect(
-       reducer(undefined, {
-         type: `${C.FINDING_ONE}_${type}`,
-       })
-     ).toEqual(
-       {
-          result: [],
-          loadingMany: false,
-          loadingOne: true,
-          deleting: false,
-          patching: false,
-          adding: false,
-          items: {}
-        }
-     );
-  });
-  
-  it ('should handle DESTROYING_CASE', () => {
-    expect(
-       reducer(undefined, {
-         type: `${C.DESTROYING}_${type}`
-       })
-     ).toEqual(
-       {
-          result: [],
-          loadingMany: false,
-          loadingOne: false,
-          deleting: true,
-          patching: false,
-          adding: false,
-          items: {}
-        }
-     );
-  });
-  
-  it ('should handle PATCHING_CASE', () => {
-    expect(
-       reducer(undefined, {
-         type: `${C.PATCHING}_${type}`
-       })
-     ).toEqual(
-       {
-          result: [],
-          loadingMany: false,
-          loadingOne: false,
-          deleting: false,
-          patching: true,
-          adding: false,
-          items: {}
-        }
-     );
-  });
-  
-  it ('should handle ADDING_CASE', () => {
-    expect(
-       reducer(undefined, {
-         type: `${C.ADDING}_${type}`
-       })
-     ).toEqual(
-       {
-          result: [],
-          loadingMany: false,
-          loadingOne: false,
-          deleting: false,
-          patching: false,
-          adding: true,
-          items: {}
-        }
-     );
-  });
-  
+
   it ('should handle FOUND_CASE', () => {
-    expect(
-       reducer(undefined, {
-         type: `${C.FOUND}_${type}`,
-         payload: {
-           result: ['/cases/1'],
-           items: {
-             '/cases/1': {
-               _links: {self: {href: '/cases/1'}}, _embedded: {entries: [{}]}
-             }
-           }
-         }
-       })
-     ).toEqual(
-       {
-          result: [],
-          loadingMany: false,
-          loadingOne: false,
-          deleting: false,
-          patching: false,
-          adding: true,
-          items: {}
-        }
-     );
+    let reduc = reducer(undefined, {
+      type: `${C.FOUND}_${type}`
+    })
+
+    verifyDefault(reduc, 'loading');
+    expect( reduc.loading ).toBeFalsy();
   });
-  
+
+  it ('should handle SET_LIST_PAGE', () => {
+    let reduc = reducer(undefined, {
+      type: `${C.SET_LIST}_PAGE_${type}`,
+      payload: 22
+    })
+
+    verifyDefault(reduc, 'page');
+    expect( reduc.page ).toEqual(22)
+  });
+
+  it ('should handle SET_LIST_COUNT', () => {
+    let reduc = reducer(undefined, {
+      type: `${C.SET_LIST}_COUNT_${type}`,
+      payload: 3
+    })
+
+    verifyDefault(reduc, 'count');
+    expect( reduc.count ).toEqual(3)
+  });
+
 });

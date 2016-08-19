@@ -1,6 +1,7 @@
 import {defaultReducer} from './resource-reducer';
 import {IEntityState} from '../resources/interfaces';
 import {Reducer} from 'redux';
+import * as Immutable from 'immutable';
 // import 'angular-mocks';
 
 import {
@@ -17,142 +18,82 @@ import {
 let type: string = 'CASE';
 let reducer: Reducer;
 
-xdescribe('defaultReducer', () => {
+let verifyDefault = (reduc, exclude?) => {
+  let defaults = ['loadingMany', 'loadingOne', 'deleting', 'patching', 'adding'];
+  if( exclude ) {
+    defaults.splice( defaults.indexOf(exclude), 1);
+  }
+  defaults.forEach( (item) => {
+    expect(reduc[item]).toBeFalsy();
+  })
+} 
+
+describe('defaultReducer', () => {
   
   beforeEach(() => {
     reducer = defaultReducer(type);    
   })
         
   it ('returns a default state', () => {   
-    expect(
-       reducer(undefined, {})
-     ).toEqual(
-       {
-          result: [],
-          loadingMany: false,
-          loadingOne: false,
-          deleting: false,
-          patching: false,
-          adding: false,
-          items: {}
-        }
-     );
+    let reduc = reducer(undefined, {})
+
+    verifyDefault(reduc);
+    expect( Immutable.is(reduc.items, Immutable.Map()) ).toBeTruthy();
   });  
-  
+
   it ('should handle FINDING_CASE', () => {
-    expect(
-       reducer(undefined, {
-         type: `${FINDING}_${type}`
-       })
-     ).toEqual(
-       {
-          result: [],
-          loadingMany: true,
-          loadingOne: false,
-          deleting: false,
-          patching: false,
-          adding: false,
-          items: {}
-        }
-     );
+    let reduc = reducer(undefined, {
+      type: `${FINDING}_${type}`
+    })
+
+    verifyDefault(reduc, 'loadingMany');
+    expect( reduc.loadingMany ).toBeTruthy();
   });
-  
+
   it ('should handle FINDING_ONE_CASE', () => {
-    expect(
-       reducer(undefined, {
-         type: `${FINDING_ONE}_${type}`,
-       })
-     ).toEqual(
-       {
-          result: [],
-          loadingMany: false,
-          loadingOne: true,
-          deleting: false,
-          patching: false,
-          adding: false,
-          items: {}
-        }
-     );
+    let reduc = reducer(undefined, {
+      type: `${FINDING_ONE}_${type}`
+    })
+
+    verifyDefault(reduc, 'loadingOne');
+    expect( reduc.loadingOne ).toBeTruthy();
   });
-  
-  it ('should handle DESTROYING_CASE', () => {
-    expect(
-       reducer(undefined, {
-         type: `${DESTROYING}_${type}`
-       })
-     ).toEqual(
-       {
-          result: [],
-          loadingMany: false,
-          loadingOne: false,
-          deleting: true,
-          patching: false,
-          adding: false,
-          items: {}
-        }
-     );
-  });
-  
-  it ('should handle PATCHING_CASE', () => {
-    expect(
-       reducer(undefined, {
-         type: `${PATCHING}_${type}`
-       })
-     ).toEqual(
-       {
-          result: [],
-          loadingMany: false,
-          loadingOne: false,
-          deleting: false,
-          patching: true,
-          adding: false,
-          items: {}
-        }
-     );
-  });
-  
-  it ('should handle ADDING_CASE', () => {
-    expect(
-       reducer(undefined, {
-         type: `${ADDING}_${type}`
-       })
-     ).toEqual(
-       {
-          result: [],
-          loadingMany: false,
-          loadingOne: false,
-          deleting: false,
-          patching: false,
-          adding: true,
-          items: {}
-        }
-     );
-  });
-  
+
   it ('should handle FOUND_CASE', () => {
-    expect(
-       reducer(undefined, {
-         type: `${FOUND}_${type}`,
-         payload: {
-           result: ['/cases/1'],
-           items: {
-             '/cases/1': {
-               _links: {self: {href: '/cases/1'}}, _embedded: {entries: [{}]}
-             }
-           }
-         }
-       })
-     ).toEqual(
-       {
-          result: [],
-          loadingMany: false,
-          loadingOne: false,
-          deleting: false,
-          patching: false,
-          adding: true,
-          items: {}
-        }
-     );
+    let reduc = reducer(undefined, {
+      type: `${FOUND}_${type}`
+    })
+
+    verifyDefault(reduc, 'loadingOne');
+    expect( reduc.loadingOne ).toBeFalsy();
   });
+
+  it ('should handle DESTROYING_CASE', () => {
+    let reduc = reducer(undefined, {
+      type: `${DESTROYING}_${type}`
+    })
+
+    verifyDefault(reduc, 'deleting');
+    expect( reduc.deleting ).toBeTruthy();
+  });
+
+  it ('should handle PATCHING_CASE', () => {
+    let reduc = reducer(undefined, {
+      type: `${PATCHING}_${type}`
+    })
+
+    verifyDefault(reduc, 'patching');
+    expect( reduc.patching ).toBeTruthy();
+  });  
+
+  it ('should handle ADDING_CASE', () => {
+    let reduc = reducer(undefined, {
+      type: `${ADDING}_${type}`
+    })
+
+    verifyDefault(reduc, 'adding');
+    expect( reduc.adding ).toBeTruthy();
+  });  
+ 
   
 });

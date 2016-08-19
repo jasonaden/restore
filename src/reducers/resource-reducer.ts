@@ -59,8 +59,12 @@ export function defaultReducer<T> (type: string): Reducer {
   }
   
   return (state = new defaultEntityState(), action: any) => {
-
     switch (action.type) {
+
+      case t(C.FINDING, type):
+        return state.set('loadingMany', true);
+      case t(C.FOUND, type):
+        return state.set('loadingMany', false);
 
       case t(C.FINDING_ONE, type):
         return state.set('loadingOne', true);

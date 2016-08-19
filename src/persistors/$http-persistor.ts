@@ -3,6 +3,9 @@ import {BasePersistor} from './base-persistor';
 import {IHttpPersistorConfig, $httpPersistorConfig} from './$http-persistor-config';
 import {generateHttpConfig} from './generate-http-config';
 import * as angular from 'angular';
+import {
+  IPersistorConfig,
+  IAdapterConfig} from '../resources/interfaces';
 
 /*
 * $http-based persistence layer.
@@ -58,14 +61,16 @@ export class $httpPersistor extends BasePersistor {
   // Execute request based on the existing config and 
   //  object passed in that overrides the existing config.  
   // execute (config?: any): ng.IPromise<any> {
-  execute (config?: Object): ng.IPromise<any> {
-    let requestConfig = this.config.extend(config).build();
+  // execute (config?: Object): ng.IPromise<any> {
+  execute (persistorConfig?: IPersistorConfig): ng.IPromise<any> {
+    let requestConfig = this.config.extend(persistorConfig).build();
     return this.doRequest(requestConfig);
   }
 
   doRequest (requestConfig: IHttpPersistorConfig): ng.IPromise<any> {
     return generateHttpConfig( $httpPersistor.$q, requestConfig )
     .then( (httpConfig) => {
+      debugger
       return $httpPersistor.$http(httpConfig);
     })
   }
@@ -79,8 +84,8 @@ export class $httpPersistor extends BasePersistor {
   }
   */
 
-  findOne(config): ng.IPromise<any> {
-    return this.execute(config);
+  findOne(persistorConfig: IPersistorConfig): ng.IPromise<any> {
+    return this.execute(persistorConfig);
   }
 
   find(config): ng.IPromise<any> {

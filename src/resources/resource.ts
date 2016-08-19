@@ -5,7 +5,11 @@ import { normalize, Schema, arrayOf } from 'normalizr';
 import * as Immutable from 'immutable';
 import {identity} from 'lodash';
 
-import {IResourceAdapter, IResourceRequestConfig, IEntityState, IPersistorConfig, IAdapterConfig} from './interfaces';
+import {IResourceAdapter,
+  IResourceRequestConfig, 
+  IEntityState, 
+  IPersistorConfig, 
+  IAdapterConfig} from './interfaces';
 
 import {add} from '../actions/add';
 import {findOne} from '../actions/findOne';
@@ -80,8 +84,11 @@ export class Resource {
    */
   add(payload: Object, persistorConfig: IPersistorConfig = {}, adapterConfig: IAdapterConfig = {}): PromiseLike<any[]> {
     return this.promise.all( this.beforeAdd(payload, persistorConfig, adapterConfig) )
-    .then(([persistorConfig, adapterConfig]) => this.store.dispatch(add(this, persistorConfig, adapterConfig)))
-    .then(([res]) => this.afterAdd(res.data));
+    .then( ([persistorConfig, adapterConfig]) => {
+      debugger;
+      this.store.dispatch( add(this, persistorConfig, adapterConfig) )
+    })
+    .then( (data) => this.afterAdd(data) );
   }
   
   /**
@@ -179,7 +186,7 @@ export class Resource {
   /**
    * Default identity hook (return what was passed in)
    */
-  afterFindOne(data: any): (PromiseLike<any[]> | Array<any>) {
+  afterFindOne(data: any): (PromiseLike<any[]>) {
     console.log("Resource afterFindOne")
     return this.promise.all([data]);
   }
