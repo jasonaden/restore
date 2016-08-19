@@ -79,12 +79,10 @@ var Resource = (function () {
         return this.promise.all(this.beforeAdd(payload, persistorConfig, adapterConfig))
             .then(function (_a) {
             var persistorConfig = _a[0], adapterConfig = _a[1];
-            return _this.store.dispatch(add_1.add(_this, persistorConfig, adapterConfig));
+            debugger;
+            _this.store.dispatch(add_1.add(_this, persistorConfig, adapterConfig));
         })
-            .then(function (_a) {
-            var res = _a[0];
-            return _this.afterAdd(res.data);
-        });
+            .then(function (data) { return _this.afterAdd(data); });
     };
     /**
      * Default identity hook (return what was passed in)

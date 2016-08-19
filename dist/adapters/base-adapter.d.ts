@@ -1,6 +1,6 @@
 import { Store } from 'redux';
 import { IPersistor } from '../persistors/i-persistor';
-import { IResourceAdapter } from '../resources/interfaces';
+import { IResourceAdapter, IPersistorConfig, IAdapterConfig } from '../resources/interfaces';
 export declare class BaseAdapter implements IResourceAdapter {
     /**
      * Persistor adapter that is used to put and retrieve data. These methods need
@@ -24,9 +24,9 @@ export declare class BaseAdapter implements IResourceAdapter {
      * generateSlug is used when storing data in the redux store. It's the key by which the data is put into the store.
      */
     generateSlug(entity: any): string;
-    findOne(persistorConfig: Object, adapterConfig?: Object): Promise<any> | PromiseLike<any>;
+    findOne(persistorConfig: IPersistorConfig, adapterConfig?: IAdapterConfig): PromiseLike<any>;
     beforeFindOne(persistorConfig: Object, adapterConfig?: Object): Array<Object>;
-    afterFindOne(data: any, adapterConfig?: Object): Promise<any[]>;
+    afterFindOne(data: any, adapterConfig?: Object): PromiseLike<any[]>;
     find(persistorConfig: Object, adapterConfig: Object): Promise<any> | PromiseLike<any>;
     beforeFind(persistorConfig: Object, adapterConfig: Object): Array<Object>;
     afterFind(data: any, adapterConfig: Object): Promise<any>;

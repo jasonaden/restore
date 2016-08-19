@@ -1,108 +1,68 @@
 "use strict";
 var resource_reducer_1 = require('./resource-reducer');
+var Immutable = require('immutable');
 // import 'angular-mocks';
 var constants_1 = require('../resources/constants');
 var type = 'CASE';
 var reducer;
-xdescribe('defaultReducer', function () {
+var verifyDefault = function (reduc, exclude) {
+    var defaults = ['loadingMany', 'loadingOne', 'deleting', 'patching', 'adding'];
+    if (exclude) {
+        defaults.splice(defaults.indexOf(exclude), 1);
+    }
+    defaults.forEach(function (item) {
+        expect(reduc[item]).toBeFalsy();
+    });
+};
+describe('defaultReducer', function () {
     beforeEach(function () {
         reducer = resource_reducer_1.defaultReducer(type);
     });
     it('returns a default state', function () {
-        expect(reducer(undefined, {})).toEqual({
-            result: [],
-            loadingMany: false,
-            loadingOne: false,
-            deleting: false,
-            patching: false,
-            adding: false,
-            items: {}
-        });
+        var reduc = reducer(undefined, {});
+        verifyDefault(reduc);
+        expect(Immutable.is(reduc.items, Immutable.Map())).toBeTruthy();
     });
     it('should handle FINDING_CASE', function () {
-        expect(reducer(undefined, {
+        var reduc = reducer(undefined, {
             type: constants_1.FINDING + "_" + type
-        })).toEqual({
-            result: [],
-            loadingMany: true,
-            loadingOne: false,
-            deleting: false,
-            patching: false,
-            adding: false,
-            items: {}
         });
+        verifyDefault(reduc, 'loadingMany');
+        expect(reduc.loadingMany).toBeTruthy();
     });
     it('should handle FINDING_ONE_CASE', function () {
-        expect(reducer(undefined, {
-            type: constants_1.FINDING_ONE + "_" + type,
-        })).toEqual({
-            result: [],
-            loadingMany: false,
-            loadingOne: true,
-            deleting: false,
-            patching: false,
-            adding: false,
-            items: {}
+        var reduc = reducer(undefined, {
+            type: constants_1.FINDING_ONE + "_" + type
         });
-    });
-    it('should handle DESTROYING_CASE', function () {
-        expect(reducer(undefined, {
-            type: constants_1.DESTROYING + "_" + type
-        })).toEqual({
-            result: [],
-            loadingMany: false,
-            loadingOne: false,
-            deleting: true,
-            patching: false,
-            adding: false,
-            items: {}
-        });
-    });
-    it('should handle PATCHING_CASE', function () {
-        expect(reducer(undefined, {
-            type: constants_1.PATCHING + "_" + type
-        })).toEqual({
-            result: [],
-            loadingMany: false,
-            loadingOne: false,
-            deleting: false,
-            patching: true,
-            adding: false,
-            items: {}
-        });
-    });
-    it('should handle ADDING_CASE', function () {
-        expect(reducer(undefined, {
-            type: constants_1.ADDING + "_" + type
-        })).toEqual({
-            result: [],
-            loadingMany: false,
-            loadingOne: false,
-            deleting: false,
-            patching: false,
-            adding: true,
-            items: {}
-        });
+        verifyDefault(reduc, 'loadingOne');
+        expect(reduc.loadingOne).toBeTruthy();
     });
     it('should handle FOUND_CASE', function () {
-        expect(reducer(undefined, {
-            type: constants_1.FOUND + "_" + type,
-            payload: {
-                result: ['/cases/1'],
-                items: {
-                    '/cases/1': {
-                        _links: { self: { href: '/cases/1' } }, _embedded: { entries: [{}] }
-                    }
-                }
-            }
-        })).toEqual({
-            result: [],
-            loadingMany: false,
-            loadingOne: false,
-            deleting: false,
-            patching: false,
-            adding: true,
-            items: {}
+        var reduc = reducer(undefined, {
+            type: constants_1.FOUND + "_" + type
         });
+        verifyDefault(reduc, 'loadingOne');
+        expect(reduc.loadingOne).toBeFalsy();
+    });
+    it('should handle DESTROYING_CASE', function () {
+        var reduc = reducer(undefined, {
+            type: constants_1.DESTROYING + "_" + type
+        });
+        verifyDefault(reduc, 'deleting');
+        expect(reduc.deleting).toBeTruthy();
+    });
+    it('should handle PATCHING_CASE', function () {
+        var reduc = reducer(undefined, {
+            type: constants_1.PATCHING + "_" + type
+        });
+        verifyDefault(reduc, 'patching');
+        expect(reduc.patching).toBeTruthy();
+    });
+    it('should handle ADDING_CASE', function () {
+        var reduc = reducer(undefined, {
+            type: constants_1.ADDING + "_" + type
+        });
+        verifyDefault(reduc, 'adding');
+        expect(reduc.adding).toBeTruthy();
     });
 });

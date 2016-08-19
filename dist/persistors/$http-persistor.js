@@ -51,13 +51,15 @@ var $httpPersistor = (function (_super) {
     // Execute request based on the existing config and 
     //  object passed in that overrides the existing config.  
     // execute (config?: any): ng.IPromise<any> {
-    $httpPersistor.prototype.execute = function (config) {
-        var requestConfig = this.config.extend(config).build();
+    // execute (config?: Object): ng.IPromise<any> {
+    $httpPersistor.prototype.execute = function (persistorConfig) {
+        var requestConfig = this.config.extend(persistorConfig).build();
         return this.doRequest(requestConfig);
     };
     $httpPersistor.prototype.doRequest = function (requestConfig) {
         return generate_http_config_1.generateHttpConfig($httpPersistor.$q, requestConfig)
             .then(function (httpConfig) {
+            debugger;
             return $httpPersistor.$http(httpConfig);
         });
     };
@@ -69,8 +71,8 @@ var $httpPersistor = (function (_super) {
       );
     }
     */
-    $httpPersistor.prototype.findOne = function (config) {
-        return this.execute(config);
+    $httpPersistor.prototype.findOne = function (persistorConfig) {
+        return this.execute(persistorConfig);
     };
     $httpPersistor.prototype.find = function (config) {
         return this.execute(config);

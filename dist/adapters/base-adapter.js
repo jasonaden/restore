@@ -34,7 +34,13 @@ var BaseAdapter = (function () {
             return _this.persistor.findOne(persistorConfig);
         })
             .then(function (res) {
-            return _this.afterFindOne(res.data);
+            return _this.afterFindOne(res.data, adapterConfig);
+        })
+            .then(null, 
+        // TODO: We probably need to add some kind of logging here
+        //  to log failures 
+        function (err) {
+            return Promise.reject(err);
         });
     };
     // Default version is a no-op that passes along the

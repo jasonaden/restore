@@ -21,7 +21,7 @@ describe('BaseAdapter', function () {
     var testPersistor = {
         create: function (data, params) { return Promise.resolve(Object.assign({}, data, { created: true })); },
         update: function (data, params, base) { return Promise.resolve(Object.assign({}, data, { updated: true })); },
-        findOne: function (params) { return Promise.all([caseEmbedded_1.caseEmbedded]); },
+        findOne: function (persistorConfig) { return Promise.all([caseEmbedded_1.caseEmbedded]); },
         find: function (params) { return Promise.all([changesCase_1.changesCase]); },
         destroy: function (params) { return Promise.resolve(null); }
     };
@@ -33,33 +33,6 @@ describe('BaseAdapter', function () {
         }
         return TestAdapter;
     }(base_adapter_1.BaseAdapter));
-    // TODO: playground
-    describe('developing', function () {
-        var adapter;
-        var types = ['CASE', 'CUSTOMER', 'DRAFT', 'MESSAGE'];
-        beforeEach(function () {
-            adapter = new base_adapter_1.BaseAdapter(schemas_1.appSchema, mockStore, testPersistor);
-            spyOn(adapter, 'findOne').and.callThrough();
-            spyOn(adapter, 'beforeFindOne').and.callThrough();
-            spyOn(adapter.persistor, "findOne").and.callThrough();
-            spyOn(adapter, 'afterFindOne').and.callThrough();
-            spyOn(adapter, 'splitSchema').and.callThrough();
-        });
-        it('should handle the changes properly', function (done) {
-            adapter.findOne({ id: 123 })
-                .then(function () {
-                expect(adapter.beforeFindOne).toHaveBeenCalledWith({ id: 123 });
-                expect(adapter.persistor.findOne).toHaveBeenCalledWith({ id: 123 });
-                expect(adapter.afterFindOne).toHaveBeenCalledWith(caseEmbedded_1.caseEmbedded);
-                expect(adapter.splitSchema).toHaveBeenCalledWith(caseEmbedded_1.caseEmbedded);
-                done();
-            }, function (err) {
-                expect(adapter.splitSchema).toThrow();
-                console.log("test error!!!!", err.message);
-                done();
-            });
-        });
-    });
     // basic instantiation
     describe('should set', function () {
         var adapter;
@@ -94,20 +67,74 @@ describe('BaseAdapter', function () {
             adapter = new base_adapter_1.BaseAdapter(null, null, testPersistor);
             spyOn(adapter, 'findOne').and.callThrough();
             spyOn(adapter, 'beforeFindOne').and.callThrough();
-            spyOn(adapter.persistor, "findOne").and.callFake(function (params) { return Promise.all([{ id: 567 }]); });
+            spyOn(adapter.persistor, "findOne").and.callFake(function (persistorConfig) {
+                return Promise.resolve({ data: { id: 567 } });
+            });
             spyOn(adapter, 'afterFindOne').and.callThrough();
         });
         it('when invoking findOne', function (done) {
             adapter.findOne({ id: 123 })
                 .then(function () {
-                expect(adapter.beforeFindOne).toHaveBeenCalledWith({ id: 123 });
+                expect(adapter.beforeFindOne).toHaveBeenCalledWith({ id: 123 }, undefined);
                 expect(adapter.persistor.findOne).toHaveBeenCalledWith({ id: 123 });
-                expect(adapter.afterFindOne).toHaveBeenCalledWith({ id: 567 });
+                expect(adapter.afterFindOne).toHaveBeenCalledWith({ id: 567 }, undefined);
+                done();
+            }, function (err) {
+                expect("ERROR OCCURED: ").toEqual(err);
                 done();
             });
         });
     });
-    describe('splitSchema', function () {
+    // TODO: These test for rejected promises. Probably need to 
+    //  add tests for methods that just throw errors.
+    describe('should handle errors anywhere on the chain', function () {
+        var adapter;
+        it('should catch rejections from the beforeFindOne', function (done) {
+            adapter = new base_adapter_1.BaseAdapter(schemas_1.appSchema, mockStore, testPersistor);
+            spyOn(adapter, 'beforeFindOne').and.callFake(function () {
+                return [Promise.reject("in beforeFindOne")];
+            });
+            adapter.findOne({ id: 123 })
+                .then(function () {
+                expect('this success beforeFindOne test should not be running').toEqual('foo');
+                done();
+            }, function (err) {
+                expect(err).toEqual('in beforeFindOne');
+                done();
+            });
+        });
+        it('should catch rejections from the call to the persistor', function (done) {
+            adapter = new base_adapter_1.BaseAdapter(schemas_1.appSchema, mockStore, testPersistor);
+            spyOn(adapter.persistor, "findOne").and.callFake(function () {
+                return Promise.reject("in persistorFindOne");
+            });
+            adapter.findOne({ id: 123 })
+                .then(function () {
+                expect('this success persistor.findOne test should not be runnning').toEqual('foo');
+                done();
+            }, function (err) {
+                expect(err).toEqual('in persistorFindOne');
+                done();
+            });
+        });
+        it('should catch rejections from the afterFindOne', function (done) {
+            adapter = new base_adapter_1.BaseAdapter(schemas_1.appSchema, mockStore, testPersistor);
+            spyOn(adapter, 'afterFindOne').and.callFake(function () {
+                return Promise.reject("in afterFindOne");
+            });
+            adapter.findOne({ id: 123 })
+                .then(function () {
+                expect('this success afterFindOne test should not be running').toEqual('foo');
+                done();
+            }, function (err) {
+                expect(err).toEqual('in afterFindOne');
+                done();
+            });
+        });
+    });
+    // TODO: Move this to a test for the ApiV2 Adapter in POC
+    // Split schema is in the ApiV2 Adapter, not the base
+    xdescribe('splitSchema', function () {
         var adapter;
         var types = ['CASE', 'CUSTOMER', 'DRAFT', 'MESSAGE'];
         beforeEach(function () {
@@ -129,98 +156,6 @@ describe('BaseAdapter', function () {
                     expect(types.indexOf(item.type.split("_")[1]) > -1).toBeTruthy();
                 });
                 done();
-            });
-        });
-    });
-    // TODO: These test for rejected promises. Probably need to 
-    //  add tests for methods that just throw errors.
-    describe('should handle errors anywhere on the chain', function () {
-        var adapter;
-        it('should catch rejections in beforeFindOne', function (done) {
-            adapter = new base_adapter_1.BaseAdapter(schemas_1.appSchema, mockStore, testPersistor);
-            spyOn(adapter, 'beforeFindOne').and.callFake(function () { return Promise.reject("in beforeFindOne"); });
-            adapter.findOne({ id: 123 })
-                .then(function () {
-                expect('this should not run').toBeTruthy;
-                done();
-            }, function (err) {
-                expect(err).toEqual('findOne failed in beforeFindOne');
-                done();
-            });
-        });
-        it('should catch rejections in the call to the persistor', function (done) {
-            adapter = new base_adapter_1.BaseAdapter(schemas_1.appSchema, mockStore, testPersistor);
-            spyOn(adapter.persistor, "findOne").and.callFake(function () { return Promise.reject("in persistorFindOne"); });
-            adapter.findOne({ id: 123 })
-                .then(function () {
-                expect('this should not run').toBeTruthy;
-                done();
-            }, function (err) {
-                expect(err).toEqual('findOne failed in persistorFindOne');
-                done();
-            });
-        });
-        it('should catch rejections in afterFindOne', function (done) {
-            adapter = new base_adapter_1.BaseAdapter(schemas_1.appSchema, mockStore, testPersistor);
-            spyOn(adapter, 'afterFindOne').and.callFake(function () { return Promise.reject("in afterFindOne"); });
-            adapter.findOne({ id: 123 })
-                .then(function () {
-                expect('this should not run').toBeTruthy;
-                done();
-            }, function (err) {
-                expect(err).toEqual('findOne failed in afterFindOne');
-                done();
-            });
-        });
-        // TODO: because the where the fail method is set on the final findOne() "then", 
-        //  this error is just returned and does not go through the 'fail' method.
-        it('should catch rejections in splitSchema', function (done) {
-            adapter = new base_adapter_1.BaseAdapter(schemas_1.appSchema, mockStore, testPersistor);
-            spyOn(adapter, 'splitSchema').and.callFake(function () { return Promise.reject("in splitSchema"); });
-            adapter.findOne({ id: 123 })
-                .then(function () {
-                expect('this should not run').toBeTruthy;
-                done();
-            }, function (err) {
-                expect(err).toEqual('in splitSchema');
-                done();
-            });
-        });
-    });
-    describe('has an add method that', function () {
-        var adapter;
-        var newObj;
-        beforeEach(function () {
-            newObj = { id: 789 };
-            adapter = new TestAdapter({});
-        });
-        it('runs before and after methods', function (done) {
-            spyOn(adapter, 'beforeAdd').and.callThrough();
-            spyOn(adapter, 'afterAdd').and.callThrough();
-            adapter.add(newObj)
-                .then(function (createdObj) {
-                expect(adapter.beforeAdd).toHaveBeenCalledWith(newObj, undefined);
-                expect(adapter.afterAdd).toHaveBeenCalled();
-                done();
-            });
-        });
-        it('runs adapter.persistence.create', function (done) {
-            adapter.add(newObj).then(function (createdObj) {
-                expect(createdObj.id).toBe(789);
-                expect(createdObj.created).toBe(true);
-                done();
-            });
-        });
-        xdescribe('takes config object', function () {
-            it('and passes through to beforeAdd', function (done) {
-                spyOn(adapter, 'beforeAdd').and.callThrough();
-                spyOn(adapter.persistor, 'create').and.callThrough();
-                var config = { config: 'object' };
-                adapter.add(newObj, config).then(function (createdObj) {
-                    expect(adapter.beforeAdd).toHaveBeenCalledWith(newObj, config);
-                    expect(adapter.persistence.create).toHaveBeenCalledWith(newObj, config);
-                    done();
-                });
             });
         });
     });

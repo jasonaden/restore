@@ -2,6 +2,7 @@ import { IPersistor } from '../persistors/i-persistor';
 export interface IPersistorConfig {
     url?: string;
     data?: Object;
+    method?: string;
 }
 export interface IAdapterConfig {
     listName?: string;
@@ -42,7 +43,7 @@ export interface IResourceAdapter {
     afterFind: (data: any, adapterConfig: Object) => Promise<any>;
     findOne: (persistorConfig: IPersistorConfig, adapterConfig?: IAdapterConfig) => Promise<any> | PromiseLike<any>;
     beforeFindOne: (persistorConfig: IPersistorConfig, adapterConfig?: IAdapterConfig) => Array<Object>;
-    afterFindOne: (data: any, adapterConfig?: Object) => Promise<any>;
+    afterFindOne: (data: any, adapterConfig?: Object) => PromiseLike<any[]>;
     update: (data, persistorConfig: IPersistorConfig, adapterConfig?: IAdapterConfig) => Promise<any> | PromiseLike<any>;
     beforeUpdate: (data, persistorConfig: IPersistorConfig, adapterConfig?: IAdapterConfig) => Array<Object>;
     afterUpdate: (data: any, adapterConfig?: Object) => Promise<any>;

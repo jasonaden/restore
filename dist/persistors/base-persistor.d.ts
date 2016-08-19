@@ -1,9 +1,10 @@
 import { IPersistor } from './i-persistor';
+import { IPersistorConfig } from '../resources/interfaces';
 export declare class BasePersistor implements IPersistor {
     create(data: any, options?: any): PromiseLike<any>;
     update(data: any, options?: any, base?: any): PromiseLike<any>;
-    findOne(options: any): PromiseLike<any>;
-    find(options: any): PromiseLike<any[]>;
+    findOne(persistorConfig: IPersistorConfig): PromiseLike<any>;
+    find(persistorConfig: IPersistorConfig): PromiseLike<any[]>;
     destroy(params: any): PromiseLike<any>;
     /**
      * Default reviver. This function will run when sending back a response such as after

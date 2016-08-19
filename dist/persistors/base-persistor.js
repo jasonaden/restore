@@ -11,11 +11,11 @@ var BasePersistor = (function () {
         data = Object.assign({}, data, { updated: true });
         return Promise.resolve(data);
     };
-    BasePersistor.prototype.findOne = function (options) {
+    BasePersistor.prototype.findOne = function (persistorConfig) {
         // Do some work to get data and then resolve it
-        return Promise.all([{ id: 123 }]);
+        return Promise.resolve();
     };
-    BasePersistor.prototype.find = function (options) {
+    BasePersistor.prototype.find = function (persistorConfig) {
         return Promise.resolve([{ id: 123 }, { id: 456 }]);
     };
     BasePersistor.prototype.destroy = function (params) {

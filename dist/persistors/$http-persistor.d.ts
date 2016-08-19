@@ -1,6 +1,7 @@
 import { BasePersistor } from './base-persistor';
 import { IHttpPersistorConfig } from './$http-persistor-config';
 import * as angular from 'angular';
+import { IPersistorConfig } from '../resources/interfaces';
 export declare class $httpPersistor extends BasePersistor {
     private static config;
     static $http: ng.IHttpService;
@@ -15,9 +16,9 @@ export declare class $httpPersistor extends BasePersistor {
     static getConfig(): IHttpPersistorConfig;
     setConfig(config: any): void;
     getConfig(): IHttpPersistorConfig;
-    execute(config?: Object): ng.IPromise<any>;
+    execute(persistorConfig?: IPersistorConfig): ng.IPromise<any>;
     doRequest(requestConfig: IHttpPersistorConfig): ng.IPromise<any>;
-    findOne(config: any): ng.IPromise<any>;
+    findOne(persistorConfig: IPersistorConfig): ng.IPromise<any>;
     find(config: any): ng.IPromise<any>;
     update(config: any): ng.IPromise<any>;
     destroy(config: any): ng.IPromise<any>;
