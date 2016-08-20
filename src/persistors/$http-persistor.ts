@@ -70,7 +70,6 @@ export class $httpPersistor extends BasePersistor {
   doRequest (requestConfig: IHttpPersistorConfig): ng.IPromise<any> {
     return generateHttpConfig( $httpPersistor.$q, requestConfig )
     .then( (httpConfig) => {
-      debugger
       return $httpPersistor.$http(httpConfig);
     })
   }

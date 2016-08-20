@@ -59,7 +59,6 @@ var $httpPersistor = (function (_super) {
     $httpPersistor.prototype.doRequest = function (requestConfig) {
         return generate_http_config_1.generateHttpConfig($httpPersistor.$q, requestConfig)
             .then(function (httpConfig) {
-            debugger;
             return $httpPersistor.$http(httpConfig);
         });
     };
