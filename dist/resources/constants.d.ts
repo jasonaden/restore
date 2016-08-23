@@ -24,3 +24,8 @@ export declare const SET_ONE: string;
 export declare const REMOVE_ONE: string;
 export declare const SET_LIST: string;
 export declare const REMOVE_LIST: string;
+export declare const FINDING_LIST: string;
+export declare const FOUND_LIST: string;
+export declare const SET_LIST_RESULT: string;
+export declare const SET_LIST_PAGE: string;
+export declare const SET_LIST_COUNT: string;
