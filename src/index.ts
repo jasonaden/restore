@@ -14,6 +14,10 @@ export {
 } from './reducers/resource-list-reducer';
 
 export {
+  defaultGenericListReducer
+} from './reducers/resource-generic-list-reducer';
+
+export {
   IResourceAdapter, 
   IResourceRequestConfig,
   IEntityState,

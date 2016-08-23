@@ -11,7 +11,7 @@ const defaultListState = Immutable.Record({
   count: null
 });
 
-export function defaultGenericListReducer<T> (type: string): Reducer {
+export function defaultGenericListReducer<T> (): Reducer {
 
   function mkDefault (state, uri) {
     if( ! state.get(uri) ) {
@@ -32,7 +32,7 @@ export function defaultGenericListReducer<T> (type: string): Reducer {
       case C.FOUND_LIST:
         return state.setIn([action.meta.uri, 'loading'], false);
       case C.SET_LIST_RESULT:
-        return state.setIn([action.meta.uri, 'result', state.get(action.meta.uri).page], Immutable.List(action.payload));
+        return state.setIn([action.meta.uri, 'result', state.get(action.meta.uri).get('page')], Immutable.List(action.payload));
       case C.SET_LIST_PAGE:
         return state.setIn([action.meta.uri, 'page'], action.payload);
       case C.SET_LIST_COUNT:
