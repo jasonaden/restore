@@ -25,3 +25,9 @@ export const SET_ONE = "SET_ONE";
 export const REMOVE_ONE = "REMOVE_ONE";
 export const SET_LIST = "SET_LIST";
 export const REMOVE_LIST = "REMOVE_LIST";
+
+export const FINDING_LIST = "FINDING_LIST";
+export const FOUND_LIST = "FOUND_LIST";
+export const SET_LIST_RESULT = "SET_LIST_RESULT";
+export const SET_LIST_PAGE = "SET_LIST_PAGE";
+export const SET_LIST_COUNT = "SET_LIST_COUNT";
