@@ -8,6 +8,7 @@ import * as C from '../resources/constants';
 
 let type: string = 'CASE';
 let reducer: Reducer;
+let uri: string = '/cases/1/notes';
 
 let verifyDefault = (reduc, exclude?) => {
   // let defaults = ['loadingMany', 'loadingOne', 'deleting', 'patching', 'adding'];
@@ -21,61 +22,71 @@ let verifyDefault = (reduc, exclude?) => {
 } 
 
 describe('defaultGenericListReducer', () => {
-  
-  beforeEach(() => {
-    reducer = defaultGenericListReducer(type);
-  })
-
-  fit ('returns a default state', () => {   
-    let reduc = reducer(undefined, {})
-
-    // verifyDefault(reduc);
-    expect( Immutable.is(reduc, Immutable.Map()) ).toBeTruthy();
-  });  
-
-  fit ('should handle FINDING_LIST', () => {
-    let uri = '/cases/1/notes';
-    
-    let reduc = reducer(undefined, {
-      type: `${C.FINDING_LIST}`,
-      uri: uri
+  describe('initialization tests', () => {
+    beforeEach(() => {
+      reducer = defaultGenericListReducer(type);
     })
-    expect( reduc.get(uri).loading ).toBeTruthy()
 
-    reduc = reducer(reduc, {
-      type: `${C.FOUND_LIST}`,
-      uri: uri
-    })
-    expect( reduc.get(uri).loading ).toBeFalsy()
+    it ('returns a default state', () => {   
+      let reduc = reducer(undefined, {})
+
+      // verifyDefault(reduc);
+      expect( Immutable.is(reduc, Immutable.Map()) ).toBeTruthy();
+    });  
+
+    it ('should handle FINDING_LIST', () => {   
+      let reduc = reducer(undefined, {
+        type: `${C.FINDING_LIST}`,
+        meta: {uri}
+      })
+      expect( reduc.get(uri).get('loading') ).toBeTruthy()
+
+      reduc = reducer(reduc, {
+        type: `${C.FOUND_LIST}`,
+        meta: {uri}
+      })
+      expect( reduc.get(uri).loading ).toBeFalsy()
+    });
   });
 
-  it ('should handle FOUND_CASE', () => {
-    let reduc = reducer(undefined, {
-      type: `${C.FOUND}_${type}`
-    })
+  describe('instantiated tests', () => {
+    let reduc;
+    beforeEach(()=>{
+      reduc = reducer(undefined, {
+        type: `${C.FINDING_LIST}`,
+        meta: {uri}
+      });
+    });
 
-    verifyDefault(reduc, 'loading');
-    expect( reduc.loading ).toBeFalsy();
-  });
+    it ('should handle SET_LIST_RESULT', () => {
+      reduc = reducer(reduc, {
+        type: `${C.SET_LIST_RESULT}`,
+        meta: {uri},
+        payload: [1,2,3]
+      })
 
-  it ('should handle SET_LIST_PAGE', () => {
-    let reduc = reducer(undefined, {
-      type: `${C.SET_LIST}_PAGE_${type}`,
-      payload: 22
-    })
+      expect( reduc.get(uri).get('result').get(1).toJS()).toEqual([1,2,3])
+    });
 
-    verifyDefault(reduc, 'page');
-    expect( reduc.page ).toEqual(22)
-  });
+    it ('should handle SET_LIST_PAGE', () => {
+      reduc = reducer(reduc, {
+        type: `${C.SET_LIST_PAGE}`,
+        meta: {uri},
+        payload: 2
+      });
 
-  it ('should handle SET_LIST_COUNT', () => {
-    let reduc = reducer(undefined, {
-      type: `${C.SET_LIST}_COUNT_${type}`,
-      payload: 3
-    })
+      expect( reduc.get(uri).page ).toEqual(2)
+    });
 
-    verifyDefault(reduc, 'count');
-    expect( reduc.count ).toEqual(3)
+    it ('should handle SET_LIST_COUNT', () => {
+      reduc = reducer(reduc, {
+        type: `${C.SET_LIST_COUNT}`,
+        meta: {uri},
+        payload: 150
+      })
+
+      expect( reduc.get(uri).count ).toEqual(150)
+    });
   });
 
 });

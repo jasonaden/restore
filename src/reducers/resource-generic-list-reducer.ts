@@ -7,7 +7,7 @@ import * as C from '../resources/constants';
 const defaultListState = Immutable.Record({
   result: Immutable.Map(),
   loading: false,
-  page: null,
+  page: 1,
   count: null
 });
 
@@ -27,19 +27,16 @@ export function defaultGenericListReducer<T> (type: string): Reducer {
     switch (action.type) {
  
       case C.FINDING_LIST:
-        state = mkDefault(state, action.uri);
-        return state.setIn([action.uri, 'loading'], true);
+        state = mkDefault(state, action.meta.uri);
+        return state.setIn([action.meta.uri, 'loading'], true);
       case C.FOUND_LIST:
-        state = mkDefault(state, action.uri);
-        return state.setIn([action.uri, 'loading'], false);
-
-      // TODO: Still not done
+        return state.setIn([action.meta.uri, 'loading'], false);
       case C.SET_LIST_RESULT:
-        return state.setIn([action.uri, 'result', state.page], Immutable.List(action.payload));
+        return state.setIn([action.meta.uri, 'result', state.get(action.meta.uri).page], Immutable.List(action.payload));
       case C.SET_LIST_PAGE:
-        return state.setIn([action.uri, 'page'], action.payload);
+        return state.setIn([action.meta.uri, 'page'], action.payload);
       case C.SET_LIST_COUNT:
-        return state.setIn([action.uri,'count'], action.payload);
+        return state.setIn([action.meta.uri, 'count'], action.payload);
 
 
       default:
