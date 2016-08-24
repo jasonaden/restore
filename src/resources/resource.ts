@@ -173,7 +173,7 @@ export class Resource {
     .then( ([persistorConfig, adapterConfig]) => {
       return this.store.dispatch( findOne(this, persistorConfig, adapterConfig) )
     })
-    .then( (data) => this.afterFindOne(data) );
+    .then( (data) => this.afterFindOne(data, adapterConfig) );
   }
   
   /**
@@ -186,8 +186,7 @@ export class Resource {
   /**
    * Default identity hook (return what was passed in)
    */
-  afterFindOne(data: any): (PromiseLike<any[]>) {
-    console.log("Resource afterFindOne")
+  afterFindOne(data: any, adapterConfig?: Object): (PromiseLike<any[]>) {
     return this.promise.all([data]);
   }
 

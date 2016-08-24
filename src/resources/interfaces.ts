@@ -8,7 +8,7 @@ export interface IPersistorConfig {
 }
 
 export interface IAdapterConfig {
-  listName?: string
+  uri?: string
 }
 
 
