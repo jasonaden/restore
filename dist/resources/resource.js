@@ -175,7 +175,7 @@ var Resource = (function () {
             var persistorConfig = _a[0], adapterConfig = _a[1];
             return _this.store.dispatch(findOne_1.findOne(_this, persistorConfig, adapterConfig));
         })
-            .then(function (data) { return _this.afterFindOne(data); });
+            .then(function (data) { return _this.afterFindOne(data, adapterConfig); });
     };
     /**
      * Default identity hook (return what was passed in)
@@ -186,8 +186,7 @@ var Resource = (function () {
     /**
      * Default identity hook (return what was passed in)
      */
-    Resource.prototype.afterFindOne = function (data) {
-        console.log("Resource afterFindOne");
+    Resource.prototype.afterFindOne = function (data, adapterConfig) {
         return this.promise.all([data]);
     };
     /**

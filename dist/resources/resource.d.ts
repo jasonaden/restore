@@ -97,7 +97,7 @@ export declare class Resource {
     /**
      * Default identity hook (return what was passed in)
      */
-    afterFindOne(data: any): (PromiseLike<any[]>);
+    afterFindOne(data: any, adapterConfig?: Object): (PromiseLike<any[]>);
     /**
      * Finds items and puts them into the store.
      *

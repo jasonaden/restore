@@ -1,2 +1,2 @@
 import { Reducer } from 'redux';
-export declare function defaultGenericListReducer<T>(type: string): Reducer;
+export declare function defaultGenericListReducer<T>(): Reducer;

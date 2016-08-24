@@ -5,7 +5,7 @@ export interface IPersistorConfig {
     method?: string;
 }
 export interface IAdapterConfig {
-    listName?: string;
+    uri?: string;
 }
 /**
  * Interface for creating a ResourceAdapter. ResourceAdapters are the glue that
