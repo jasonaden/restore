@@ -5,10 +5,12 @@ import * as Immutable from 'immutable';
 import * as C from '../resources/constants';
 
 export const defaultGenericEntityState = Immutable.Record({
+  loadingMany: false,
   loadingOne: false,
   deleting: false,
   patching: false,
-  adding: false
+  adding: false,
+  items: Immutable.Map()
 });
 
 
@@ -19,7 +21,7 @@ export const defaultGenericEntityState = Immutable.Record({
  *  entities = {
  *    customer: {},
  *    ...
- *    case: {
+ *    cases: {
  *      // sequence of cases as returned from most recent API call
  *      loadingMany: true,
  *      loadingOne: true,
@@ -42,64 +44,70 @@ export const defaultGenericEntityState = Immutable.Record({
 
 export function defaultGenericReducer<T> (type: string): Reducer {
   let baseUri: string = '/api/v2';
-  let className: string;
-
 
   // figure out the resoure class and set up record for it
-  function mkDefault (state, uri) {
-    if( uri.indexOf(baseUri) === -1 ) {
-      throw new Error(`resource-generic-reducer: received uri ${uri} doesn't contain ${baseUri}`);
-    }
-    let className = uri.split('/')[3]
+  function mkDefault (state, className) {
     if( ! state.get(className) ) {
-      return [state.setIn([className], new defaultGenericEntityState()), className];
+      return state.setIn([className], new defaultGenericEntityState());
     } else {
-      return [state, className];
+      return state;
     }
   } 
 
   return (state: any = Immutable.Map(), action: any) => {
-  
+    let className;
+    let uri;
+
     switch (action.type) {
 
       /**  actions to update status associated with a resource type */
       case C.FINDING_ONE:
-        [state, className] = mkDefault(state, action.meta.uri);
-        return state.setIn([className,'loadingOne'], true);
+        state = mkDefault(state, action.meta.className);
+        return state.setIn([action.meta.className,'loadingOne'], true);
       case C.FOUND_ONE:
-        return state.setIn([className,'loadingOne'], false);
+        return state.setIn([action.meta.className,'loadingOne'], false);
 
       case C.DESTROYING:
-        [state, className] = mkDefault(state, action.meta.uri);
-        return state.setIn([className,'deleting'], true);
+        state = mkDefault(state, action.meta.className);
+        return state.setIn([action.meta.className,'deleting'], true);
       case C.DESTROYED:
-        return state.setIn([className,'deleting'], false);
+        return state.setIn([action.meta.className,'deleting'], false);
 
       case C.PATCHING:
-        [state, className] = mkDefault(state, action.meta.uri);
-        return state.setIn([className,'patching'], true);      
+        state = mkDefault(state, action.meta.className);
+        return state.setIn([action.meta.className,'patching'], true);      
       case C.PATCHED:
-        return state.setIn([className,'patching'], false);
+        return state.setIn([action.meta.className,'patching'], false);
 
       case C.ADDING:
-        [state, className] = mkDefault(state, action.meta.uri);
-        return state.setIn([className,'adding'], true);
+        state = mkDefault(state, action.meta.className);
+        return state.setIn([action.meta.className,'adding'], true);
       case C.ADDED:
-        return state.setIn([className,'adding'], false);
+        return state.setIn([action.meta.className,'adding'], false);
 
       /** actions to set/unset resource data */
       case C.SET_ONE:
-        return state.set(action.meta.uri, Immutable.fromJS(action.payload));
+        className = action.payload._links.self.class;
+        uri = action.payload._links.self.href;
+        return state.setIn([className, 'items', uri], Immutable.fromJS(action.payload));
   
       case C.REMOVE_ONE:
-        return state.delete(action.meta.uri);
+        if( action.payload ) {
+          className = action.payload._links.self.class;
+          uri = action.payload._links.self.href;
+          return state.deleteIn([className, 'items', uri])
+
+        } else if ( action.meta && action.meta.className && action.meta.uri ) {
+          return state.deleteIn([action.meta.className, 'items', action.meta.uri])
+        }
 
       // For now, this depends on an error including the associated uri
       //  Might need to make it more generic to loop through all resource
       //  entityStates to reset all of them
       case C.ERROR:
-        [state, className] = mkDefault(state, action.meta.uri);
+        state = mkDefault(state, action.meta.className);
 
+        className = action.meta.className;
         state = state.setIn([className,'loadingOne'], false);
         state = state.setIn([className,'deleting'], false);
         state = state.setIn([className,'patching'], false);

@@ -22,6 +22,7 @@ import * as C from '../resources/constants';
 let type: string = 'CASE';
 let reducer: Reducer;
 let uri: string = '/api/v2/cases/1';
+let className = 'case'
 
 let verifyClassRecord = (classRecord, targetProp?) => {
   let defaults = ['loadingOne', 'deleting', 'patching', 'adding'];
@@ -46,7 +47,7 @@ let verifyClassRecord = (classRecord, targetProp?) => {
     expect(classRecord[item]).toBeDefined();
     expect(classRecord[item]).toBeFalsy();
   })
-} 
+}
 
 describe('defaultGenericReducer', () => {
   
@@ -63,73 +64,73 @@ describe('defaultGenericReducer', () => {
     it ('should create new default entity state records for new types', () => {
       let reduc = reducer(undefined, {
         type: `${C.FINDING_ONE}`,
-        meta: {uri}
+        meta: {className}
       })
-      expect( reduc.get('cases') ).toBeDefined();
+      expect( reduc.get(className) ).toBeDefined();
       expect( reduc.get('customers') ).not.toBeDefined();
 
       reduc = reducer(reduc, {
         type: `${C.FINDING_ONE}`,
-        meta: {uri: '/api/v2/customers/3'}
+        meta: {className: 'customers'}
       })
-      expect( reduc.get('cases') ).toBeDefined();
+      expect( reduc.get(className) ).toBeDefined();
       expect( reduc.get('customers') ).toBeDefined();
     });
 
     it ('should handle FINDING_ONE and FOUND_ONE', () => {
       let reduc = reducer(undefined, {
         type: `${C.FINDING_ONE}`,
-        meta: {uri}
+        meta: {className}
       })
-      verifyClassRecord(reduc.get('cases'), 'loadingOne');
+      verifyClassRecord(reduc.get(className), 'loadingOne');
 
       reduc = reducer(reduc, {
         type: `${C.FOUND_ONE}`,
-        meta: {uri}
+        meta: {className}
       })
-      verifyClassRecord(reduc.get('cases'));    
+      verifyClassRecord(reduc.get(className));    
     });
 
     it ('should handle DESTROYING and DESTROYED', () => {
       let reduc = reducer(undefined, {
         type: `${C.DESTROYING}`,
-        meta: {uri}
+        meta: {className}
       })
-      verifyClassRecord(reduc.get('cases'), 'deleting');
+      verifyClassRecord(reduc.get(className), 'deleting');
 
       reduc = reducer(reduc, {
         type: `${C.DESTROYED}`,
-        meta: {uri}
+        meta: {className}
       })
-      verifyClassRecord(reduc.get('cases'));
+      verifyClassRecord(reduc.get(className));
     });
 
     it ('should handle PATCHING and PATCHED', () => {
       let reduc = reducer(undefined, {
         type: `${C.PATCHING}`,
-        meta: {uri}
+        meta: {className}
       })
-      verifyClassRecord(reduc.get('cases'), 'patching');
+      verifyClassRecord(reduc.get(className), 'patching');
 
       reduc = reducer(reduc, {
         type: `${C.PATCHED}`,
-        meta: {uri}
+        meta: {className}
       })
-      verifyClassRecord(reduc.get('cases'));
+      verifyClassRecord(reduc.get(className));
     });
 
     it ('should handle ADDING and ADDED', () => {
       let reduc = reducer(undefined, {
         type: `${C.ADDING}`,
-        meta: {uri}
+        meta: {className}
       })
-      verifyClassRecord(reduc.get('cases'), 'adding');
+      verifyClassRecord(reduc.get(className), 'adding');
 
       reduc = reducer(reduc, {
         type: `${C.ADDED}`,
-        meta: {uri}
+        meta: {className}
       })
-      verifyClassRecord(reduc.get('cases'));
+      verifyClassRecord(reduc.get(className));
     });
   })
 
@@ -142,29 +143,57 @@ describe('defaultGenericReducer', () => {
     it ('should handle SET_ONE', () => {
       let reduc = reducer(undefined, {
         type: `${C.SET_ONE}`,
-        meta: {uri}, 
         payload: caseData
       })
 
-      expect( reduc.get(uri) ).toBeDefined();
-      expect( reduc.get(uri).get('id') ).toEqual(13);
+      let className = caseData._links.self.class;
+      let uri = caseData._links.self.href;
+
+      expect( reduc.get(className).get('items').get(uri) ).toBeDefined();
+      expect( reduc.get(className).get('items').get(uri).get('id') ).toEqual(13);
     });
     
-    it ('should handle REMOVE_ONE', () => {
+    it ('should handle REMOVE_ONE when the payload is passed', () => {
       let reduc = reducer(undefined, {
         type: `${C.SET_ONE}`,
-        meta: {uri}, 
         payload: caseData
       })
-      expect( reduc.get(uri) ).toBeDefined();
-      expect( reduc.get(uri).get('id') ).toEqual(13);
 
-      reduc = reducer(undefined, {
+      let className = caseData._links.self.class;
+      let uri = caseData._links.self.href;
+
+      expect( reduc.get(className).get('items').get(uri) ).toBeDefined();
+      expect( reduc.get(className).get('items').get(uri).get('id') ).toEqual(13);
+
+      reduc = reducer(reduc, {
         type: `${C.REMOVE_ONE}`,
-        meta: {uri} 
+        payload: caseData
       })
-      expect( reduc.get(uri) ).not.toBeDefined();
+      expect( reduc.get(className).get('items').get(uri)).not.toBeDefined();
     });
+
+    it ('should handle REMOVE_ONE when the className and uri is passed', () => {
+      let reduc = reducer(undefined, {
+        type: `${C.SET_ONE}`,
+        payload: caseData
+      })
+
+      let className = caseData._links.self.class;
+      let uri = caseData._links.self.href;
+
+      expect( reduc.get(className).get('items').get(uri) ).toBeDefined();
+      expect( reduc.get(className).get('items').get(uri).get('id') ).toEqual(13);
+
+      reduc = reducer(reduc, {
+        type: `${C.REMOVE_ONE}`,
+        meta: {
+          className: className,
+          uri: uri
+        }
+      })
+      expect( reduc.get(className).get('items').get(uri)).not.toBeDefined();
+    });
+
   })
 
   describe('actions to take on error', () => {
@@ -173,25 +202,25 @@ describe('defaultGenericReducer', () => {
       // set all the states to true
       let reduc = reducer(undefined, {
         type: C.FINDING_ONE,
-        meta: {uri} 
+        meta: {className} 
       })
       let list = [C.DESTROYING, C.PATCHING, C.ADDING]
       list.forEach( (item) => {
         reduc = reducer(reduc, {
           type: item,
-          meta: {uri} 
+          meta: {className} 
         })
       })
       // all items should be true
-      verifyClassRecord( reduc.get('cases'), 'all' )
+      verifyClassRecord( reduc.get(className), 'all' )
 
       reduc = reducer(reduc, {
         type: C.ERROR,
-        meta: {uri}
+        meta: {className}
       })
 
       // all items should be false
-      verifyClassRecord( reduc.get('cases') )
+      verifyClassRecord( reduc.get(className) )
     })
    
   })
