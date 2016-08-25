@@ -12,15 +12,15 @@ export function findOne (Resource, persistorConfig: IPersistorConfig, adapterCon
 
   return (dispatch, store) => {
 
-    dispatch(action(FINDING_ONE, Resource.className));
+    dispatch({type: FINDING_ONE, meta: {className:Resource.className}});
     return Resource.adapter.findOne(persistorConfig, adapterConfig)
     .then(
       res => {
-        dispatch(action(FOUND_ONE, Resource.className));
+        dispatch({type: FOUND_ONE, meta: {className:Resource.className}});
         return res.data;
       },
       error => {
-        dispatch(action(ERROR, Resource.className, error));
+        dispatch({type: ERROR, meta: {className:Resource.className}, error});
         return Promise.reject(error);
       }
     );

@@ -18,6 +18,10 @@ export {
 } from './reducers/resource-generic-list-reducer';
 
 export {
+  defaultGenericReducer
+} from './reducers/resource-generic-reducer';
+
+export {
   IResourceAdapter, 
   IResourceRequestConfig,
   IEntityState,

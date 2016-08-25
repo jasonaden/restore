@@ -42,7 +42,7 @@ export const defaultGenericEntityState = Immutable.Record({
  * ```
  */
 
-export function defaultGenericReducer<T> (type: string): Reducer {
+export function defaultGenericReducer<T> (): Reducer {
   let baseUri: string = '/api/v2';
 
   // figure out the resoure class and set up record for it
@@ -88,6 +88,7 @@ export function defaultGenericReducer<T> (type: string): Reducer {
       /** actions to set/unset resource data */
       case C.SET_ONE:
         className = action.payload._links.self.class;
+        state = mkDefault(state, className);
         uri = action.payload._links.self.href;
         return state.setIn([className, 'items', uri], Immutable.fromJS(action.payload));
   
