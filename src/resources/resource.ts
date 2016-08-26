@@ -204,8 +204,14 @@ export class Resource {
   // TODO: Determine if type OR is needed
   find(persistorConfig: IPersistorConfig = {}, adapterConfig: IAdapterConfig = {}): PromiseLike<any[]>  {
     return this.promise.all(this.beforeFind(persistorConfig, adapterConfig))
-    .then( ([persistorConfig, adapterConfig]) => this.store.dispatch(find(this, persistorConfig, adapterConfig)) )
-    .then((data) => this.afterFind(data));
+    .then( ([persistorConfig, adapterConfig]) => {
+      // this.store.dispatch(find(this, persistorConfig, adapterConfig))
+      return this.adapter.find(persistorConfig, adapterConfig)
+      .then( (res) => {
+        return res.data;
+      })      
+    })
+    .then((data) => this.afterFind(data, adapterConfig));
   }
   
   /**
@@ -218,7 +224,7 @@ export class Resource {
   /**
    * Default identity hook (return what was passed in)
    */
-  afterFind(data: any): any {
+  afterFind(data: any, adapterConfig): any {
     return this.promise.all([data]);
   }
 
