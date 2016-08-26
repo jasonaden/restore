@@ -171,9 +171,14 @@ export class Resource {
   findOne(id: number, persistorConfig: IPersistorConfig = {}, adapterConfig: IAdapterConfig = {}): PromiseLike<any[]> {
     return this.promise.all( this.beforeFindOne(id, persistorConfig, adapterConfig) )
     .then( ([persistorConfig, adapterConfig]) => {
-      return this.store.dispatch( findOne(this, persistorConfig, adapterConfig) )
+      return this.adapter.findOne(persistorConfig, adapterConfig)
+      .then( (res) => {
+        return res.data;
+      }) 
     })
-    .then( (data) => this.afterFindOne(data, adapterConfig) );
+    .then( (data) => {
+      return this.afterFindOne(data, adapterConfig)
+    } )
   }
   
   /**
@@ -186,7 +191,7 @@ export class Resource {
   /**
    * Default identity hook (return what was passed in)
    */
-  afterFindOne(data: any, adapterConfig?: Object): (PromiseLike<any[]>) {
+  afterFindOne(data: any, adapterConfig?: Object): PromiseLike<any> {
     return this.promise.all([data]);
   }
 

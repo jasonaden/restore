@@ -67,12 +67,12 @@ export class BaseAdapter implements IResourceAdapter {
       .then( (res) => {
         return this.afterFindOne(res.data, adapterConfig);
       })
-      .then( null,
-        // TODO: We probably need to add some kind of logging here
-        //  to log failures 
-        (err) => {
-          return Promise.reject(err);
-        })    
+      // .then( null,
+      //   // TODO: We probably need to add some kind of logging here
+      //   //  to log failures 
+      //   (err) => {
+      //     return Promise.reject(err);
+      //   })    
   } 
 
   // Default version is a no-op that passes along the
