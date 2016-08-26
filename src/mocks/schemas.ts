@@ -24,6 +24,7 @@ export const replySchema = new Schema('reply', getOptions());
  * Schema setup for Customer
  */
 export const customerSchema = new Schema('customer', getOptions());
+export const userSchema = new Schema('user', getOptions());
 
 export const caseChangesSchema = new Schema('changes', getOptions());
 
@@ -59,5 +60,6 @@ export const appSchema = {
   message: messageSchema,
   reply: replySchema,
   customer: customerSchema,
+  user: userSchema,
   changes: caseChangesSchema
 }
