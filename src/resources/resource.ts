@@ -82,7 +82,7 @@ export class Resource {
    * * `beforeFindOne(payload[, cb])`
    * * `afterFindOne(payload[, cb])`
    */
-  findOne(id: number, persistorConfig: IPersistorConfig = {}, adapterConfig: IAdapterConfig = {}): PromiseLike<any[]> {
+  findOne(id: (number | string), persistorConfig: IPersistorConfig = {}, adapterConfig: IAdapterConfig = {}): PromiseLike<any[]> {
     return this.promise.all( this.beforeFindOne(id, persistorConfig, adapterConfig) )
     .then( ([persistorConfig, adapterConfig]) => {
       return this.store.dispatch( findOne(this, persistorConfig, adapterConfig) )
@@ -94,7 +94,7 @@ export class Resource {
   /**
    * Default identity hook (return what was passed in) 
    */
-  beforeFindOne(id: number, persistorConfig: IPersistorConfig, adapterConfig?: IAdapterConfig): Array<any> {
+  beforeFindOne(id: (number | string), persistorConfig: IPersistorConfig, adapterConfig?: IAdapterConfig): Array<any> {
     return [persistorConfig, adapterConfig];
   }
   /**

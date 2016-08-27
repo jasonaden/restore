@@ -24,7 +24,7 @@ let verifyDefault = (reduc, exclude?) => {
 describe('defaultGenericListReducer', () => {
   describe('initialization tests', () => {
     beforeEach(() => {
-      reducer = defaultGenericListReducer(type);
+      reducer = defaultGenericListReducer();
     })
 
     it ('returns a default state', () => {   

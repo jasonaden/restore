@@ -41,8 +41,7 @@ export const defaultGenericEntityState = Immutable.Record({
  *  }
  * ```
  */
-
-export function defaultGenericReducer<T> (): Reducer {
+export function defaultGenericReducer (): Reducer {
   let baseUri: string = '/api/v2';
 
   // figure out the resoure class and set up record for it

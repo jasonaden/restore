@@ -11,7 +11,7 @@ const defaultListState = Immutable.Record({
   count: null
 });
 
-export function defaultGenericListReducer<T> (): Reducer {
+export function defaultGenericListReducer (): Reducer {
 
   function mkDefault (state, uri) {
     if( ! state.get(uri) ) {

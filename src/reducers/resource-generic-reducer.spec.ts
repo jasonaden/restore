@@ -2,20 +2,7 @@ import {defaultGenericReducer} from './resource-generic-reducer';
 import {IEntityState} from '../resources/interfaces';
 import {Reducer} from 'redux';
 import * as Immutable from 'immutable';
-import { defaultEntityState } from './resource-generic-reducer';
-// import 'angular-mocks';
 import {caseData} from '../mocks/case';
-
-// import {
-//   FIND_ONE, FINDING_ONE, FOUND_ONE,
-//   FIND, FINDING, FOUND,
-//   ADD, ADDING, ADDED, 
-//   DESTROY, DESTROYING, DESTROYED,
-//   PATCH, PATCHING, PATCHED,
-//   UPDATE, UPDATING, UPDATED,
-//   REFRESH, REFRESHING, REFRESHED,
-//   ERROR, SET_ONE
-// } from '../resources/constants';
 
 import * as C from '../resources/constants';
 
@@ -52,7 +39,7 @@ let verifyClassRecord = (classRecord, targetProp?) => {
 describe('defaultGenericReducer', () => {
   
   beforeEach(() => {
-    reducer = defaultGenericReducer(type);    
+    reducer = defaultGenericReducer();    
   })
         
   describe('actions to update statuses', () => {
