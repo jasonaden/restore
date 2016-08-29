@@ -13,6 +13,8 @@ var resource_list_reducer_1 = require('./reducers/resource-list-reducer');
 exports.defaultListReducer = resource_list_reducer_1.defaultListReducer;
 var resource_generic_list_reducer_1 = require('./reducers/resource-generic-list-reducer');
 exports.defaultGenericListReducer = resource_generic_list_reducer_1.defaultGenericListReducer;
+var resource_generic_reducer_1 = require('./reducers/resource-generic-reducer');
+exports.defaultGenericReducer = resource_generic_reducer_1.defaultGenericReducer;
 // base adapter
 var base_adapter_1 = require('./adapters/base-adapter');
 exports.BaseAdapter = base_adapter_1.BaseAdapter;

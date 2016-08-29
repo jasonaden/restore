@@ -19,7 +19,7 @@ var verifyDefault = function (reduc, exclude) {
 describe('defaultGenericListReducer', function () {
     describe('initialization tests', function () {
         beforeEach(function () {
-            reducer = resource_generic_list_reducer_1.defaultGenericListReducer(type);
+            reducer = resource_generic_list_reducer_1.defaultGenericListReducer();
         });
         it('returns a default state', function () {
             var reduc = reducer(undefined, {});

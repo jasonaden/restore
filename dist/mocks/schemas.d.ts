@@ -14,6 +14,7 @@ export declare const replySchema: Schema;
  * Schema setup for Customer
  */
 export declare const customerSchema: Schema;
+export declare const userSchema: Schema;
 export declare const caseChangesSchema: Schema;
 export declare const appSchema: {
     case: Schema;
@@ -22,5 +23,6 @@ export declare const appSchema: {
     message: Schema;
     reply: Schema;
     customer: Schema;
+    user: Schema;
     changes: Schema;
 };

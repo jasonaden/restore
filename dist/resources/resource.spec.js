@@ -50,10 +50,4 @@ describe('Resource', function () {
         // testResource = new TestResource(store, adapter, schema);
         testResource = new TestResource(store, adapter);
     });
-    it('should have isLoading method default to false', function () {
-        expect(testResource.isLoading()).toBe(false);
-    });
-    it('should have isLoading(id) method default to false', function () {
-        expect(testResource.isLoading(1)).toBe(false);
-    });
 });

@@ -11,8 +11,6 @@ export declare class Resource {
      * Promise library to use throughout the adapter
      */
     promise: PromiseConstructor;
-    state: any;
-    private _state;
     /**
      * The Resource class is designed to be extended, rather than instantiated on its own.
      * Because it's extended, Angular's DI system will not pick up on the constructor
@@ -26,18 +24,6 @@ export declare class Resource {
      *                              returned for this Resource.
      */
     constructor(store: any, adapter: IResourceAdapter);
-    /**
-     * Check whether this resource type is loading or optionally a specific resource.
-     *
-     * Example:
-     *
-     * ```
-     * Case.isLoading(); // Checks whether loadMany is being run
-     *
-     * Case.isLoading(5); // Checks whether we are fetching a specific case
-     * ```
-     */
-    isLoading(id?: string | number): boolean;
     /**
      * Lifecycle Hooks:
      *
@@ -53,6 +39,36 @@ export declare class Resource {
      * Default identity hook (return what was passed in)
      */
     afterAdd(data: any): PromiseLike<any[]>;
+    /**
+     * Finds a single and puts it into the server store.
+     *
+     * * `beforeFindOne(payload[, cb])`
+     * * `afterFindOne(payload[, cb])`
+     */
+    findOne(id: (number | string), persistorConfig?: IPersistorConfig, adapterConfig?: IAdapterConfig): PromiseLike<any[]>;
+    /**
+     * Default identity hook (return what was passed in)
+     */
+    beforeFindOne(id: (number | string), persistorConfig: IPersistorConfig, adapterConfig?: IAdapterConfig): Array<any>;
+    /**
+     * Default identity hook (return what was passed in)
+     */
+    afterFindOne(data: any, adapterConfig?: Object): (PromiseLike<any[]>);
+    /**
+     * Finds items and puts them into the store.
+     *
+     * * `beforeFind(payload[, cb])`
+     * * `afterFind(payload[, cb])`
+     */
+    find(persistorConfig?: IPersistorConfig, adapterConfig?: IAdapterConfig): PromiseLike<any[]>;
+    /**
+     * Default identity hook (return what was passed in)
+     */
+    beforeFind(persistorConfig: IPersistorConfig, adapterConfig: IAdapterConfig): Array<any>;
+    /**
+     * Default identity hook (return what was passed in)
+     */
+    afterFind(data: any): any;
     /**
      * Lifecycle Hooks:
      *
@@ -83,34 +99,4 @@ export declare class Resource {
      * Default identity hook (return what was passed in)
      */
     afterDestroy(data: any): PromiseLike<any[]>;
-    /**
-     * Finds a single and puts it into the server store.
-     *
-     * * `beforeFindOne(payload[, cb])`
-     * * `afterFindOne(payload[, cb])`
-     */
-    findOne(id: number, persistorConfig?: IPersistorConfig, adapterConfig?: IAdapterConfig): PromiseLike<any[]>;
-    /**
-     * Default identity hook (return what was passed in)
-     */
-    beforeFindOne(id: number, persistorConfig: IPersistorConfig, adapterConfig?: IAdapterConfig): Array<any>;
-    /**
-     * Default identity hook (return what was passed in)
-     */
-    afterFindOne(data: any, adapterConfig?: Object): (PromiseLike<any[]>);
-    /**
-     * Finds items and puts them into the store.
-     *
-     * * `beforeFind(payload[, cb])`
-     * * `afterFind(payload[, cb])`
-     */
-    find(persistorConfig?: IPersistorConfig, adapterConfig?: IAdapterConfig): PromiseLike<any[]>;
-    /**
-     * Default identity hook (return what was passed in)
-     */
-    beforeFind(persistorConfig: IPersistorConfig, adapterConfig: IAdapterConfig): Array<any>;
-    /**
-     * Default identity hook (return what was passed in)
-     */
-    afterFind(data: any): any;
 }

@@ -24,6 +24,7 @@ exports.replySchema = new normalizr_1.Schema('reply', getOptions());
  * Schema setup for Customer
  */
 exports.customerSchema = new normalizr_1.Schema('customer', getOptions());
+exports.userSchema = new normalizr_1.Schema('user', getOptions());
 exports.caseChangesSchema = new normalizr_1.Schema('changes', getOptions());
 exports.interactionSchema.define({
     case: exports.caseSchema
@@ -52,5 +53,6 @@ exports.appSchema = {
     message: exports.messageSchema,
     reply: exports.replySchema,
     customer: exports.customerSchema,
+    user: exports.userSchema,
     changes: exports.caseChangesSchema
 };
