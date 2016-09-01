@@ -31,3 +31,4 @@ export const FOUND_LIST = "FOUND_LIST";
 export const SET_LIST_RESULT = "SET_LIST_RESULT";
 export const SET_LIST_PAGE = "SET_LIST_PAGE";
 export const SET_LIST_COUNT = "SET_LIST_COUNT";
+export const SET_BULK = "SET_BULK";

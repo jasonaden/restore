@@ -90,7 +90,19 @@ export function defaultGenericReducer (): Reducer {
         state = mkDefault(state, className);
         uri = action.payload._links.self.href;
         return state.setIn([className, 'items', uri], Immutable.fromJS(action.payload));
-  
+
+      case C.SET_BULK:
+        className = action.payload.className;
+        state = mkDefault(state, className);
+        return state.withMutations( map => {
+          for( let key in action.payload.items ) {
+            let item = action.payload.items[key]
+            let uri = item._links.self.href;
+            map = map.setIn([className, 'items', uri], Immutable.fromJS(item));
+          }
+          return map
+        })
+
       case C.REMOVE_ONE:
         if( action.payload ) {
           className = action.payload._links.self.class;
